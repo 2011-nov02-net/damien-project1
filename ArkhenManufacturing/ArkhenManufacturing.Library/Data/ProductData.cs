@@ -7,18 +7,19 @@
     public class ProductData : NamedData
     {
         /// <summary>
-        /// Default constructor for use with assigning the data in 
-        ///     object initialization syntax
-        /// </summary>
-        public ProductData() :
-            base("") { }
-
-        /// <summary>
         /// Constructor that allows the Product's name to be set
         /// </summary>
         /// <param name="name"></param>
         public ProductData(string name) :
             base(name) {
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The other instance with the data being assigned to this</param>
+        public ProductData(ProductData other) :
+            this(other.Name) {
         }
     }
 }

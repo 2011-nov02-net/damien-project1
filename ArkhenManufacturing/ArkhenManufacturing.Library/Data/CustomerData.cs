@@ -53,13 +53,21 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="userName">UserName of the User</param>
         /// <param name="password">User's password</param>
         /// <param name="email">Email address of the user</param>
-        public CustomerData(string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? defaultLocationId, string firstName, string lastName, string userName, string password, string email) :
+        public CustomerData(string firstName, string lastName, string userName, string password, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? defaultLocationId) :
             base(firstName, lastName, userName, password, email) {
             PhoneNumber = phoneNumber;
             AddressId = addressId;
             SignUpDate = signUpDate;
             BirthDate = birthDate;
             DefaultLocationId = defaultLocationId;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The value being assigned to this</param>
+        public CustomerData(CustomerData other) :
+            this(other.FirstName, other.LastName, other.UserName, other.Password, other.Email, other.PhoneNumber, other.AddressId, other.SignUpDate, other.BirthDate, other.DefaultLocationId) {
         }
     }
 }

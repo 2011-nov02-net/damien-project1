@@ -1,4 +1,6 @@
-﻿namespace ArkhenManufacturing.Library.Data
+﻿using System;
+
+namespace ArkhenManufacturing.Library.Data
 {
     /// <summary>
     /// Interface that is the basis for accessing the data

@@ -55,7 +55,7 @@ namespace ArkhenManufacturing.Library.Entity
             Data = data switch
             {
                 AdminData adminData => adminData,
-                _ => throw new ArgumentException($"Got '{nameof(data)}' instead of '{nameof(Data)}'")
+                _ => throw new ArgumentException($"Got '{data.GetType().Name}' instead of '{Data.GetType().Name}'")
             };
         }
     }

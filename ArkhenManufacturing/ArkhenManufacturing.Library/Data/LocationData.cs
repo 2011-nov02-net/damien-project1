@@ -30,7 +30,7 @@ namespace ArkhenManufacturing.Library.Data
         ///     It holds the ids of the InventoryEntries, 
         ///     and they store the actual product information
         /// </summary>
-        public List<Guid> InventoryEntries { get; set; }
+        public List<Guid> InventoryEntryIds { get; set; }
 
         /// <summary>
         /// Default constructor that sets the NamedData's parameter as the string passed in
@@ -48,13 +48,21 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="addressId">Id of the address of the store location</param>
         /// <param name="orderIds">A collection of order ids placed to this location</param>
         /// <param name="adminIds">A collection of the administrators of this location</param>
-        /// <param name="inventoryEntries">The inventory entries of this store location</param>
-        public LocationData(string name, Guid addressId, List<Guid> orderIds, List<Guid> adminIds, List<Guid> inventoryEntries) :
+        /// <param name="inventoryEntryIds">The inventory entries of this store location</param>
+        public LocationData(string name, Guid addressId, List<Guid> orderIds, List<Guid> adminIds, List<Guid> inventoryEntryIds) :
             base(name) {
             AddressId = addressId;
             OrderIds = orderIds;
             AdminIds = adminIds;
-            InventoryEntries = inventoryEntries;
+            InventoryEntryIds = inventoryEntryIds;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The other instance with the data being assigned to this</param>
+        public LocationData(LocationData other) :
+            this(other.Name, other.AddressId, other.OrderIds, other.AdminIds, other.InventoryEntryIds) {
         }
     }
 }

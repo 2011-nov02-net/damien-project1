@@ -1,4 +1,6 @@
-﻿namespace ArkhenManufacturing.Library.Data
+﻿using ArkhenManufacturing.Library.Extensions;
+
+namespace ArkhenManufacturing.Library.Data
 {
     /// <summary>
     /// Container for the actual data of an Address
@@ -51,12 +53,25 @@
         /// <param name="country">The country in which the address is located</param>
         /// <param name="zipCode">The Zip Code of the address</param>
         public AddressData(string line1, string line2, string city, string state, string country, string zipCode) {
+            line1.NullOrEmptyCheck(nameof(line1));
+            city.NullOrEmptyCheck(nameof(city));
+            country.NullOrEmptyCheck(nameof(country));
+            zipCode.NullOrEmptyCheck(nameof(zipCode));
+
             Line1 = line1;
             Line2 = line2;
             City = city;
             State = state;
             Country = country;
             ZipCode = zipCode;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The instance being assigned to this</param>
+        public AddressData(AddressData other) :
+            this(other.Line1, other.Line2, other.City, other.State, other.Country, other.ZipCode) {
         }
 
         /// <summary>

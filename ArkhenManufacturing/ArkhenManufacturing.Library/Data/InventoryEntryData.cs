@@ -58,5 +58,13 @@ namespace ArkhenManufacturing.Library.Data
             Price = price;
             Discount = discount;
         }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The other instance with the data being assigned to this</param>
+        public InventoryEntryData(InventoryEntryData other) :
+            this(other.ProductId, other.LocationId, other.Price, other.Discount) {
+        }
     }
 }

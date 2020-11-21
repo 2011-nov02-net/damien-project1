@@ -1,4 +1,8 @@
-﻿namespace ArkhenManufacturing.Library.Data
+﻿using System;
+
+using ArkhenManufacturing.Library.Extensions;
+
+namespace ArkhenManufacturing.Library.Data
 {
     /// <summary>
     /// Abstract class that is a subset of IData
@@ -17,6 +21,8 @@
         /// </summary>
         /// <param name="name">The name of the data</param>
         public NamedData(string name) {
+            name.NullOrEmptyCheck(nameof(name));
+
             Name = name;
         }
     }

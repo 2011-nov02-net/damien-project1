@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using ArkhenManufacturing.Library.Extensions;
+
 namespace ArkhenManufacturing.Library.Data
 {
     /// <summary>
@@ -12,7 +14,7 @@ namespace ArkhenManufacturing.Library.Data
         /// <summary>
         /// Locations in which this Admin can access and can monitor
         /// </summary>
-        public List<Guid> LocationIdsAssignedTo { get; set; }
+        public List<Guid> LocationIds { get; set; }
 
         /// <summary>
         /// Default constructor for use with assigning the data in 
@@ -23,15 +25,25 @@ namespace ArkhenManufacturing.Library.Data
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="locationIdsAssignedTo">Locations in which this Admin can access and can monitor</param>
+        /// <param name="locationIds">Locations in which this Admin can access and can monitor</param>
         /// <param name="firstName">First Name of the User</param>
         /// <param name="lastName">Last Name of the User</param>
         /// <param name="userName">UserName of the User</param>
         /// <param name="password">User's password</param>
         /// <param name="email">Email address of the user</param>
-        public AdminData(List<Guid> locationIdsAssignedTo, string firstName, string lastName, string userName, string password, string email) :
+        public AdminData(string firstName, string lastName, string userName, string password, string email, List<Guid> locationIds) :
             base(firstName, lastName, userName, password, email) {
-            LocationIdsAssignedTo = locationIdsAssignedTo;
+            locationIds.NullCheck(nameof(locationIds));
+
+            LocationIds = locationIds;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The value being assigned to this</param>
+        public AdminData(AdminData other) :
+            this(other.FirstName, other.LastName, other.UserName, other.Password, other.Email, other.LocationIds) {
         }
     }
 }

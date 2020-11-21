@@ -64,6 +64,14 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         }
 
         /// <summary>
+        /// Gets the count in a collection
+        /// </summary>
+        /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
+        /// <returns>An unsigned int of the number in the collection</returns>
+        public int Count<T>()
+            where T : ArkhEntity => GetList<T>().Count;
+
+        /// <summary>
         /// Create an ArkhEntity child with the specified data
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>

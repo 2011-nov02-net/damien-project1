@@ -28,6 +28,13 @@ namespace ArkhenManufacturing.Library
         bool Exists<T>(Guid id) where T : ArkhEntity;
 
         /// <summary>
+        /// Gets the count in a collection
+        /// </summary>
+        /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
+        /// <returns>An unsigned int of the number in the collection</returns>
+        int Count<T>() where T : ArkhEntity;
+
+        /// <summary>
         /// Get an amount of items that contain a specified name
         /// </summary>
         /// <typeparam name="T">The type of NamedArkhEntity being searched in the collection</typeparam>

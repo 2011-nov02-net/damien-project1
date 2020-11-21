@@ -16,7 +16,7 @@ namespace ArkhenManufacturing.Library.Data
         /// <summary>
         /// The admin assigned to monitor and assist with this order
         /// </summary>
-        public Guid AttendingAdminId { get; set; }
+        public Guid AdminId { get; set; }
 
         /// <summary>
         /// The location in which the order was placed
@@ -27,11 +27,6 @@ namespace ArkhenManufacturing.Library.Data
         /// The date in which the order was placed
         /// </summary>
         public DateTime PlacementDate { get; set; }
-
-        /// <summary>
-        /// The overall total of the order
-        /// </summary>
-        public decimal Total { get; set; }
 
         /// <summary>
         /// A collection of ids of the orderlines that were placed to this order
@@ -48,18 +43,24 @@ namespace ArkhenManufacturing.Library.Data
         /// Constructor that allows for the internal data to be set
         /// </summary>
         /// <param name="customerId">Id of the customer that made this order</param>
-        /// <param name="attendingAdminId">The admin assigned to monitor and assist with this order</param>
+        /// <param name="adminId">The admin assigned to monitor and assist with this order</param>
         /// <param name="locationId">The location in which the order was placed</param>
         /// <param name="placementDate">The date in which the order was placed</param>
-        /// <param name="total">The overall total of the order</param>
         /// <param name="orderLineIds">A collection of ids of the orderlines that were placed to this order</param>
-        public OrderData(Guid customerId, Guid attendingAdminId, Guid locationId, DateTime placementDate, decimal total, ICollection<Guid> orderLineIds) {
+        public OrderData(Guid customerId, Guid adminId, Guid locationId, DateTime placementDate, ICollection<Guid> orderLineIds) {
             CustomerId = customerId;
-            AttendingAdminId = attendingAdminId;
+            AdminId = adminId;
             LocationId = locationId;
             PlacementDate = placementDate;
-            Total = total;
             OrderLineIds = orderLineIds;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The other instance with the data being assigned to this</param>
+        public OrderData(OrderData other) :
+            this(other.CustomerId, other.AdminId, other.LocationId, other.PlacementDate, other.OrderLineIds) {
         }
     }
 }

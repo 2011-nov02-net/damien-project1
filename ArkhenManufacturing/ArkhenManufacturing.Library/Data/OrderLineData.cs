@@ -68,5 +68,13 @@ namespace ArkhenManufacturing.Library.Data
             PricePerUnit = pricePerUnit;
             Discount = discount;
         }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">The other instance with the data being assigned to this</param>
+        public OrderLineData(OrderLineData other) :
+            this(other.OrderId, other.ProductId, other.Count, other.PricePerUnit, other.Discount) {
+        }
     }
 }

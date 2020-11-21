@@ -1,4 +1,6 @@
-﻿namespace ArkhenManufacturing.Library.Data
+﻿using ArkhenManufacturing.Library.Extensions;
+
+namespace ArkhenManufacturing.Library.Data
 {
     /// <summary>
     /// Container for the actual data of a User
@@ -50,6 +52,12 @@
         /// <param name="password">User's password</param>
         /// <param name="email">Email address of the user</param>
         public UserData(string firstName, string lastName, string userName, string password, string email) {
+            firstName.NullOrEmptyCheck(nameof(firstName));
+            lastName.NullOrEmptyCheck(nameof(lastName));
+            userName.NullOrEmptyCheck(nameof(userName));
+            password.NullOrEmptyCheck(nameof(password));
+            email.NullOrEmptyCheck(nameof(email));
+
             FirstName = firstName;
             LastName = lastName;
             UserName = userName;
