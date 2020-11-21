@@ -1,6 +1,7 @@
 ﻿using System;
 
 using ArkhenManufacturing.Library.Data;
+using ArkhenManufacturing.Library.Extensions;
 
 namespace ArkhenManufacturing.Library.Entity
 {
@@ -50,6 +51,8 @@ namespace ArkhenManufacturing.Library.Entity
         /// </summary>
         /// <param name="data">The data that is being assigned in this class</param>
         public override void SetData(IData data) {
+            data.NullCheck(nameof(data));
+
             Data = data switch
             {
                 AddressData addressData => addressData,

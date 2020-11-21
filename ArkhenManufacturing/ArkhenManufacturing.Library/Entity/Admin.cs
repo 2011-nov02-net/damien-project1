@@ -1,6 +1,7 @@
 ﻿using System;
 
 using ArkhenManufacturing.Library.Data;
+using ArkhenManufacturing.Library.Extensions;
 
 namespace ArkhenManufacturing.Library.Entity
 {
@@ -11,23 +12,17 @@ namespace ArkhenManufacturing.Library.Entity
     /// </summary>
     public sealed class Admin : User
     {
-        private AdminData _data;
-
         /// <summary>
         /// The Object where the actual data is being stored
         /// </summary>
-        internal new AdminData Data
-        {
-            get => _data;
-            set => _data = value ?? throw new ArgumentException("The data for this class cannot be null.");
-        }
+        internal new AdminData Data { get; set; }
 
         /// <summary>
         /// Default constructor that assigns the guid to a new Guid
         /// </summary>
         public Admin() :
             base(Guid.NewGuid(), new AdminData()) {
-            Data = base.Data as AdminData;
+            SetData(base.Data as AdminData);
         }
 
         /// <summary>
@@ -38,7 +33,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// <param name="data">The data being assigned to this</param>
         public Admin(Guid id, AdminData data) :
             base(id, data) {
-            Data = data;
+            SetData(data);
         }
 
         /// <summary>
@@ -52,6 +47,8 @@ namespace ArkhenManufacturing.Library.Entity
         /// </summary>
         /// <param name="data">The data that is being assigned in this class</param>
         public override void SetData(IData data) {
+            data.NullCheck(nameof(data));
+
             Data = data switch
             {
                 AdminData adminData => adminData,

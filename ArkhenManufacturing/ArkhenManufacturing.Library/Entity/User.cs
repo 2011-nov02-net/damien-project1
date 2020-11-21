@@ -1,6 +1,7 @@
 ﻿using System;
 
 using ArkhenManufacturing.Library.Data;
+using ArkhenManufacturing.Library.Extensions;
 
 namespace ArkhenManufacturing.Library.Entity
 {
@@ -11,16 +12,10 @@ namespace ArkhenManufacturing.Library.Entity
     /// </summary>
     public abstract class User : NamedArkhEntity
     {
-        private UserData _data;
-
         /// <summary>
         /// The Object where the actual data is being stored
         /// </summary>
-        internal UserData Data
-        {
-            get => _data;
-            set => _data = value ?? throw new ArgumentException("The data for this class cannot be null.");
-        }
+        internal UserData Data { get; set; }
 
         /// <summary>
         /// Constructor that allows assigning the id
@@ -30,7 +25,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// <param name="data">The data being assigned to this</param>
         public User(Guid id, UserData data) :
             base(id) {
-            Data = data;
+            SetData(data);
         }
 
         /// <summary>
@@ -44,6 +39,8 @@ namespace ArkhenManufacturing.Library.Entity
         /// </summary>
         /// <param name="data">The data that is being assigned in this class</param>
         public override void SetData(IData data) {
+            data.NullCheck(nameof(data));
+
             Data = data switch
             {
                 UserData userData => userData,

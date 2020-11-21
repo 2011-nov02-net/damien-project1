@@ -13,7 +13,8 @@ namespace ArkhenManufacturing.Library.Entity
         /// </summary>
         /// <param name="id">The Guid id being assigned</param>
         public NamedArkhEntity(Guid id) : 
-            base(id) { }
+            base(id) { 
+        }
 
         /// <summary>
         /// Method declaration that states that a subclass will either
