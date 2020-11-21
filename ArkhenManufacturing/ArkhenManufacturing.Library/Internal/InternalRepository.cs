@@ -28,6 +28,7 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
                 { typeof(InventoryEntry), new List<InventoryEntry>() },
                 { typeof(Location), new List<Location>() },
                 { typeof(Order), new List<Order>() },
+                { typeof(OrderLine), new List<OrderLine>() },
                 { typeof(Product), new List<Product>() },
             };
         }
@@ -38,19 +39,15 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// <typeparam name="T">The subclass of ArkhEntity being targeted</typeparam>
         /// <returns>An ICollection of the specified subclass</returns>
         private ICollection<T> GetList<T>()
-            where T : ArkhEntity {
-            return _typeFactories[typeof(T)] as ICollection<T>;
-        }
+            where T : ArkhEntity => _typeFactories[typeof(T)] as ICollection<T>;
 
         /// <summary>
         /// Method that checks for any ArkhEntities within the collection
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <returns>True if any are present, otherwise returns false</returns>
-        public bool Any<T>() 
-            where T : ArkhEntity {
-            return GetList<T>().Any();
-        }
+        public bool Any<T>()
+            where T : ArkhEntity => GetList<T>().Any();
 
         /// <summary>
         /// Checks for an ArkhEntity with the specified Guid
@@ -84,13 +81,10 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <returns>A complete collection of all the items being stored</returns>
-        public List<IData> RetrieveAll<T>() 
-            where T : ArkhEntity {
-            var list = GetList<T>();
-            return list
+        public List<IData> RetrieveAll<T>()
+            where T : ArkhEntity => GetList<T>()
                 .Select(item => item.GetData())
                 .ToList();
-        }
 
         /// <summary>
         /// Gets all the items that contain the specified string
@@ -98,14 +92,12 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="name">The string of characters being searched for</param>
         /// <returns>A list that contains the data of any of the items found, if any</returns>
-        public List<IData> RetrieveByName<T>(string name) 
-            where T : NamedArkhEntity {
-            return GetList<T>()
+        public List<IData> RetrieveByName<T>(string name)
+            where T : NamedArkhEntity => GetList<T>()
                 .Where(item => item.GetName()
                     .Contains(name))
                 .Select(item => item.GetData())
                 .ToList();
-        }
 
         /// <summary>
         /// Get an item using a Guid id
@@ -114,13 +106,10 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="id">The Guid id of the item</param>
         /// <returns>The item that has the specified Guid, otherwise it returns null</returns>
-        public IData Retrieve<T>(Guid id) 
-            where T : ArkhEntity {
-            var list = GetList<T>();
-            return list
+        public IData Retrieve<T>(Guid id)
+            where T : ArkhEntity => GetList<T>()
                 .FirstOrDefault(item => item.Id == id)?
                 .GetData();
-        }
 
         /// <summary>
         /// Update an ArkhEntity having the specified Guid with the data entered, if it exists

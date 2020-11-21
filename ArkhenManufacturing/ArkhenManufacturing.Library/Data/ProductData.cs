@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ArkhenManufacturing.Library.Data
+﻿namespace ArkhenManufacturing.Library.Data
 {
     /// <summary>
     /// Container for the actual data of an Product

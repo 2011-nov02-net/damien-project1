@@ -33,12 +33,10 @@ namespace ArkhenManufacturing.Library.Data
         /// </summary>
         public decimal Total { get; set; }
 
-        // TODO: Decide what to do here for products and their prices here
-        // OrderId, ProductId, Count, Price per Unit => OrderDetails?
-        // \--------+-------/
-        //          |
-        //         have these two as a composite key for the DB?
-        public IDictionary<Guid, uint> ProductIdsWithCount { get; set; }
+        /// <summary>
+        /// A collection of ids of the orderlines that were placed to this order
+        /// </summary>
+        public ICollection<Guid> OrderLineIds { get; set; }
 
         /// <summary>
         /// Default constructor for use with assigning the data in 
@@ -46,12 +44,22 @@ namespace ArkhenManufacturing.Library.Data
         /// </summary>
         public OrderData() { }
 
-        public OrderData(Guid customerId, Guid locationId, DateTime placementDate, decimal total, IDictionary<Guid, uint> productIdsWithCount) {
+        /// <summary>
+        /// Constructor that allows for the internal data to be set
+        /// </summary>
+        /// <param name="customerId">Id of the customer that made this order</param>
+        /// <param name="attendingAdminId">The admin assigned to monitor and assist with this order</param>
+        /// <param name="locationId">The location in which the order was placed</param>
+        /// <param name="placementDate">The date in which the order was placed</param>
+        /// <param name="total">The overall total of the order</param>
+        /// <param name="orderLineIds">A collection of ids of the orderlines that were placed to this order</param>
+        public OrderData(Guid customerId, Guid attendingAdminId, Guid locationId, DateTime placementDate, decimal total, ICollection<Guid> orderLineIds) {
             CustomerId = customerId;
+            AttendingAdminId = attendingAdminId;
             LocationId = locationId;
             PlacementDate = placementDate;
             Total = total;
-            ProductIdsWithCount = productIdsWithCount;
+            OrderLineIds = orderLineIds;
         }
     }
 }
