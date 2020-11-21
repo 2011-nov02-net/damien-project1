@@ -10,30 +10,18 @@ namespace ArkhenManufacturing.Library.Entity
     ///     to it and holds the data object that its actual data
     ///     will be stored in.
     /// </summary>
-    public sealed class Customer : User
+    public sealed class Customer : NamedArkhEntity
     {
         /// <summary>
         /// The Object where the actual data is being stored
         /// </summary>
-        internal new CustomerData Data { get; set; }
+        internal CustomerData Data { get; set; }
 
         /// <summary>
         /// Default constructor that assigns the guid to a new Guid
         /// </summary>
         public Customer() :
-            base(Guid.NewGuid(), new CustomerData()) {
-            SetData(base.Data as CustomerData);
-        }
-
-        /// <summary>
-        /// Constructor that allows assigning the id
-        ///     and the data object
-        /// </summary>
-        /// <param name="id">The Guid id being assigned to this</param>
-        /// <param name="data">The data being assigned to this</param>
-        public Customer(Guid id, CustomerData data) :
-            base(id, data) {
-            SetData(data);
+            base(Guid.NewGuid()) {
         }
 
         /// <summary>
@@ -55,5 +43,11 @@ namespace ArkhenManufacturing.Library.Entity
                 _ => throw new ArgumentException($"Got '{data.GetType().Name}' instead of '{Data.GetType().Name}'")
             };
         }
+
+        /// <summary>
+        /// Method definition that exposes this subclass's name
+        /// </summary>
+        /// <returns>The name of this subclass, as a string</returns>
+        internal override string GetName() => Data.Fullname;
     }
 }

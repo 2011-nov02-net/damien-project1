@@ -21,17 +21,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// Default constructor that assigns the guid to a new Guid
         /// </summary>
         public OrderLine() :
-            base(Guid.NewGuid()) { }
-
-        /// <summary>
-        /// Constructor that allows for the Guid id to be set
-        ///     and the data of the object to be set
-        /// </summary>
-        /// <param name="id">The Guid id being assigned to this</param>
-        /// <param name="data">The data being assigned to this</param>
-        public OrderLine(Guid id, OrderLineData data) :
-            base(id) {
-            SetData(data);
+            base(Guid.NewGuid()) { 
         }
 
         /// <summary>

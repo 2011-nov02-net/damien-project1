@@ -78,8 +78,7 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// <param name="data">The specific data type being passed in</param>
         public void Create<T>(IData data) 
             where T : ArkhEntity, new() {
-            var id = Guid.NewGuid();
-            var item = new T { Id = id };
+            var item = new T();
             item.SetData(data);
             GetList<T>().Add(item);
         }

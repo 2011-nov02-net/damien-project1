@@ -21,17 +21,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// Default constructor that assigns the guid to a new Guid
         /// </summary>
         public Product() :
-            base(Guid.NewGuid()) { }
-
-        /// <summary>
-        /// Constructor that allows assigning the id
-        ///     and the data object
-        /// </summary>
-        /// <param name="id">The Guid id being assigned to this</param>
-        /// <param name="data">The data being assigned to this</param>
-        public Product(Guid id, ProductData data) :
-            base(id) {
-            SetData(data);
+            base(Guid.NewGuid()) { 
         }
 
         /// <summary>
