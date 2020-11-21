@@ -2,13 +2,15 @@
 
 using ArkhenManufacturing.Library.Repository.InternalRepository;
 
+using Xunit;
+
 namespace ArkhenManufacturing.Library.Test.Repository.Ephemeral
 {
-    public class InternalRepositoryUtilityTest
+    public class InternalRepository_UtilityTests
     {
         private IRepository _repository;
 
-        public InternalRepositoryUtilityTest() {
+        public InternalRepository_UtilityTests() {
             _repository = new InternalRepository();
         }
 
@@ -25,6 +27,10 @@ namespace ArkhenManufacturing.Library.Test.Repository.Ephemeral
         #endregion
 
         #region Order Utility Tests
+
+        #endregion
+
+        #region OrderLine Utility Tests
 
         #endregion
 

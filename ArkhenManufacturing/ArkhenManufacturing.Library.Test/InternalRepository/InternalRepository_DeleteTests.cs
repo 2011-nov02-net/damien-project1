@@ -2,9 +2,9 @@
 
 namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
 {
-    public class InternalRepositoryDeleteTests
+    public class InternalRepository_DeleteTests
     {
-        public InternalRepositoryDeleteTests() {
+        public InternalRepository_DeleteTests() {
 
         }
         

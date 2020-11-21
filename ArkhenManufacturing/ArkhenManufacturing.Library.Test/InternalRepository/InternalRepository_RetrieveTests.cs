@@ -2,9 +2,9 @@
 
 namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
 {
-    public class InternalRepositoryRetrieveTests
+    public class InternalRepository_RetrieveTests
     {
-        public InternalRepositoryRetrieveTests() {
+        public InternalRepository_RetrieveTests() {
 
         }
 
