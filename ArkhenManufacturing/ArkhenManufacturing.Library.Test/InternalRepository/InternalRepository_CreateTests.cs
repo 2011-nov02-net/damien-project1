@@ -7,7 +7,7 @@ using ArkhenManufacturing.Library.Repository.InternalRepository;
 
 using Xunit;
 
-namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
+namespace ArkhenManufacturing.Library.Test.Library.Internal
 {
     public class InternalRepository_CreateTests
     {
@@ -227,17 +227,18 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         #region Location Creation Tests
 
         [Fact]
-        public void Create_NullLocationData() {
+        public void Create_Null_LocationData() {
             // Assign
             LocationData data = null;
 
             // Act and Assert
             Assert.Throws<ArgumentException>(() => _repository.Create<Location>(data));
+            Assert.True(_repository.Count<Location>() == 0);
         }
 
         [Theory]
         [MemberData(nameof(ValidLocationTestData))]
-        public void Create_ValidLocation(string name, Guid addressId, List<Guid> orderIds, List<Guid> adminIds, List<Guid> inventoryEntryIds) {
+        public void Create_Valid_LocationData(string name, Guid addressId, List<Guid> orderIds, List<Guid> adminIds, List<Guid> inventoryEntryIds) {
             // Arrange
             var data = new LocationData(name, addressId, orderIds, adminIds, inventoryEntryIds);
 
@@ -251,15 +252,13 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
 
         [Theory]
         [MemberData(nameof(InvalidLocationTestData))]
-        public void Create_InvalidLocation(string name, Guid addressId, List<Guid> orderIds, List<Guid> adminIds, List<Guid> inventoryEntryIds) {
+        public void Create_Invalid_LocationData(string name, Guid addressId, List<Guid> orderIds, List<Guid> adminIds, List<Guid> inventoryEntryIds) {
             // Arrange
             var data = new LocationData(name, addressId, orderIds, adminIds, inventoryEntryIds);
 
-            // Act
-            _repository.Create<Location>(data);
-
-            // Assert
-            Assert.True(_repository.Count<Location>() > 0);
+            // Act and Assert
+            Assert.Throws<ArgumentException>(() => _repository.Create<Location>(data));
+            Assert.True(_repository.Count<Location>() == 0);
         }
 
         #endregion
@@ -267,22 +266,37 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         #region Customer Creation Tests
 
         [Fact]
-        public void Create_NullCustomerData() {
+        public void Create_Null_CustomerData() {
             // Assign
             CustomerData data = null;
 
             // Act and Assert
             Assert.Throws<ArgumentException>(() => _repository.Create<Customer>(data));
+            Assert.True(_repository.Count<Customer>() == 0);
         }
 
-        [Fact]
-        public void Customer_Create_Succeeds() {
-            _repository.Create<Customer>(null);
+        [Theory]
+        [MemberData(nameof(ValidCustomerTestData))]
+        public void Create_Valid_CustomerData(string firstName, string lastName, string userName, string password, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? locationId) {
+            // Arrange
+            var data = new CustomerData(firstName, lastName, userName, password, email, phoneNumber, addressId, signUpDate, birthDate, locationId);
+
+            // Act
+            _repository.Create<Customer>(data);
+
+            // Assert
+            Assert.True(_repository.Count<Customer>() > 0);
         }
         
-        [Fact]
-        public void Customer_Create_Fails() {
-            _repository.Create<Customer>(null);
+        [Theory]
+        [MemberData(nameof(InvalidCustomerTestData))]
+        public void Create_Invalid_CustomerData(string firstName, string lastName, string userName, string password, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? locationId) {
+            // Arrange
+            var data = new CustomerData(firstName, lastName, userName, password, email, phoneNumber, addressId, signUpDate, birthDate, locationId);
+
+            // Act and Assert
+            Assert.Throws<ArgumentException>(() => _repository.Create<Customer>(data));
+            Assert.True(_repository.Count<Customer>() == 0);
         }
 
         #endregion
@@ -290,7 +304,7 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         #region Admin Creation Tests
 
         [Fact]
-        public void Create_NullAdminData() {
+        public void Create_Null_AdminData() {
             // Assign
             AdminData data = null;
 
@@ -299,12 +313,12 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         }
 
         [Fact]
-        public void Admin_Create_Succeeds() {
+        public void Create_Valid_AdminData() {
             _repository.Create<Admin>(null);
         }
         
         [Fact]
-        public void Admin_Create_Fails() {
+        public void Create_Invalid_AdminData() {
             _repository.Create<Admin>(null);
         }
 
@@ -313,7 +327,7 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         #region Order Creation Tests
 
         [Fact]
-        public void Create_NullOrderData() {
+        public void Create_Null_OrderData() {
             // Assign
             OrderData data = null;
 
@@ -322,12 +336,12 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         }
 
         [Fact]
-        public void Create_Valid_Order() {
+        public void Create_Valid_OrderData() {
             _repository.Create<Order>(null);
         }
         
         [Fact]
-        public void Create_Invalid_Order() {
+        public void Create_Invalid_OrderData() {
             _repository.Create<Order>(null);
         }
 
@@ -336,7 +350,7 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         #region OrderLine Creation Tests
 
         [Fact]
-        public void Create_Null_OrderLine() {
+        public void Create_Null_OrderLineData() {
             // Assign
             OrderLineData data = null;
 
@@ -345,12 +359,12 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         }
 
         [Fact]
-        public void Create_Valid_OrderLine() {
+        public void Create_Valid_OrderLineData() {
             _repository.Create<OrderLine>(null);
         }
         
         [Fact]
-        public void Create_InvalidOrderLine() {
+        public void Create_Invalid_OrderLineData() {
             _repository.Create<OrderLine>(null);
         }
 
@@ -368,12 +382,12 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         }
 
         [Fact]
-        public void Create_Valid_InventoryEntry() {
+        public void Create_Valid_InventoryEntryData() {
             _repository.Create<InventoryEntry>(null);
         }
 
         [Fact]
-        public void Create_Invalid_InventoryEntry() {
+        public void Create_Invalid_InventoryEntryData() {
             _repository.Create<InventoryEntry>(null);
         }
 
@@ -392,7 +406,7 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
 
         [Theory]
         [MemberData(nameof(ValidProductTestData))]
-        public void Create_Valid_Product(string productName) {
+        public void Create_Valid_ProductData(string productName) {
             var data = new ProductData(productName);
             _repository.Create<Product>(data);
             Assert.True(_repository.Count<Product>() > 0);
@@ -400,7 +414,7 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         
         [Theory]
         [MemberData(nameof(InvalidProductTestData))]
-        public void Create_Invalid_Product(string productName) {
+        public void Create_Invalid_ProductData(string productName) {
             // No arranging needed, as that's what is being asserted
             Assert.Throws<ArgumentException>(() => new ProductData(productName));
         }
@@ -419,12 +433,12 @@ namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
         }
 
         [Fact]
-        public void Create_Valid_Address() {
+        public void Create_Valid_AddressData() {
             _repository.Create<Address>(null);
         }
         
         [Fact]
-        public void Create_Invalid_Address() {
+        public void Create_Invalid_AddressData() {
             _repository.Create<Address>(null);
         }
 
