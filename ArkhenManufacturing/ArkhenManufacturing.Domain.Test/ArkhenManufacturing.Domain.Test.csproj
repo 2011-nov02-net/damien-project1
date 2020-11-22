@@ -17,4 +17,8 @@
     <ProjectReference Include="..\ArkhenManufacturing.Domain\ArkhenManufacturing.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Database\" />
+  </ItemGroup>
+
 </Project>
