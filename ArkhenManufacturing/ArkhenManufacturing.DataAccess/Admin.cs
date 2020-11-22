@@ -6,7 +6,7 @@ namespace ArkhenManufacturing.DataAccess
     public class Admin
     {
         public Admin() {
-            Locations = new HashSet<Location>();
+            LocationAdmins = new HashSet<LocationAdmin>();
             Orders = new HashSet<Order>();
         }
 
@@ -17,7 +17,7 @@ namespace ArkhenManufacturing.DataAccess
         public string Password { get; set; }
         public string Email { get; set; }
 
-        public virtual ICollection<Location> Locations { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<LocationAdmin> LocationAdmins { get; set; }
     }
 }

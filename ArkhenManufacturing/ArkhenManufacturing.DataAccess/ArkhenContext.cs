@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class ArkhenManufacturingContext : DbContext
+    public class ArkhenContext : DbContext
     {
-        public ArkhenManufacturingContext(DbContextOptions<ArkhenManufacturingContext> options) :
+        public ArkhenContext(DbContextOptions<ArkhenContext> options) :
             base(options) {
         }
 
@@ -15,6 +15,7 @@ namespace ArkhenManufacturing.DataAccess
         public DbSet<Customer> Customers { get; set; }
         public DbSet<InventoryEntry> InventoryEntries { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<LocationAdmin> LocationAdmins { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderLine> OrderLines { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -70,10 +71,7 @@ namespace ArkhenManufacturing.DataAccess
                 entity.HasMany(e => e.Orders)
                     .WithOne(e => e.Admin)
                     .HasForeignKey(e => e.AdminId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_AdminOrder_AdminId");
-
-                // TODO: Set up N:N for Locations
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Customer>(entity => {
@@ -109,9 +107,17 @@ namespace ArkhenManufacturing.DataAccess
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
 
-                // TODO: Set up FK to Address
-                // TODO: Set up nullable FK to DefaultLocation
-                // TODO: Set up 1:N with orders
+                entity.HasOne(e => e.Address)
+                    .WithMany()
+                    .HasForeignKey(e => e.AddressId);
+
+                entity.HasOne(e => e.DefaultLocation)
+                    .WithMany()
+                    .HasForeignKey(e => e.DefaultLocationId);
+
+                entity.HasMany(e => e.Orders)
+                    .WithOne()
+                    .OnDelete(DeleteBehavior.ClientCascade);
             });
 
             modelBuilder.Entity<InventoryEntry>(entity => {
@@ -123,8 +129,13 @@ namespace ArkhenManufacturing.DataAccess
                 entity.Property(e => e.Price)
                     .IsRequired();
 
-                // TODO: Set up FK to Product
-                // TODO: Set up FK to Location
+                entity.HasOne(e => e.Product)
+                    .WithMany()
+                    .HasForeignKey(e => e.ProductId);
+
+                entity.HasOne(e => e.Location)
+                    .WithMany(l => l.InventoryEntries)
+                    .HasForeignKey(e => e.LocationId);
             });
 
             modelBuilder.Entity<Location>(entity => {
@@ -136,9 +147,27 @@ namespace ArkhenManufacturing.DataAccess
                 entity.Property(e => e.Address)
                     .IsRequired();
 
-                // TODO: Set up N:N to Admin
-                // TODO: Set up 1:N to Orders
-                // TODO: Set up 1:N to InventoryEntries
+                entity.HasMany(e => e.Orders)
+                    .WithOne(o => o.Location)
+                    .HasForeignKey(o => o.LocationId);
+
+                entity.HasMany(e => e.InventoryEntries)
+                    .WithOne(ie => ie.Location)
+                    .HasForeignKey(ie => ie.LocationId);
+            });
+
+            modelBuilder.Entity<LocationAdmin>(entity => {
+                entity.ToTable("LocationAdmin");
+
+                entity.HasKey(la => new { la.LocationId, la.AdminId });
+
+                entity.HasOne(la => la.Location)
+                    .WithMany(l => l.LocationAdmins)
+                    .HasForeignKey(la => la.LocationId);
+
+                entity.HasOne(la => la.Admin)
+                    .WithMany(a => a.LocationAdmins)
+                    .HasForeignKey(la => la.AdminId);
             });
 
             modelBuilder.Entity<Order>(entity => {
@@ -150,10 +179,22 @@ namespace ArkhenManufacturing.DataAccess
                 entity.Property(e => e.PlacementDate)
                     .IsRequired();
 
-                // TODO: Set up FK to Customer
-                // TODO: Set up FK to Admin
-                // TODO: Set up FK to Location
-                // TODO: Set up 1:N to OrderLines
+                entity.HasOne(e => e.Customer)
+                    .WithMany(c => c.Orders)
+                    .HasForeignKey(e => e.CustomerId);
+
+                entity.HasOne(e => e.Admin)
+                    .WithMany()
+                    .HasForeignKey(e => e.AdminId);
+
+                entity.HasOne(e => e.Location)
+                    .WithMany()
+                    .HasForeignKey(e => e.LocationId);
+
+                entity.HasMany(e => e.OrderLines)
+                    .WithOne(ol => ol.Order)
+                    .HasForeignKey(ol => ol.OrderId)
+                    .OnDelete(DeleteBehavior.ClientCascade);
             });
 
             modelBuilder.Entity<OrderLine>(entity => {
@@ -168,8 +209,13 @@ namespace ArkhenManufacturing.DataAccess
                 entity.Property(e => e.PricePerUnit)
                     .IsRequired();
 
-                // TODO: Set up FK to Order
-                // TODO: Set up FK to Product
+                entity.HasOne(e => e.Order)
+                    .WithMany(o => o.OrderLines)
+                    .HasForeignKey(e => e.OrderId);
+
+                entity.HasOne(e => e.Product)
+                    .WithMany()
+                    .HasForeignKey(e => e.ProductId);
             });
 
             modelBuilder.Entity<Product>(entity => {
