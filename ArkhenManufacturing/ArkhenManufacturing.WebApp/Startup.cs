@@ -1,3 +1,4 @@
+using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
 
 using Microsoft.AspNetCore.Builder;
@@ -20,11 +21,8 @@ namespace ArkhenManufacturing.WebApp
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllersWithViews();
 
-            // Set up the DbContext here?
-            // services.UseDbContext<>();
-
             // Initialize the Archivist
-            ArchivistInterface.Initialize();
+            ArchivistInterface.Initialize(Configuration.GetConnectionString("ArkhenContext"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

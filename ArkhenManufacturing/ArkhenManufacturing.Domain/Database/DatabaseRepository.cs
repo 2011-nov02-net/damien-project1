@@ -12,10 +12,10 @@ namespace ArkhenManufacturing.Domain.Database
 {
     public class DatabaseRepository : IRepository
     {
-        private readonly DbContextOptions<ArkhenManufacturingContext> _options;
+        private readonly DbContextOptions<ArkhenContext> _options;
 
         public DatabaseRepository(string connectionString) {
-            var optionsBuilder = new DbContextOptionsBuilder<ArkhenManufacturingContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ArkhenContext>();
             optionsBuilder.UseSqlServer(connectionString);
 
             _options = optionsBuilder.Options;
