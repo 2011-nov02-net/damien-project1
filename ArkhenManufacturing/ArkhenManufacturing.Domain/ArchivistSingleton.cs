@@ -71,7 +71,7 @@ namespace ArkhenManufacturing.Domain
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="name">The string of characters being searched for</param>
         /// <returns>A list that contains the data of any of the items found, if any</returns>
-        public static List<IData> GetByName<T>(string name)
+        public static List<T> RetrieveByName<T>(string name)
             where T : NamedArkhEntity => s_Archivist.GetEntitiesByName<T>(name);
 
         #endregion
@@ -83,7 +83,7 @@ namespace ArkhenManufacturing.Domain
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="data">The specific data type being passed in</param>
-        public static void Create<T>(IData data)
+        public static Guid Create<T>(IData data)
             where T : ArkhEntity, new() => s_Archivist.CreateEntity<T>(data);
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace ArkhenManufacturing.Domain
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <returns>A complete collection of all the items being stored</returns>
-        public static List<IData> RetrieveAll<T>()
+        public static List<T> RetrieveAll<T>()
             where T : ArkhEntity => s_Archivist.RetrieveAllEntities<T>();
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace ArkhenManufacturing.Domain
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="id">The Guid id of the item</param>
         /// <returns>The item that has the specified Guid, otherwise it returns null</returns>
-        public static IData Retrieve<T>(Guid id)
+        public static T Retrieve<T>(Guid id)
             where T : ArkhEntity => s_Archivist.RetrieveEntity<T>(id);
 
         /// <summary>

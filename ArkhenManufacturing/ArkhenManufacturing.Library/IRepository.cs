@@ -40,21 +40,21 @@ namespace ArkhenManufacturing.Library
         /// <typeparam name="T">The type of NamedArkhEntity being searched in the collection</typeparam>
         /// <param name="name">A string that can be any portion of the NamedArkhEntity, even the whole string</param>
         /// <returns>A collection of the data of the items that were found with the </returns>
-        List<IData> RetrieveByName<T>(string name) where T : NamedArkhEntity;
+        List<T> RetrieveByName<T>(string name) where T : NamedArkhEntity;
 
         /// <summary>
         /// Creates an ArkhEntity of the specified type with the specified data
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
         /// <param name="data">The set of data for the item that's being created</param>
-        void Create<T>(IData data) where T : ArkhEntity, new();
+        Guid Create<T>(IData data) where T : ArkhEntity, new();
 
         /// <summary>
         /// Get all of the items in the collection
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
         /// <returns>A List of the data that is found in the collection</returns>
-        List<IData> RetrieveAll<T>() where T : ArkhEntity;
+        List<T> RetrieveAll<T>() where T : ArkhEntity;
 
         /// <summary>
         /// Gets the data that is paired with the Guid id being passed in.
@@ -62,7 +62,7 @@ namespace ArkhenManufacturing.Library
         /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
         /// <param name="id">The Guid id of the item being searched for</param>
         /// <returns>The specified type of data found if the id exists within the collection. Elsewise, it returns null</returns>
-        IData Retrieve<T>(Guid id) where T : ArkhEntity;
+        T Retrieve<T>(Guid id) where T : ArkhEntity;
 
         /// <summary>
         /// Updates the ArkhEntity of a specified type

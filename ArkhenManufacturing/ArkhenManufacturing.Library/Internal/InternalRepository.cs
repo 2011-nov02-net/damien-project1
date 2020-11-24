@@ -76,11 +76,12 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="data">The specific data type being passed in</param>
-        public void Create<T>(IData data) 
+        public Guid Create<T>(IData data) 
             where T : ArkhEntity, new() {
             var item = new T();
             item.SetData(data);
             GetList<T>().Add(item);
+            return item.Id;
         }
 
         /// <summary>
@@ -88,9 +89,8 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <returns>A complete collection of all the items being stored</returns>
-        public List<IData> RetrieveAll<T>()
+        public List<T> RetrieveAll<T>()
             where T : ArkhEntity => GetList<T>()
-                .Select(item => item.GetData())
                 .ToList();
 
         /// <summary>
@@ -99,11 +99,10 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="name">The string of characters being searched for</param>
         /// <returns>A list that contains the data of any of the items found, if any</returns>
-        public List<IData> RetrieveByName<T>(string name)
+        public List<T> RetrieveByName<T>(string name)
             where T : NamedArkhEntity => GetList<T>()
                 .Where(item => item.GetName()
                     .Contains(name))
-                .Select(item => item.GetData())
                 .ToList();
 
         /// <summary>
@@ -113,10 +112,9 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="id">The Guid id of the item</param>
         /// <returns>The item that has the specified Guid, otherwise it returns null</returns>
-        public IData Retrieve<T>(Guid id)
+        public T Retrieve<T>(Guid id)
             where T : ArkhEntity => GetList<T>()
-                .FirstOrDefault(item => item.Id == id)?
-                .GetData();
+                .FirstOrDefault(item => item.Id == id);
 
         /// <summary>
         /// Update an ArkhEntity having the specified Guid with the data entered, if it exists
