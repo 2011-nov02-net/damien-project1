@@ -67,11 +67,6 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
-
-                entity.HasMany(e => e.Orders)
-                    .WithOne(e => e.Admin)
-                    .HasForeignKey(e => e.AdminId)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Customer>(entity => {
@@ -113,11 +108,8 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.HasOne(e => e.DefaultLocation)
                     .WithMany()
-                    .HasForeignKey(e => e.DefaultLocationId);
-
-                entity.HasMany(e => e.Orders)
-                    .WithOne()
-                    .OnDelete(DeleteBehavior.ClientCascade);
+                    .HasForeignKey(e => e.DefaultLocationId)
+                    .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
             modelBuilder.Entity<InventoryEntry>(entity => {
@@ -143,17 +135,6 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
-
-                entity.Property(e => e.Address)
-                    .IsRequired();
-
-                entity.HasMany(e => e.Orders)
-                    .WithOne(o => o.Location)
-                    .HasForeignKey(o => o.LocationId);
-
-                entity.HasMany(e => e.InventoryEntries)
-                    .WithOne(ie => ie.Location)
-                    .HasForeignKey(ie => ie.LocationId);
             });
 
             modelBuilder.Entity<LocationAdmin>(entity => {
@@ -189,12 +170,8 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.HasOne(e => e.Location)
                     .WithMany()
-                    .HasForeignKey(e => e.LocationId);
-
-                entity.HasMany(e => e.OrderLines)
-                    .WithOne(ol => ol.Order)
-                    .HasForeignKey(ol => ol.OrderId)
-                    .OnDelete(DeleteBehavior.ClientCascade);
+                    .HasForeignKey(e => e.LocationId)
+                    .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
             modelBuilder.Entity<OrderLine>(entity => {
