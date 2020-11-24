@@ -170,7 +170,44 @@ CREATE INDEX [IX_OrderLine_ProductId] ON [OrderLine] ([ProductId]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20201123235935_InitialCreate', N'5.0.0');
+VALUES (N'20201124001116_InitialCreate', N'5.0.0');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Order] DROP CONSTRAINT [FK_Order_Admin_AdminId1];
+GO
+
+ALTER TABLE [Order] DROP CONSTRAINT [FK_Order_Location_LocationId1];
+GO
+
+EXEC sp_rename N'[Order].[LocationId1]', N'DbLocationId', N'COLUMN';
+GO
+
+EXEC sp_rename N'[Order].[AdminId1]', N'DbAdminId', N'COLUMN';
+GO
+
+EXEC sp_rename N'[Order].[IX_Order_LocationId1]', N'IX_Order_DbLocationId', N'INDEX';
+GO
+
+EXEC sp_rename N'[Order].[IX_Order_AdminId1]', N'IX_Order_DbAdminId', N'INDEX';
+GO
+
+ALTER TABLE [Location] ADD [Name] nvarchar(max) NULL;
+GO
+
+ALTER TABLE [Order] ADD CONSTRAINT [FK_Order_Admin_DbAdminId] FOREIGN KEY ([DbAdminId]) REFERENCES [Admin] ([Id]) ON DELETE NO ACTION;
+GO
+
+ALTER TABLE [Order] ADD CONSTRAINT [FK_Order_Location_DbLocationId] FOREIGN KEY ([DbLocationId]) REFERENCES [Location] ([Id]) ON DELETE NO ACTION;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20201124011743_LocationHasNameNow', N'5.0.0');
 GO
 
 COMMIT;

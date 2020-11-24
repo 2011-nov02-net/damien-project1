@@ -12,6 +12,7 @@ namespace ArkhenManufacturing.DataAccess
         }
 
         public Guid Id { get; set; }
+        public string Name { get; set; }
         public Guid AddressId { get; set; }
         public DbAddress Address { get; set; }
 
