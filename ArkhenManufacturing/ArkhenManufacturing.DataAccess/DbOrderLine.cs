@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class DbOrderLine
+    public class DbOrderLine : DbEntity
     {
         public Guid Id { get; set; }
         public Guid OrderId { get; set; }

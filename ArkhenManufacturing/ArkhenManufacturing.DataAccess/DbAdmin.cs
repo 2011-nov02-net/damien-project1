@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class DbAdmin
+    public class DbAdmin : DbEntity
     {
         public DbAdmin() {
             LocationAdmins = new HashSet<DbLocationAdmin>();

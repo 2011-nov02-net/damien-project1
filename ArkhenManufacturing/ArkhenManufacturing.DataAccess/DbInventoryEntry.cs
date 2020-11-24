@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class DbInventoryEntry
+    public class DbInventoryEntry : DbEntity
     {
         public Guid Id { get; set; }
         public Guid ProductId { get; set; }

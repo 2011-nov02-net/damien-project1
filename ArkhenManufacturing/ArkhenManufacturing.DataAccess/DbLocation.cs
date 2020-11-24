@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class DbLocation
+    public class DbLocation : DbEntity
     {
         public DbLocation() {
             Orders = new HashSet<DbOrder>();

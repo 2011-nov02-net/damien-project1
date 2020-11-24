@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class DbOrder
+    public class DbOrder : DbEntity
     {
         public DbOrder() {
             OrderLines = new HashSet<DbOrderLine>();

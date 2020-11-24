@@ -2,7 +2,7 @@
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class DbLocationAdmin
+    public class DbLocationAdmin : DbEntity
     {
         public Guid LocationId { get; set; }
         public DbLocation Location { get; set; }
