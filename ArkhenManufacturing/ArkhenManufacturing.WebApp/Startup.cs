@@ -3,6 +3,7 @@ using ArkhenManufacturing.Domain;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,7 +23,8 @@ namespace ArkhenManufacturing.WebApp
             services.AddControllersWithViews();
 
             // Initialize the Archivist
-            ArchivistInterface.Initialize(Configuration.GetConnectionString("ArkhenContext"));
+            ArchivistInterface.Initialize(); /* This initializes it with its internal repository */
+            // ArchivistInterface.Initialize(Configuration["ArkhenContext:ConnectionString"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
