@@ -10,19 +10,19 @@ namespace ArkhenManufacturing.DataAccess
             base(options) {
         }
 
-        public DbSet<Address> Addresses { get; set; }
-        public DbSet<Admin> Admins { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<InventoryEntry> InventoryEntries { get; set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<LocationAdmin> LocationAdmins { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderLine> OrderLines { get; set; }
-        public DbSet<Product> Products { get; set; }
+        public DbSet<DbAddress> Addresses { get; set; }
+        public DbSet<DbAdmin> Admins { get; set; }
+        public DbSet<DbCustomer> Customers { get; set; }
+        public DbSet<DbInventoryEntry> InventoryEntries { get; set; }
+        public DbSet<DbLocation> Locations { get; set; }
+        public DbSet<DbLocationAdmin> LocationAdmins { get; set; }
+        public DbSet<DbOrder> Orders { get; set; }
+        public DbSet<DbOrderLine> OrderLines { get; set; }
+        public DbSet<DbProduct> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
-            modelBuilder.Entity<Address>(entity => {
+            modelBuilder.Entity<DbAddress>(entity => {
                 entity.ToTable("Address");
 
                 entity.Property(e => e.Id)
@@ -41,7 +41,7 @@ namespace ArkhenManufacturing.DataAccess
                     .IsRequired();
             });
 
-            modelBuilder.Entity<Admin>(entity => {
+            modelBuilder.Entity<DbAdmin>(entity => {
                 entity.ToTable("Admin");
 
                 entity.Property(e => e.Id)
@@ -69,7 +69,7 @@ namespace ArkhenManufacturing.DataAccess
                     .IsUnique();
             });
 
-            modelBuilder.Entity<Customer>(entity => {
+            modelBuilder.Entity<DbCustomer>(entity => {
                 entity.ToTable("Customer");
 
                 entity.Property(e => e.Id)
@@ -112,7 +112,7 @@ namespace ArkhenManufacturing.DataAccess
                     .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
-            modelBuilder.Entity<InventoryEntry>(entity => {
+            modelBuilder.Entity<DbInventoryEntry>(entity => {
                 entity.ToTable("InventoryEntry");
 
                 entity.Property(e => e.Id)
@@ -130,14 +130,14 @@ namespace ArkhenManufacturing.DataAccess
                     .HasForeignKey(e => e.LocationId);
             });
 
-            modelBuilder.Entity<Location>(entity => {
+            modelBuilder.Entity<DbLocation>(entity => {
                 entity.ToTable("Location");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<LocationAdmin>(entity => {
+            modelBuilder.Entity<DbLocationAdmin>(entity => {
                 entity.ToTable("LocationAdmin");
 
                 entity.HasKey(la => new { la.LocationId, la.AdminId });
@@ -151,7 +151,7 @@ namespace ArkhenManufacturing.DataAccess
                     .HasForeignKey(la => la.AdminId);
             });
 
-            modelBuilder.Entity<Order>(entity => {
+            modelBuilder.Entity<DbOrder>(entity => {
                 entity.ToTable("Order");
 
                 entity.Property(e => e.Id)
@@ -174,7 +174,7 @@ namespace ArkhenManufacturing.DataAccess
                     .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
-            modelBuilder.Entity<OrderLine>(entity => {
+            modelBuilder.Entity<DbOrderLine>(entity => {
                 entity.ToTable("OrderLine");
 
                 entity.Property(e => e.Id)
@@ -195,7 +195,7 @@ namespace ArkhenManufacturing.DataAccess
                     .HasForeignKey(e => e.ProductId);
             });
 
-            modelBuilder.Entity<Product>(entity => {
+            modelBuilder.Entity<DbProduct>(entity => {
                 entity.ToTable("Product");
 
                 entity.Property(e => e.Id)
