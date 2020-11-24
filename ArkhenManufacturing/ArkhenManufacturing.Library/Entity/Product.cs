@@ -25,6 +25,17 @@ namespace ArkhenManufacturing.Library.Entity
         }
 
         /// <summary>
+        /// Constructor that allows assigning the id
+        ///     and the data object
+        /// </summary>
+        /// <param name="id">The Guid id being assigned to this</param>
+        /// <param name="data">The data being assigned to this</param>
+        public Product(Guid id, ProductData data) :
+            base(id) {
+            SetData(data);
+        }
+
+        /// <summary>
         /// Accessor for the data
         /// </summary>
         /// <returns>Returns the ProductData stored in this class as an IData</returns>

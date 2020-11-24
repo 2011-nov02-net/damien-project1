@@ -25,6 +25,17 @@ namespace ArkhenManufacturing.Library.Entity
         }
 
         /// <summary>
+        /// Constructor that allows for the Guid id to be set
+        ///     and the data of the object to be set
+        /// </summary>
+        /// <param name="id">The Guid id being assigned to this</param>
+        /// <param name="data">The data being assigned to this</param>
+        public OrderLine(Guid id, OrderLineData data) :
+            base(id) {
+            SetData(data);
+        }
+
+        /// <summary>
         /// Accessor for the data
         /// </summary>
         /// <returns>Returns the AddressData stored in this class as an IData</returns>
