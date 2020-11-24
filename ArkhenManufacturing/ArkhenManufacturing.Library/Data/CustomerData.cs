@@ -29,7 +29,7 @@ namespace ArkhenManufacturing.Library.Data
         public DateTime BirthDate { get; set; }
 
         /// <summary>
-        /// Default store location that the customer shops from
+        /// Default store location that the customer shops from;
         ///     If null, implies they don't have a default
         /// </summary>
         public Guid? DefaultLocationId { get; set; }

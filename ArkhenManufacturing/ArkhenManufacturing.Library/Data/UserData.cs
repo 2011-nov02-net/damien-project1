@@ -10,32 +10,32 @@ namespace ArkhenManufacturing.Library.Data
         /// <summary>
         /// Property that only accesses the FirstName and LastName
         /// </summary>
-        internal string Fullname => $"{LastName}, {FirstName}"; 
+        public string Fullname => $"{LastName}, {FirstName}"; 
 
         /// <summary>
         /// First Name of the User
         /// </summary>
-        internal string FirstName { get; set; }
+        public string FirstName { get; set; }
 
         /// <summary>
         /// Last Name of the User
         /// </summary>
-        internal string LastName { get; set; }
+        public string LastName { get; set; }
 
         /// <summary>
         /// UserName of the User
         /// </summary>
-        internal string UserName { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// User's password
         /// </summary>
-        internal string Password { get; set; }
+        public string Password { get; set; }
 
         /// <summary>
         /// Email address of the user
         /// </summary>
-        internal string Email { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Default constructor for use with assigning the data in 
