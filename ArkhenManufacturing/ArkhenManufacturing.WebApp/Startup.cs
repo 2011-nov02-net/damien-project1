@@ -22,6 +22,13 @@ namespace ArkhenManufacturing.WebApp
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllersWithViews();
 
+            // Uncomment this line when making migrations
+            /*
+                services.AddDbContext<ArkhenContext>(options =>
+                    options.UseSqlServer(Configuration["ArkhenContext:ConnectionString"])
+                );
+            */
+
             // Initialize the Archivist
             ArchivistInterface.Initialize(); /* This initializes it with its internal repository */
             // ArchivistInterface.Initialize(Configuration["ArkhenContext:ConnectionString"]);
