@@ -1,9 +1,16 @@
+#define Database
+
+#if Migrate
 using ArkhenManufacturing.DataAccess;
+using Microsoft.EntityFrameworkCore;
+#endif
+
+using System;
+
 using ArkhenManufacturing.Domain;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,16 +29,26 @@ namespace ArkhenManufacturing.WebApp
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllersWithViews();
 
-            // Uncomment this line when making migrations
-            /*
-                services.AddDbContext<ArkhenContext>(options =>
-                    options.UseSqlServer(Configuration["ArkhenContext:ConnectionString"])
-                );
-            */
+#if Migrate
 
+            services.AddDbContext<ArkhenContext>(options =>
+                options.UseSqlServer(Configuration["ArkhenContext:ConnectionString"])
+            );
+#elif Internal
             // Initialize the Archivist
             ArchivistInterface.Initialize(); /* This initializes it with its internal repository */
-            // ArchivistInterface.Initialize(Configuration["ArkhenContext:ConnectionString"]);
+#elif Database
+            // Initialize the Archivist with a connection string, core logger and ef core logger
+            string connectionString = Configuration["ArkhenContext:ConnectionString"];
+            string targetPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var archivistLogger = new FileLogger($"{targetPath}/ArkhenManufacturing/arkhen_manufacturing.archivist.log");
+            var efCoreLogger = new FileLogger($"{targetPath}/arkhen_manufacturing.efcore.log");
+            ArchivistInterface.Initialize(connectionString: connectionString, archivistLogger: archivistLogger, efCoreLogger: efCoreLogger);
+#else
+#error None were defined.
+#endif
+
+            ArchivistInterface.LogLine($"info [{DateTime.Now:{{0:MM/dd/yy H:mm:ss:fff}}}]:  Archivist initialized successfully.");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,7 +65,7 @@ namespace ArkhenManufacturing.WebApp
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
