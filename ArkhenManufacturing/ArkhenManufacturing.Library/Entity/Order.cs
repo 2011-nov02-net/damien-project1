@@ -30,7 +30,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// </summary>
         /// <param name="id">The Guid id being assigned to this</param>
         /// <param name="data">The data being assigned to this</param>
-        internal Order(Guid id, OrderData data) :
+        public Order(Guid id, OrderData data) :
             base(id) {
             SetData(data);
         }
