@@ -5,6 +5,7 @@ using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Library;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
+using ArkhenManufacturing.Library.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +16,9 @@ namespace ArkhenManufacturing.Domain.Database
         private readonly DbContextOptions<ArkhenContext> _options;
 
         public DatabaseRepository(string connectionString) {
+            connectionString.NullOrEmptyCheck(nameof(connectionString));
             var optionsBuilder = new DbContextOptionsBuilder<ArkhenContext>();
             optionsBuilder.UseSqlServer(connectionString);
-
             _options = optionsBuilder.Options;
         }
 
@@ -29,7 +30,7 @@ namespace ArkhenManufacturing.Domain.Database
             throw new NotImplementedException();
         }
 
-        public List<IData> RetrieveByName<T>(string name) where T : NamedArkhEntity {
+        public List<T> RetrieveByName<T>(string name) where T : NamedArkhEntity {
             throw new NotImplementedException();
         }
 
@@ -37,7 +38,7 @@ namespace ArkhenManufacturing.Domain.Database
             throw new NotImplementedException();
         }
 
-        public void Create<T>(IData data) where T : ArkhEntity, new() {
+        public Guid Create<T>(IData data) where T : ArkhEntity, new() {
             throw new NotImplementedException();
         }
 
@@ -45,11 +46,11 @@ namespace ArkhenManufacturing.Domain.Database
             throw new NotImplementedException();
         }
 
-        public List<IData> RetrieveAll<T>() where T : ArkhEntity {
+        public List<T> RetrieveAll<T>() where T : ArkhEntity {
             throw new NotImplementedException();
         }
 
-        public IData Retrieve<T>(Guid id) where T : ArkhEntity {
+        public T Retrieve<T>(Guid id) where T : ArkhEntity {
             throw new NotImplementedException();
         }
 
