@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class Address
+    public class DbAddress
     {
         public Guid Id { get; set; }
         public string Line1 { get; set; }

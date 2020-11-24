@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class Admin
+    public class DbAdmin
     {
-        public Admin() {
-            LocationAdmins = new HashSet<LocationAdmin>();
-            Orders = new HashSet<Order>();
+        public DbAdmin() {
+            LocationAdmins = new HashSet<DbLocationAdmin>();
+            Orders = new HashSet<DbOrder>();
         }
 
         public Guid Id { get; set; }
@@ -17,7 +17,7 @@ namespace ArkhenManufacturing.DataAccess
         public string Password { get; set; }
         public string Email { get; set; }
 
-        public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<LocationAdmin> LocationAdmins { get; set; }
+        public virtual ICollection<DbOrder> Orders { get; set; }
+        public virtual ICollection<DbLocationAdmin> LocationAdmins { get; set; }
     }
 }

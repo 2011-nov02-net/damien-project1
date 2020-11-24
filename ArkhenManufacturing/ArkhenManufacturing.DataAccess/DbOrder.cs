@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class Order
+    public class DbOrder
     {
-        public Order() {
-            OrderLines = new HashSet<OrderLine>();
+        public DbOrder() {
+            OrderLines = new HashSet<DbOrderLine>();
         }
 
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public DbCustomer Customer { get; set; }
         public Guid AdminId { get; set; }
-        public Admin Admin { get; set; }
+        public DbAdmin Admin { get; set; }
         public Guid LocationId { get; set; }
-        public Location Location { get; set; }
+        public DbLocation Location { get; set; }
         public DateTime PlacementDate { get; set; }
 
-        public virtual ICollection<OrderLine> OrderLines { get; set; }
+        public virtual ICollection<DbOrderLine> OrderLines { get; set; }
     }
 }
