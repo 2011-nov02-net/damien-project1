@@ -39,6 +39,10 @@ namespace ArkhenManufacturing.Library.Data
                 ? value : _discount;
         }
 
+        public int Count { get; set; }
+        
+        public int Threshold { get; set; }
+        
         /// <summary>
         /// Default constructor for use with assigning the data in 
         ///     object initialization syntax
@@ -52,11 +56,13 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="locationId">The location of the store in which this product resides</param>
         /// <param name="price">The price per unit of the items</param>
         /// <param name="discount">The discount (as a percentage of 0-100) </param>
-        public InventoryEntryData(Guid productId, Guid locationId, decimal price, decimal discount) {
+        public InventoryEntryData(Guid productId, Guid locationId, decimal price, decimal discount, int count, int threshold) {
             ProductId = productId;
             LocationId = locationId;
             Price = price;
             Discount = discount;
+            Count = count;
+            Threshold = threshold;
         }
 
         /// <summary>
@@ -64,7 +70,7 @@ namespace ArkhenManufacturing.Library.Data
         /// </summary>
         /// <param name="other">The other instance with the data being assigned to this</param>
         public InventoryEntryData(InventoryEntryData other) :
-            this(other.ProductId, other.LocationId, other.Price, other.Discount) {
+            this(other.ProductId, other.LocationId, other.Price, other.Discount, other.Count, other.Threshold) {
         }
     }
 }

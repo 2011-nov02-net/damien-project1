@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ArkhenManufacturing.DataAccess.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Update : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -57,6 +57,7 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -110,7 +111,9 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Discount = table.Column<decimal>(type: "decimal(3,3)", nullable: false)
+                    Discount = table.Column<decimal>(type: "decimal(3,3)", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false),
+                    Threshold = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,8 +165,8 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                     AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PlacementDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AdminId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LocationId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    DbAdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DbLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -175,8 +178,8 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Order_Admin_AdminId1",
-                        column: x => x.AdminId1,
+                        name: "FK_Order_Admin_DbAdminId",
+                        column: x => x.DbAdminId,
                         principalTable: "Admin",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -187,16 +190,16 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Order_Location_DbLocationId",
+                        column: x => x.DbLocationId,
+                        principalTable: "Location",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Order_Location_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Location",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Order_Location_LocationId1",
-                        column: x => x.LocationId1,
-                        principalTable: "Location",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -287,24 +290,24 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                 column: "AdminId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Order_AdminId1",
-                table: "Order",
-                column: "AdminId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Order_CustomerId",
                 table: "Order",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Order_DbAdminId",
+                table: "Order",
+                column: "DbAdminId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_DbLocationId",
+                table: "Order",
+                column: "DbLocationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Order_LocationId",
                 table: "Order",
                 column: "LocationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Order_LocationId1",
-                table: "Order",
-                column: "LocationId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderLine_OrderId",

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArkhenManufacturing.DataAccess.Migrations
 {
     [DbContext(typeof(ArkhenContext))]
-    [Migration("20201124011743_LocationHasNameNow")]
-    partial class LocationHasNameNow
+    [Migration("20201125233413_Update")]
+    partial class Update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -149,6 +149,9 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(3,3)");
 
@@ -160,6 +163,9 @@ namespace ArkhenManufacturing.DataAccess.Migrations
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Threshold")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -25,7 +25,7 @@ namespace ArkhenManufacturing.Library.Data
         /// <summary>
         /// UserName of the User
         /// </summary>
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         /// <summary>
         /// User's password
@@ -48,19 +48,19 @@ namespace ArkhenManufacturing.Library.Data
         /// </summary>
         /// <param name="firstName">First Name of the User</param>
         /// <param name="lastName">Last Name of the User</param>
-        /// <param name="userName">UserName of the User</param>
+        /// <param name="username">UserName of the User</param>
         /// <param name="password">User's password</param>
         /// <param name="email">Email address of the user</param>
-        public UserData(string firstName, string lastName, string userName, string password, string email) {
+        public UserData(string firstName, string lastName, string username, string password, string email) {
             firstName.NullOrEmptyCheck(nameof(firstName));
             lastName.NullOrEmptyCheck(nameof(lastName));
-            userName.NullOrEmptyCheck(nameof(userName));
+            username.NullOrEmptyCheck(nameof(username));
             password.NullOrEmptyCheck(nameof(password));
             email.NullOrEmptyCheck(nameof(email));
 
             FirstName = firstName;
             LastName = lastName;
-            UserName = userName;
+            Username = username;
             Password = password;
             Email = email;
         }

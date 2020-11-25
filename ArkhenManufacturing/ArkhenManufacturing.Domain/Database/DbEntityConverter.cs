@@ -36,7 +36,7 @@ namespace ArkhenManufacturing.Domain.Database
                 Id = id,
                 FirstName = data.FirstName,
                 LastName = data.LastName,
-                UserName = data.UserName,
+                UserName = data.Username,
                 Password = data.Password,
                 Email = data.Email
             };
@@ -158,7 +158,7 @@ namespace ArkhenManufacturing.Domain.Database
 
         public static InventoryEntryData ToInventoryEntry(DbInventoryEntry item) {
             item.NullCheck(nameof(item));
-            return new InventoryEntryData(item.ProductId, item.LocationId, item.Price, item.Discount);
+            return new InventoryEntryData(item.ProductId, item.LocationId, item.Price, item.Discount, item.Count, item.Threshold);
         }
 
         public static LocationData ToLocation(DbLocation item) {

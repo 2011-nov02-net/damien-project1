@@ -147,6 +147,9 @@ namespace ArkhenManufacturing.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(3,3)");
 
@@ -158,6 +161,9 @@ namespace ArkhenManufacturing.DataAccess.Migrations
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Threshold")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

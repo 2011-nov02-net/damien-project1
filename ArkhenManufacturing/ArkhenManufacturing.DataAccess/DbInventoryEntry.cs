@@ -14,5 +14,7 @@ namespace ArkhenManufacturing.DataAccess
         public decimal Price { get; set; }
         [Column(TypeName = "decimal(3,3)")]
         public decimal Discount { get; set; }
+        public int Count { get; set; }
+        public int Threshold { get; set; }
     }
 }
