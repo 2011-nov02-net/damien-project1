@@ -1,4 +1,4 @@
-#define Database
+#define Internal
 
 #if Migrate
 using ArkhenManufacturing.DataAccess;

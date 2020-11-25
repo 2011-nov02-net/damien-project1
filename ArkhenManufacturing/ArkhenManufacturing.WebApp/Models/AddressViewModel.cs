@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 using ArkhenManufacturing.Library.Data;
+using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Misc;
 
 namespace ArkhenManufacturing.WebApp.Models
@@ -43,12 +40,15 @@ namespace ArkhenManufacturing.WebApp.Models
         [Required]
         public string ZipCode { get; set; }
 
+        public AddressViewModel() { }
+
         /// <summary>
         /// This allows a ViewModel to be constructed from the data if 
         ///     the data is passed in
         /// </summary>
         /// <param name="data">The data of the address being shown</param>
-        public AddressViewModel(AddressData data) {
+        public AddressViewModel(Address address) {
+            var data = address.GetData() as AddressData;
             Line1 = data.Line1;
             Line2 = data.Line2;
             City = data.City;
