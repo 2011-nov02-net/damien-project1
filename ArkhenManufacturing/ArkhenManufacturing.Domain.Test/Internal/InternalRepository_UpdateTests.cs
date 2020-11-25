@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ArkhenManufacturing.Library.Test.Library.Ephemeral
+namespace ArkhenManufacturing.Domain.Test.Internal
 {
     public class InternalRepository_UpdateTests
     {

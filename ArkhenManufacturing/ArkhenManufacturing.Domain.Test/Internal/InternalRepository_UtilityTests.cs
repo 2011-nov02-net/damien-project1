@@ -1,10 +1,9 @@
 ﻿using System;
-
-using ArkhenManufacturing.Library.Repository.InternalRepository;
+using ArkhenManufacturing.Domain.Internal;
 
 using Xunit;
 
-namespace ArkhenManufacturing.Library.Test.Repository.Ephemeral
+namespace ArkhenManufacturing.Domain.Test.Internal
 {
     public class InternalRepository_UtilityTests
     {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using ArkhenManufacturing.Domain.Internal;
+using ArkhenManufacturing.Library;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
-using ArkhenManufacturing.Library.Repository.InternalRepository;
-
 using Xunit;
 
-namespace ArkhenManufacturing.Library.Test.Library.Internal
+namespace ArkhenManufacturing.Domain.Test.Internal
 {
     public class InternalRepository_CreateTests
     {
