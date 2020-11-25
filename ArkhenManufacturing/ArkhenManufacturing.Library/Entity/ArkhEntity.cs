@@ -1,5 +1,4 @@
 ﻿using System;
-
 using ArkhenManufacturing.Library.Data;
 
 namespace ArkhenManufacturing.Library.Entity
@@ -16,11 +15,13 @@ namespace ArkhenManufacturing.Library.Entity
         /// </summary>
         public Guid Id { get; internal set; }
 
-        /// <summary>
-        /// Constructor that is used in the creation 
-        ///     generalizing 
-        /// </summary>
-        public ArkhEntity() { }
+        /*
+            /// <summary>
+            /// Constructor that is used in the creation 
+            ///     generalizing 
+            /// </summary>
+            protected ArkhEntity() { }
+         */
 
         /// <summary>
         /// Constructor that takes in a Guid id and assigns it

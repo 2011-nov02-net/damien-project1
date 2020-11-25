@@ -6,7 +6,7 @@ using ArkhenManufacturing.Library.Extensions;
 namespace ArkhenManufacturing.Library.Entity
 {
     /// <summary>
-    /// An arteface that has the name 'InventoryEntry', but only relates a Guid id 
+    /// An artifice that has the name 'InventoryEntry', but only relates a Guid id 
     ///     to it and holds the data object that its actual data
     ///     will be stored in.
     /// </summary>
@@ -15,7 +15,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// <summary>
         /// The Object where the actual data is being stored
         /// </summary>
-        internal InventoryEntryData Data { get; set; }
+        private InventoryEntryData Data { get; set; }
 
         /// <summary>
         /// Default constructor that assigns the guid to a new Guid

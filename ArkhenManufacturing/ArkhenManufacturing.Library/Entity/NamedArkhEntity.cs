@@ -12,7 +12,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// Constructor that assigns a Guid id to this instance
         /// </summary>
         /// <param name="id">The Guid id being assigned</param>
-        public NamedArkhEntity(Guid id) : 
+        internal NamedArkhEntity(Guid id) : 
             base(id) { 
         }
 
@@ -22,6 +22,6 @@ namespace ArkhenManufacturing.Library.Entity
         ///     or it will be abstract and pass it on
         /// </summary>
         /// <returns>The name of the subclass, as a string</returns>
-        internal abstract string GetName();
+        public abstract string GetName();
     }
 }

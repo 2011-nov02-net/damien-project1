@@ -7,7 +7,7 @@ using ArkhenManufacturing.Library.Extensions;
 namespace ArkhenManufacturing.Library.Entity
 {
     /// <summary>
-    /// An arteface that has the name 'Admin', but only relates a Guid id 
+    /// An artifice that has the name 'Admin', but only relates a Guid id 
     ///     to it and holds the data object that its actual data
     ///     will be stored in.
     /// </summary>
@@ -16,7 +16,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// <summary>
         /// The Object where the actual data is being stored
         /// </summary>
-        internal AdminData Data { get; set; }
+        private AdminData Data { get; set; }
 
         /// <summary>
         /// Default constructor that assigns the guid to a new Guid
@@ -60,6 +60,6 @@ namespace ArkhenManufacturing.Library.Entity
         /// Method definition that exposes this subclass's name
         /// </summary>
         /// <returns>The name of this subclass, as a string</returns>
-        internal override string GetName() => Data.Fullname;
+        public override string GetName() => Data.Fullname;
     }
 }

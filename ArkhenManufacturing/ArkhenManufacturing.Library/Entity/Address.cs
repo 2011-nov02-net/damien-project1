@@ -6,7 +6,7 @@ using ArkhenManufacturing.Library.Extensions;
 namespace ArkhenManufacturing.Library.Entity
 {
     /// <summary>
-    /// An arteface that has the name 'Address', but only relates a Guid id 
+    /// An artifice that has the name 'Address', but only relates a Guid id 
     ///     to it and holds the data object that its actual data
     ///     will be stored in.
     /// </summary>
@@ -17,7 +17,7 @@ namespace ArkhenManufacturing.Library.Entity
         /// <summary>
         /// The Object where the actual data is being stored
         /// </summary>
-        internal AddressData Data
+        private AddressData Data
         {
             get => _data;
             set => _data = value ?? throw new ArgumentException("The data for this class cannot be null.");

@@ -6,16 +6,16 @@ using ArkhenManufacturing.Library.Extensions;
 namespace ArkhenManufacturing.Library.Entity
 {
     /// <summary>
-    /// An arteface that has the name 'OrderLine', but only relates a Guid id 
+    /// An artifice that has the name 'OrderLine', but only relates a Guid id 
     ///     to it and holds the data object that its actual data
     ///     will be stored in.
     /// </summary>
-    public class OrderLine : ArkhEntity
+    public sealed class OrderLine : ArkhEntity
     {
         /// <summary>
         /// The Object where the actual data is being stored
         /// </summary>
-        internal OrderLineData Data { get; set; }
+        private OrderLineData Data { get; set; }
 
         /// <summary>
         /// Default constructor that assigns the guid to a new Guid
