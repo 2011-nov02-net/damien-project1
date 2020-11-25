@@ -11,5 +11,6 @@
         public const string NameCharacters = "Alphabet, spaces, and hyphens only";
         public const string PasswordCharacters = "Special characters and alphanumeric characters only";
         public const string EmailCharacters = "<username>@<domain>.<top level domain>";
+        public const string PhoneNumber = @"[+###] (###) ###-####";
     }
 }

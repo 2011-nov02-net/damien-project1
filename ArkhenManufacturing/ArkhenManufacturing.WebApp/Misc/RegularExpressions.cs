@@ -14,6 +14,8 @@ namespace ArkhenManufacturing.WebApp.Misc {
         public const string PasswordCharacters = @"^[A-Za-z0-9!@#$%^&*-_+=]{8}+$";
         // TODO: Fill out the email characters regex
         public const string EmailCharacters = @"";
+        // TODO: Fill out phone number characters regex
+        public const string PhoneNumber = @"";
     }
 
 }
