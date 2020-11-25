@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using ArkhenManufacturing.Library;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
-using ArkhenManufacturing.Library.Repository.InternalRepository;
 
-namespace ArkhenManufacturing.Library
+namespace ArkhenManufacturing.Domain
 {
     /// <summary>
     /// This acts as a way of interfacing with an IRepository of ArkhEntities
@@ -18,8 +17,9 @@ namespace ArkhenManufacturing.Library
         /// Construct an Archivist with a specified IRepository
         /// </summary>
         /// <param name="repository">The IRepository instance that the class will be calling methods on</param>
-        public Archivist(IRepository repository) {
-            _repository = repository ?? new InternalRepository();
+        public Archivist(IRepository repository)
+        {
+            _repository = repository;
         }
 
         #region Utility Operations

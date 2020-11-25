@@ -2,11 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 
-namespace ArkhenManufacturing.Library.Repository.InternalRepository
+namespace ArkhenManufacturing.Domain.Internal
 {
     /// <summary>
     /// The internal ephemeral repository that the application uses by default
@@ -127,8 +126,8 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
             where T : ArkhEntity {
             var list = GetList<T>();
             if (list.Any()) {
-                var item = list.FirstOrDefault(item => item.Id == id);
-                item.SetData(data);
+                var targetItem = list.FirstOrDefault(item => item.Id == id);
+                targetItem?.SetData(data);
             }
         }
 
@@ -142,8 +141,8 @@ namespace ArkhenManufacturing.Library.Repository.InternalRepository
             where T : ArkhEntity {
             var list = GetList<T>();
             if (list.Any()) {
-                var item = list.FirstOrDefault(item => item.Id == id);
-                list.Remove(item);
+                var targetItem = list.FirstOrDefault(item => item.Id == id);
+                list.Remove(targetItem);
             }
         }
     }

@@ -8,20 +8,17 @@ using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.Library.Extensions;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.Domain.Database
 {
     public class DatabaseRepository : IRepository
     {
         private readonly DbContextOptions<ArkhenContext> _options;
-        private readonly ILogger _logger;
-
-        public DatabaseRepository(string connectionString, ILogger logger) {
-            _logger = logger ?? new FileLogger("arkhen_manufacturing.ef.log");
-            connectionString.NullOrEmptyCheck(nameof(connectionString));
-            var optionsBuilder = new DbContextOptionsBuilder<ArkhenContext>();
-            optionsBuilder.UseSqlServer(connectionString);
-            _options = optionsBuilder.Options;
+        
+        public DatabaseRepository(DbContextOptions<ArkhenContext> options)
+        {
+            _options = options;
         }
 
         public bool Any<T>() where T : ArkhEntity {

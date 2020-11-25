@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 
-namespace ArkhenManufacturing.Library
+namespace ArkhenManufacturing.Domain
 {
     /// <summary>
     /// An interface that declares a contract towards a repository pattern;
