@@ -1,5 +1,7 @@
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Domain.Internal;
+using ArkhenManufacturing.WebApp.Misc;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,10 +22,18 @@ namespace ArkhenManufacturing.WebApp
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllersWithViews();
 
+
+            /*string connectionString */ 
+            _ = Configuration["ArkhenContext:ConnectionString"];
+
             services.AddSingleton<IRepository, InternalRepository>();
-            // services.AddScoped<IRepository, DatabaseRepository>();
+            // services.AddScoped<IRepository, DatabaseRepository>(
+            //     sp => new DatabaseRepository(new DbContextOptionsBuilder<ArkhenContext>()
+            //             .UseSqlServer(Configuration["ArkhenContext:ConnectionString"])
+            //             .Options));
             
             services.AddScoped<Archivist>();
+            services.AddScoped<IEncrypter, SaltHashEncrypter>();
 
             /*
              
@@ -40,7 +50,7 @@ namespace ArkhenManufacturing.WebApp
             // var archivistLogger = new FileLogger($"{targetPath}/ArkhenManufacturing/arkhen_manufacturing.archivist.log");
             // var efCoreLogger = new FileLogger($"{targetPath}/arkhen_manufacturing.efcore.log");
 
-            // ArchivistInterface.LogLine($"info [{DateTime.Now:{{0:MM/dd/yy H:mm:ss:fff}}}]:  Archivist initialized successfully.");
+            // DateTime.Now:{{0:MM/dd/yy H:mm:ss:fff}}
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +67,7 @@ namespace ArkhenManufacturing.WebApp
 
             app.UseRouting();
 
-            // app.UseAuthorization();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
