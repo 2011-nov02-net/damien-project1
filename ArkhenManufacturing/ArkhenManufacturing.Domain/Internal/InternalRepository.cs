@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 
@@ -48,6 +50,9 @@ namespace ArkhenManufacturing.Domain.Internal
         public bool Any<T>()
             where T : ArkhEntity => GetList<T>().Any();
 
+        public async Task<bool> AnyAsync<T>()
+            where T : ArkhEntity => await Task.Run(() => Any<T>());
+
         /// <summary>
         /// Checks for an ArkhEntity with the specified Guid
         /// </summary>
@@ -62,6 +67,9 @@ namespace ArkhenManufacturing.Domain.Internal
                 .Contains(id);
         }
 
+        public async Task<bool> ExistsAsync<T>(Guid id)
+            where T : ArkhEntity => await Task.Run(() => Exists<T>(id));
+
         /// <summary>
         /// Gets the count in a collection
         /// </summary>
@@ -70,18 +78,23 @@ namespace ArkhenManufacturing.Domain.Internal
         public int Count<T>()
             where T : ArkhEntity => GetList<T>().Count;
 
+        public async Task<int> CountAsync<T>()
+            where T : ArkhEntity => await Task.Run(() => Count<T>());
+
         /// <summary>
         /// Create an ArkhEntity child with the specified data
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="data">The specific data type being passed in</param>
-        public Guid Create<T>(IData data) 
+        public void Create<T>(IData data) 
             where T : ArkhEntity, new() {
             var item = new T();
             item.SetData(data);
             GetList<T>().Add(item);
-            return item.Id;
         }
+
+        public async Task CreateAsync<T>(IData data)
+            where T : ArkhEntity, new() => await Task.Run(() => Create<T>(data));
 
         /// <summary>
         /// Get all of ArkhEntities of a specified type
@@ -91,6 +104,9 @@ namespace ArkhenManufacturing.Domain.Internal
         public List<T> RetrieveAll<T>()
             where T : ArkhEntity => GetList<T>()
                 .ToList();
+
+        public async Task<List<T>> RetrieveAllAsync<T>()
+            where T : ArkhEntity => await Task.Run(() => RetrieveAll<T>());
 
         /// <summary>
         /// Gets all the items that contain the specified string
@@ -104,6 +120,9 @@ namespace ArkhenManufacturing.Domain.Internal
                     .Contains(name))
                 .ToList();
 
+        public async Task<List<T>> RetrieveByNameAsync<T>(string name)
+            where T : NamedArkhEntity => await Task.Run(() => RetrieveByName<T>(name));
+
         /// <summary>
         /// Get an item using a Guid id
         ///     If it doesn't exist, it returns null
@@ -114,6 +133,9 @@ namespace ArkhenManufacturing.Domain.Internal
         public T Retrieve<T>(Guid id)
             where T : ArkhEntity => GetList<T>()
                 .FirstOrDefault(item => item.Id == id);
+
+        public async Task<T> RetrieveAsync<T>(Guid id)
+            where T : ArkhEntity => await Task.Run(() => Retrieve<T>(id));
 
         /// <summary>
         /// Update an ArkhEntity having the specified Guid with the data entered, if it exists
@@ -131,6 +153,9 @@ namespace ArkhenManufacturing.Domain.Internal
             }
         }
 
+        public async Task UpdateAsync<T>(Guid id, IData data)
+            where T : ArkhEntity => await Task.Run(() => Update<T>(id, data));
+
         /// <summary>
         /// Delete an ArkhEntity from the collection having the specified Guid id
         ///     If it is not found, nothing happens
@@ -145,5 +170,8 @@ namespace ArkhenManufacturing.Domain.Internal
                 list.Remove(targetItem);
             }
         }
+
+        public async Task DeleteAsync<T>(Guid id)
+            where T : ArkhEntity => await Task.Run(() => Delete<T>(id));
     }
 }
