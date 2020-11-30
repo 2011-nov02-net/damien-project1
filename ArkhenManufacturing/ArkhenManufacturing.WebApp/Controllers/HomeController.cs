@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
+using ArkhenManufacturing.Domain;
+using ArkhenManufacturing.Library.Data;
+using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Models;
 
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +16,31 @@ namespace ArkhenManufacturing.WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly Archivist _archivist;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger) {
+        public HomeController(Archivist archivist, ILogger<HomeController> logger) {
+            _archivist = archivist;
             _logger = logger;
         }
 
         public IActionResult Index() {
-            return View();
+            var products = _archivist.RetrieveAll<Product>();
+
+            Dictionary<string, ProductViewModel> productViewModels = new Dictionary<string, ProductViewModel>();
+            var inventoryEntries = _archivist.RetrieveAll<InventoryEntry>();
+
+            foreach (var ie in inventoryEntries) {
+                var ieData = ie.GetData() as InventoryEntryData;
+                var firstProduct = products.First(p => p.Id == ieData.ProductId);
+                string productName = firstProduct.GetName();
+
+                if (!productViewModels.ContainsKey(productName)) {
+                    productViewModels[productName] = new ProductViewModel(productName, ieData);
+                }
+            }
+
+            return View(productViewModels.Values);
         }
 
         public IActionResult Privacy() {

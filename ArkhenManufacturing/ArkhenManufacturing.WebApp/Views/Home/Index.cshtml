@@ -1,8 +1,23 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<ArkhenManufacturing.WebApp.Models.ProductViewModel>
+
+@{
+  ViewData["Title"] = "Arkhen Manufacturing - Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+  @* TODO: Show the products here *@
+  @* Show the toggle for the displays here *@
+  @{
+    bool listView = true;
+  }
+  @*@{ await Html.RenderPartialAsync("", new object()) }*@
+
+  @if (listView) {
+    // Show the list view here
+
+  } else {
+    // Show the grid view here
+  }
+
+  @{ await Html.RenderPartialAsync("Products", Model); }
 </div>
