@@ -58,12 +58,12 @@ namespace ArkhenManufacturing.Library.Data
             country.NullOrEmptyCheck(nameof(country));
             zipCode.NullOrEmptyCheck(nameof(zipCode));
 
-            Line1 = line1;
-            Line2 = line2;
-            City = city;
-            State = state;
-            Country = country;
-            ZipCode = zipCode;
+            Line1 = line1.Trim();
+            Line2 = line2?.Trim();
+            City = city.Trim();
+            State = state?.Trim();
+            Country = country.Trim();
+            ZipCode = zipCode.Trim();
         }
 
         /// <summary>

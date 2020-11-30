@@ -5,7 +5,7 @@ namespace ArkhenManufacturing.Library.Data
     /// <summary>
     /// Container for the actual data of a User
     /// </summary>
-    public abstract class UserData : IData
+    public class UserData : IData
     {
         /// <summary>
         /// Property that only accesses the FirstName and LastName
@@ -58,11 +58,11 @@ namespace ArkhenManufacturing.Library.Data
             password.NullOrEmptyCheck(nameof(password));
             email.NullOrEmptyCheck(nameof(email));
 
-            FirstName = firstName;
-            LastName = lastName;
-            Username = username;
-            Password = password;
-            Email = email;
+            FirstName = firstName.Trim();
+            LastName = lastName.Trim();
+            Username = username.Trim();
+            Password = password.Trim();
+            Email = email.Trim();
         }
     }
 }

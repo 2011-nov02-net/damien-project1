@@ -55,7 +55,7 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="email">Email address of the user</param>
         public CustomerData(string firstName, string lastName, string username, string password, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? defaultLocationId) :
             base(firstName, lastName, username, password, email) {
-            PhoneNumber = phoneNumber;
+            PhoneNumber = phoneNumber?.Trim();
             AddressId = addressId;
             SignUpDate = signUpDate;
             BirthDate = birthDate;

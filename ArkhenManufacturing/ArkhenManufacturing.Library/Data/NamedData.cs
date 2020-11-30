@@ -23,7 +23,7 @@ namespace ArkhenManufacturing.Library.Data
         public NamedData(string name) {
             name.NullOrEmptyCheck(nameof(name));
 
-            Name = name;
+            Name = name.Trim();
         }
     }
 }
