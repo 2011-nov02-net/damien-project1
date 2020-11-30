@@ -7,5 +7,6 @@ namespace ArkhenManufacturing.WebApp.Models
 {
     public class LocationViewModel
     {
+        public LocationViewModel() { }
     }
 }

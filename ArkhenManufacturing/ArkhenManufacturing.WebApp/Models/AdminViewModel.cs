@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ArkhenManufacturing.Library.Data;
+using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Misc;
 
 namespace ArkhenManufacturing.WebApp.Models
 {
     public class AdminViewModel
     {
+
         [RegularExpression(RegularExpressions.NameCharacters,
                            ErrorMessage = ErrorMessages.NameCharacters)]
         [Required, Display(Name = "First Name")]
@@ -32,7 +34,6 @@ namespace ArkhenManufacturing.WebApp.Models
                            ErrorMessage = ErrorMessages.EmailCharacters)]
         [Required]
         public string Email { get; set; }
-        public List<Guid> LocationIds { get; set; }
 
         public AdminViewModel(AdminData data) {
             FirstName = data.FirstName;
@@ -40,7 +41,6 @@ namespace ArkhenManufacturing.WebApp.Models
             UserName = data.Username;
             Password = data.Password;
             Email = data.Password;
-            LocationIds = data.LocationIds;
         }
 
         public static explicit operator AdminData(AdminViewModel viewModel) {
@@ -49,8 +49,8 @@ namespace ArkhenManufacturing.WebApp.Models
                 viewModel.LastName, 
                 viewModel.UserName, 
                 viewModel.Password, 
-                viewModel.Email, 
-                viewModel.LocationIds
+                viewModel.Email,
+                new List<Guid>()
             );
         }
     }

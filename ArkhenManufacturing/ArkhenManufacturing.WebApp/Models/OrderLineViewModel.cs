@@ -7,5 +7,6 @@ namespace ArkhenManufacturing.WebApp.Models
 {
     public class OrderLineViewModel
     {
+        public OrderLineViewModel() { }
     }
 }

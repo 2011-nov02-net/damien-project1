@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
+using ArkhenManufacturing.Library.Extensions;
 using ArkhenManufacturing.WebApp.Misc;
 
 namespace ArkhenManufacturing.WebApp.Models
@@ -21,30 +23,43 @@ namespace ArkhenManufacturing.WebApp.Models
         [Required, Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [RegularExpression(RegularExpressions.UserNameCharacters,
-                           ErrorMessage = ErrorMessages.NameCharacters)]
-        [Required]
-        public string Username { get; set; }
-
-        [RegularExpression(RegularExpressions.PasswordCharacters,
-                           ErrorMessage = ErrorMessages.PasswordCharacters)]
-        [Required]
-        public string Password { get; set; }
-
-        [RegularExpression(RegularExpressions.EmailCharacters,
-                           ErrorMessage = ErrorMessages.EmailCharacters)]
-        [Required]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
-        [RegularExpression(RegularExpressions.PhoneNumber,
-                           ErrorMessage = ErrorMessages.PhoneNumber)]
+        [Phone]
         [Required, Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
 
-        public Guid AddressId { get; set; }
-        public AddressViewModel Address { get; set; }
-        
-        public Guid? DefaultStoreLocationId { get; set; }
+        [RegularExpression(RegularExpressions.NoSpecialCharacters,
+            ErrorMessage = ErrorMessages.NoSpecialCharacters)]
+        [Display(Name = "Address Line 1")]
+        [Required]
+        public string Line1 { get; set; }
+
+        [RegularExpression(RegularExpressions.NoSpecialCharacters,
+            ErrorMessage = ErrorMessages.NoSpecialCharacters)]
+        [Display(Name = "Address Line 2")]
+        public string Line2 { get; set; }
+
+        [RegularExpression(RegularExpressions.NameCharacters,
+            ErrorMessage = ErrorMessages.NameCharacters)]
+        [Required]
+        public string City { get; set; }
+
+        [RegularExpression(RegularExpressions.NameCharacters,
+            ErrorMessage = ErrorMessages.NameCharacters)]
+        public string State { get; set; }
+
+        [Required]
+        [RegularExpression(RegularExpressions.NameCharacters,
+            ErrorMessage = ErrorMessages.NameCharacters)]
+        public string Country { get; set; }
+
+        [Display(Name = "Zip Code")]
+        [Required, DataType(DataType.PostalCode)]
+        public string ZipCode { get; set; }
+
+        public CustomerViewModel() { }
 
         /// <summary>
         /// Create a customer view model from the provided customer and address;
@@ -53,35 +68,43 @@ namespace ArkhenManufacturing.WebApp.Models
         /// <param name="customer">The customer data being stored</param>
         /// <param name="address">The address data being stored</param>
         /// <exception cref="ArgumentException">Exception thrown when the data of the customer is null</exception>
-        public CustomerViewModel(Customer customer, Address address)
-        {
-            if (!(customer.GetData() is CustomerData customerData))
-            {
-                throw new ArgumentException("CustomerData cannot be null");
-            }
+        public CustomerViewModel(Customer customer, Address address) {
+            customer.NullCheck(nameof(customer));
+            address.NullCheck(nameof(address));
+
+            var customerData = customer.GetData() as CustomerData;
+            var addressData = address.GetData() as AddressData;
 
             FirstName = customerData.FirstName;
             LastName = customerData.LastName;
-            Username = customerData.Username;
-            Password = customerData.Password;
             Email = customerData.Email;
-            AddressId = customerData.AddressId;
-            DefaultStoreLocationId = customerData.DefaultLocationId;
-            
-            Address = new AddressViewModel(address);
+
+            Line1 = addressData.Line1;
+            Line2 = addressData.Line2;
+            City = addressData.City;
+            State = addressData.State;
+            Country = addressData.Country;
+            ZipCode = addressData.ZipCode;
         }
 
-        public static explicit operator CustomerData(CustomerViewModel viewModel)
-        {
+        public static explicit operator CustomerData(CustomerViewModel viewModel) {
             return new CustomerData
             {
                 FirstName = viewModel.FirstName,
                 LastName = viewModel.LastName,
-                Username = viewModel.LastName,
-                Password = viewModel.LastName,
-                Email = viewModel.Email,
-                AddressId = viewModel.AddressId,
-                DefaultLocationId = viewModel.DefaultStoreLocationId
+                Email = viewModel.Email
+            };
+        }
+
+        public static explicit operator AddressData(CustomerViewModel viewModel) {
+            return new AddressData
+            {
+                Line1 = viewModel.Line1,
+                Line2 = viewModel.Line2,
+                City = viewModel.City,
+                State = viewModel.State,
+                Country = viewModel.Country,
+                ZipCode = viewModel.ZipCode
             };
         }
     }
