@@ -62,14 +62,14 @@ namespace ArkhenManufacturing.Domain
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
         /// <param name="data">The set of data for the item that's being created</param>
-        void Create<T>(IData data) where T : ArkhEntity, new();
+        Guid Create<T>(IData data) where T : ArkhEntity, new();
 
         /// <summary>
         /// Creates an ArkhEntity of the specified type with the specified data
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
         /// <param name="data">The set of data for the item that's being created</param>
-        Task CreateAsync<T>(IData data) where T : ArkhEntity, new();
+        Task<Guid> CreateAsync<T>(IData data) where T : ArkhEntity, new();
 
         /// <summary>
         /// Get all of the items in the collection

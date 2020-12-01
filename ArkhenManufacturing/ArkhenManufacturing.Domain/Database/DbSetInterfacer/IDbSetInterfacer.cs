@@ -14,7 +14,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
         bool Any();
         bool Exists(Guid id);
         int Count();
-        void Create(IData data);
+        Guid Create(IData data);
         ICollection<T> RetrieveAll();
         T Retrieve(Guid id);
         void Update(Guid id, IData data);

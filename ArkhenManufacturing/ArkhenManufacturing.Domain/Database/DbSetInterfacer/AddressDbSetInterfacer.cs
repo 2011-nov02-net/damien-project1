@@ -33,13 +33,15 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             return context.Addresses.Count();
         }
 
-        public void Create(IData data) {
+        public Guid Create(IData data) {
             var item = DbEntityConverter.ToDbAddress(Guid.NewGuid(), data as AddressData);
 
             using (var context = _createContext()) {
                 context.Addresses.Add(item);
                 context.SaveChanges();
             }
+
+            return item.Id;
         }
 
         public ICollection<Address> RetrieveAll() {

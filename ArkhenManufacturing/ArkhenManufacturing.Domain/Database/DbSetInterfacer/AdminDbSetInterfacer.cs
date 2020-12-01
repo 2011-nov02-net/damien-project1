@@ -20,7 +20,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             throw new NotImplementedException();
         }
 
-        public void Create(IData data) {
+        public Guid Create(IData data) {
             throw new NotImplementedException();
         }
 

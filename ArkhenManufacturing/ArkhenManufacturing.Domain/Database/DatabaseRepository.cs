@@ -82,12 +82,12 @@ namespace ArkhenManufacturing.Domain.Database
             where T : ArkhEntity
             => await Task.Run(() => Count<T>());
 
-        public void Create<T>(IData data) 
+        public Guid Create<T>(IData data) 
             where T : ArkhEntity, new() 
             => Interfacer<T>()
                 .Create(data);
 
-        public async Task CreateAsync<T>(IData data)
+        public async Task<Guid> CreateAsync<T>(IData data)
             where T : ArkhEntity, new()
             => await Task.Run(() => Create<T>(data));
 
