@@ -14,6 +14,7 @@ namespace ArkhenManufacturing.WebApp.Models
         [RegularExpression(RegularExpressions.NoSpecialCharacters,
                            ErrorMessage = ErrorMessages.NoSpecialCharacters)]
         [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [Display(Name = "Remember Me?")]

@@ -1,9 +1,12 @@
+using System;
+
 using ArkhenManufacturing.Library.Data;
 
 namespace ArkhenManufacturing.WebApp.Models
 {
     public class ProductViewModel
     {
+        public Guid Id { get; set; }
         public string ProductName { get; set; }
         public int Count { get; set; }
         public int Threshold { get; set; }
@@ -13,6 +16,7 @@ namespace ArkhenManufacturing.WebApp.Models
         public ProductViewModel() { }
 
         public ProductViewModel(string productName, InventoryEntryData data) {
+            Id = data.ProductId;
             ProductName = productName;
             Count = data.Count;
             Threshold = data.Threshold;
@@ -24,6 +28,7 @@ namespace ArkhenManufacturing.WebApp.Models
             decimal discount = viewModel.Discount ?? 0.0M;
             return new InventoryEntryData
             {
+                ProductId = viewModel.Id,
                 Count = viewModel.Count,
                 Price = viewModel.Price,
                 Discount = discount

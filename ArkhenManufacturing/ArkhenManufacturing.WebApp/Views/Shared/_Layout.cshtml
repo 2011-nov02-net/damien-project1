@@ -28,7 +28,7 @@
         </div>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
           @if (TempData.Peek("CurrentUser") is not null) {
-            @:Welcome, @TempData.Peek("CurrentUser")
+            <p class="navbar-brand btn-link">Welcome, @TempData.Peek("CurrentUser")</p>
             <a class="navbar-brand btn-link" asp-controller="Account" asp-action="Logout">Logout</a>
           } else {
             <a class="navbar-brand btn-link" asp-controller="Account" asp-action="Register">New? Register now</a>

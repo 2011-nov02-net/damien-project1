@@ -48,9 +48,10 @@ namespace ArkhenManufacturing.WebApp.Controllers
         public ActionResult Details(Guid id) {
             var product = _archivist.Retrieve<Product>(id);
             Guid? defaultStoreId = TempData.Peek("DefaultStoreId") as Guid?;
-            InventoryEntryData inventoryEntry = _archivist.RetrieveAll<InventoryEntry>()
-                    .Select(ie => ie.GetData() as InventoryEntryData)
-                    .FirstOrDefault(data => data.ProductId == id);
+            InventoryEntryData inventoryEntry = _archivist
+                .RetrieveAll<InventoryEntry>()
+                .Select(ie => ie.GetData() as InventoryEntryData)
+                .FirstOrDefault(data => data.ProductId == id);
 
             if (defaultStoreId.HasValue) {
                 if (inventoryEntry?.LocationId != defaultStoreId.Value) {

@@ -85,6 +85,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 if (customerData is null) {
                     TempData["SuccessMessage"] = null;
                     ModelState.AddModelError("", "User does not exist");
+                    return View(viewModel);
                 } else {
                     string encryptedPassword = _encrypter.Encrypt(viewModel.Password);
 
@@ -106,9 +107,14 @@ namespace ArkhenManufacturing.WebApp.Controllers
             }
         }
 
+        // TODO: Get the currently logged in user and show their details
+        public IActionResult Details() {
+            return View();
+        }
+
         public IActionResult Logout() {
             TempData["CurrentUser"] = null;
-            return Redirect("Home");
+            return Redirect("/Home");
         }
     }
 }
