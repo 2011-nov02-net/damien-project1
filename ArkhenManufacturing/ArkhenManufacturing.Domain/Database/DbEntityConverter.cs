@@ -28,12 +28,14 @@ namespace ArkhenManufacturing.Domain.Database
             };
         }
 
-        public static DbAdmin ToDbAdmin(Guid id, AdminData data) {
-            data.NullCheck(nameof(data));
+        public static DbAdmin ToDbAdmin(Admin item) {
+            item.NullCheck(nameof(item));
+
+            var data = item.GetData() as AdminData;
 
             return new DbAdmin
             {
-                Id = id,
+                Id = item.Id,
                 FirstName = data.FirstName,
                 LastName = data.LastName,
                 UserName = data.Username,
@@ -42,12 +44,14 @@ namespace ArkhenManufacturing.Domain.Database
             };
         }
 
-        public static DbCustomer ToDbCustomer(Guid id, CustomerData data) {
-            data.NullCheck(nameof(data));
+        public static DbCustomer ToDbCustomer(Customer item) {
+            item.NullCheck(nameof(item));
+
+            var data = item.GetData() as CustomerData;
 
             return new DbCustomer
             {
-                Id = id,
+                Id = item.Id,
                 FirstName = data.FirstName,
                 LastName = data.LastName,
                 Email = data.Email,
@@ -58,12 +62,14 @@ namespace ArkhenManufacturing.Domain.Database
             };
         }
 
-        public static DbInventoryEntry ToDbInventoryEntry(Guid id, InventoryEntryData data) {
-            data.NullCheck(nameof(data));
+        public static DbInventoryEntry ToDbInventoryEntry(InventoryEntry item) {
+            item.NullCheck(nameof(item));
+
+            var data = item.GetData() as InventoryEntryData;
 
             return new DbInventoryEntry
             {
-                Id = id,
+                Id = item.Id,
                 ProductId = data.ProductId,
                 LocationId = data.LocationId,
                 Price = data.Price,
@@ -71,22 +77,26 @@ namespace ArkhenManufacturing.Domain.Database
             };
         }
 
-        public static DbLocation ToDbLocation(Guid id, LocationData data) {
-            data.NullCheck(nameof(data));
+        public static DbLocation ToDbLocation(Location item) {
+            item.NullCheck(nameof(item));
+
+            var data = item.GetData() as LocationData;
 
             return new DbLocation
             {
-                Id = id,
+                Id = item.Id,
                 AddressId = data.AddressId
             };
         }
 
-        public static DbOrder ToDbOrder(Guid id, OrderData data) {
-            data.NullCheck(nameof(data));
+        public static DbOrder ToDbOrder(Order item) {
+            item.NullCheck(nameof(item));
+
+            var data = item.GetData() as OrderData;
 
             return new DbOrder
             { 
-                Id = id,
+                Id = item.Id,
                 CustomerId = data.CustomerId,
                 AdminId = data.AdminId,
                 LocationId = data.LocationId,
@@ -94,12 +104,14 @@ namespace ArkhenManufacturing.Domain.Database
             };
         }
 
-        public static DbOrderLine ToDbOrderLine(Guid id, OrderLineData data) {
-            data.NullCheck(nameof(data));
+        public static DbOrderLine ToDbOrderLine(OrderLine item) {
+            item.NullCheck(nameof(item));
+
+            var data = item.GetData() as OrderLineData;
 
             return new DbOrderLine
             { 
-                Id = id,
+                Id = item.Id,
                 OrderId = data.OrderId,
                 ProductId = data.ProductId,
                 Count = data.Count,
@@ -108,102 +120,109 @@ namespace ArkhenManufacturing.Domain.Database
             };
         }
 
-        public static DbProduct ToDbProduct(Guid id, ProductData data) {
-            data.NullCheck(nameof(data));
+        public static DbProduct ToDbProduct(Product item) {
+            item.NullCheck(nameof(item));
 
             return new DbProduct
             { 
-                Id = id,
-                Name = data.Name
-            };
-        }
-
-        public static DbLocationAdmin ToLocationAdmin(Guid locationId, LocationData locationData, Guid adminId, AdminData adminData) {
-            locationData.NullCheck(nameof(locationData));
-            adminData.NullCheck(nameof(adminData));
-
-            return new DbLocationAdmin
-            {
-                LocationId = locationId,
-                Location = ToDbLocation(locationId, locationData),
-
-                AdminId = adminId,
-                Admin = ToDbAdmin(adminId, adminData)
+                Id = item.Id,
+                Name = item.GetName()
             };
         }
 
         #endregion
 
-        #region To Lib Entity
+        #region To Library Entity
 
-        public static AddressData ToAddress(DbAddress item) {
+        public static Address ToAddress(DbAddress item) {
             item.NullCheck(nameof(item));
-            return new AddressData(item.Line1, item.Line2,
+            var data = new AddressData(item.Line1, item.Line2,
                 item.City, item.State, item.Country, item.ZipCode);
+            return new Address(item.Id, data);
         }
 
-        public static AdminData ToAdmin(DbAdmin item) {
+        public static Admin ToAdmin(DbAdmin item) {
             item.NullCheck(nameof(item));
-            var locationIds = item.LocationAdmins
-                .Select(la => la.LocationId)
-                .ToList();
 
-            return new AdminData(item.FirstName, item.LastName, item.UserName, item.Password, item.Email, locationIds);
+            var data = new AdminData(
+                item.FirstName, item.LastName, item.UserName, 
+                item.Password, item.Email, item.LocationId);
+
+            return new Admin(item.Id, data);
         }
 
-        public static CustomerData ToCustomer(DbCustomer item) {
+        public static Customer ToCustomer(DbCustomer item) {
             item.NullCheck(nameof(item));
-            return new CustomerData(item.FirstName, item.LastName, item.UserName, item.Password, item.Email, item.PhoneNumber, item.AddressId, item.BirthDate, item.SignUpDate, item.DefaultLocationId);
+
+            var data = new CustomerData(
+                item.FirstName, item.LastName, item.UserName, 
+                item.Password, item.Email, item.PhoneNumber, item.AddressId, 
+                item.BirthDate, item.SignUpDate, item.DefaultLocationId);
+
+            return new Customer(item.Id, data);
         }
 
-        public static InventoryEntryData ToInventoryEntry(DbInventoryEntry item) {
+        public static InventoryEntry ToInventoryEntry(DbInventoryEntry item) {
             item.NullCheck(nameof(item));
-            return new InventoryEntryData(item.ProductId, item.LocationId, item.Price, item.Discount, item.Count, item.Threshold);
+
+            var data = new InventoryEntryData(
+                item.ProductId, item.LocationId, item.Price, 
+                item.Discount, item.Count, item.Threshold);
+
+            return new InventoryEntry(item.Id, data);
         }
 
-        public static LocationData ToLocation(DbLocation item) {
+        public static Location ToLocation(DbLocation item) {
             item.NullCheck(nameof(item));
+
             var orderIds = item.Orders
                 .Select(o => o.Id)
                 .ToList();
 
-            var adminIds = item.LocationAdmins
-                .Select(la => la.AdminId)
+            var adminIds = item.Admins
+                .Select(a => a.Id)
                 .ToList();
 
             var inventoryEntryIds = item.InventoryEntries
                 .Select(ie => ie.Id)
                 .ToList();
 
-            return new LocationData(item.Name, item.AddressId, orderIds, adminIds, inventoryEntryIds);
+            var data = new LocationData(
+                item.Name, item.AddressId, orderIds, 
+                adminIds, inventoryEntryIds);
+
+            return new Location(item.Id, data);
         }
 
-        public static OrderData ToOrder(DbOrder item) {
+        public static Order ToOrder(DbOrder item) {
             item.NullCheck(nameof(item));
             var orderLineIds = item.OrderLines
                 .Select(ol => ol.Id)
                 .ToList();
 
-            return new OrderData(item.CustomerId, item.AdminId, item.LocationId, item.PlacementDate, orderLineIds);
+            var data = new OrderData(
+                item.CustomerId, item.AdminId, item.LocationId, 
+                item.PlacementDate, orderLineIds);
+
+            return new Order(item.Id, data);
         }
 
-        public static OrderLineData ToOrderLine(DbOrderLine item) {
+        public static OrderLine ToOrderLine(DbOrderLine item) {
             item.NullCheck(nameof(item));
-            return new OrderLineData(item.OrderId, item.ProductId, item.Count, item.PricePerUnit, item.Discount);
+
+            var data = new OrderLineData(
+                item.OrderId, item.ProductId, item.Count, 
+                item.PricePerUnit, item.Discount);
+
+            return new OrderLine(item.Id, data);
         }
 
-        public static ProductData ToProduct(DbProduct item) {
+        public static Product ToProduct(DbProduct item) {
             item.NullCheck(nameof(item));
-            return new ProductData(item.Name);
-        }
 
-        public static Tuple<LocationData, AdminData> ToLocationAndAdmin(DbLocationAdmin dbLocationAdmin) {
-            dbLocationAdmin.NullCheck(nameof(dbLocationAdmin));
+            var data = new ProductData(item.Name);
 
-            var location = ToLocation(dbLocationAdmin.Location);
-            var admin = ToAdmin(dbLocationAdmin.Admin);
-
-            return new Tuple<LocationData, AdminData>(location, admin);
+            return new Product(item.Id, data);
         }
 
         #endregion

@@ -44,17 +44,25 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             return item.Id;
         }
 
-        public ICollection<Address> RetrieveAll() {
-            using var context = _createContext();
-            return context.Addresses.ToList()
-                .ConvertAll(a => new Address(a.Id, DbEntityConverter.ToAddress(a)));
-        }
-
         public Address Retrieve(Guid id) {
             using var context = _createContext();
             var dbItem = context.Addresses.Find(id);
-            var item = new Address(id, DbEntityConverter.ToAddress(dbItem));
+            var item = DbEntityConverter.ToAddress(dbItem);
             return item;
+        }
+
+        public ICollection<Address> RetrieveSome(ICollection<Guid> ids) {
+            using var context = _createContext();
+            return context.Addresses
+                .Where(a => ids.Contains(a.Id))
+                .Select(a => DbEntityConverter.ToAddress(a))
+                .ToList();
+        }
+
+        public ICollection<Address> RetrieveAll() {
+            using var context = _createContext();
+            return context.Addresses.ToList()
+                .ConvertAll(a => DbEntityConverter.ToAddress(a));
         }
 
         public void Update(Guid id, IData data) {

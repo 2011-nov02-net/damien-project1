@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using ArkhenManufacturing.Library.Extensions;
 
 namespace ArkhenManufacturing.Library.Data
 {
@@ -14,7 +11,7 @@ namespace ArkhenManufacturing.Library.Data
         /// <summary>
         /// Locations in which this Admin can access and can monitor
         /// </summary>
-        public List<Guid> LocationIds { get; set; }
+        public Guid LocationId { get; set; }
 
         /// <summary>
         /// Default constructor for use with assigning the data in 
@@ -31,11 +28,9 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="username">UserName of the User</param>
         /// <param name="password">User's password</param>
         /// <param name="email">Email address of the user</param>
-        public AdminData(string firstName, string lastName, string username, string password, string email, List<Guid> locationIds) :
+        public AdminData(string firstName, string lastName, string username, string password, string email, Guid locationId) :
             base(firstName, lastName, username, password, email) {
-            locationIds.NullCheck(nameof(locationIds));
-
-            LocationIds = locationIds;
+            LocationId = locationId;
         }
 
         /// <summary>
@@ -43,7 +38,7 @@ namespace ArkhenManufacturing.Library.Data
         /// </summary>
         /// <param name="other">The value being assigned to this</param>
         public AdminData(AdminData other) :
-            this(other.FirstName, other.LastName, other.Username, other.Password, other.Email, other.LocationIds) {
+            this(other.FirstName, other.LastName, other.Username, other.Password, other.Email, other.LocationId) {
         }
     }
 }
