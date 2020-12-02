@@ -7,7 +7,7 @@ namespace ArkhenManufacturing.DataAccess
     {
         public DbLocation() {
             Orders = new HashSet<DbOrder>();
-            LocationAdmins = new HashSet<DbLocationAdmin>();
+            Admins = new HashSet<DbAdmin>();
             InventoryEntries = new HashSet<DbInventoryEntry>();
         }
 
@@ -18,7 +18,7 @@ namespace ArkhenManufacturing.DataAccess
 
         public virtual ICollection<DbOrder> Orders { get; set; }
         public virtual ICollection<DbInventoryEntry> InventoryEntries { get; set; }
-        public virtual ICollection<DbLocationAdmin> LocationAdmins { get; set; }
+        public virtual ICollection<DbAdmin> Admins { get; set; }
 
     }
 }

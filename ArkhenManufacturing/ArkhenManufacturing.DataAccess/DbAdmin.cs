@@ -6,7 +6,6 @@ namespace ArkhenManufacturing.DataAccess
     public class DbAdmin : DbEntity
     {
         public DbAdmin() {
-            LocationAdmins = new HashSet<DbLocationAdmin>();
             Orders = new HashSet<DbOrder>();
         }
 
@@ -16,8 +15,9 @@ namespace ArkhenManufacturing.DataAccess
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
+        public Guid LocationId { get; set; }
+        public DbLocation Location { get; set; }
 
         public virtual ICollection<DbOrder> Orders { get; set; }
-        public virtual ICollection<DbLocationAdmin> LocationAdmins { get; set; }
     }
 }

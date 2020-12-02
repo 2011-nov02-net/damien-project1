@@ -15,7 +15,6 @@ namespace ArkhenManufacturing.DataAccess
         public DbSet<DbCustomer> Customers { get; set; }
         public DbSet<DbInventoryEntry> InventoryEntries { get; set; }
         public DbSet<DbLocation> Locations { get; set; }
-        public DbSet<DbLocationAdmin> LocationAdmins { get; set; }
         public DbSet<DbOrder> Orders { get; set; }
         public DbSet<DbOrderLine> OrderLines { get; set; }
         public DbSet<DbProduct> Products { get; set; }
@@ -67,6 +66,10 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
+
+                entity.HasOne(e => e.Location)
+                    .WithMany(l => l.Admins)
+                    .HasForeignKey(e => e.LocationId);
             });
 
             modelBuilder.Entity<DbCustomer>(entity => {
@@ -135,20 +138,6 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
-            });
-
-            modelBuilder.Entity<DbLocationAdmin>(entity => {
-                entity.ToTable("LocationAdmin");
-
-                entity.HasKey(la => new { la.LocationId, la.AdminId });
-
-                entity.HasOne(la => la.Location)
-                    .WithMany(l => l.LocationAdmins)
-                    .HasForeignKey(la => la.LocationId);
-
-                entity.HasOne(la => la.Admin)
-                    .WithMany(a => a.LocationAdmins)
-                    .HasForeignKey(la => la.AdminId);
             });
 
             modelBuilder.Entity<DbOrder>(entity => {
