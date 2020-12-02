@@ -36,6 +36,10 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             throw new NotImplementedException();
         }
 
+        public ICollection<Admin> RetrieveSome(ICollection<Guid> ids) {
+            throw new NotImplementedException();
+        }
+
         public ICollection<Admin> RetrieveAll() {
             throw new NotImplementedException();
         }

@@ -23,7 +23,7 @@ namespace ArkhenManufacturing.WebApp.Models
         [RegularExpression(RegularExpressions.UserNameCharacters,
                            ErrorMessage = ErrorMessages.NameCharacters)]
         [Required]
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         [RegularExpression(RegularExpressions.PasswordCharacters,
                            ErrorMessage = ErrorMessages.PasswordCharacters)]
@@ -38,20 +38,20 @@ namespace ArkhenManufacturing.WebApp.Models
         public AdminViewModel(AdminData data) {
             FirstName = data.FirstName;
             LastName = data.LastName;
-            UserName = data.Username;
+            Username = data.Username;
             Password = data.Password;
             Email = data.Password;
         }
 
         public static explicit operator AdminData(AdminViewModel viewModel) {
-            return new AdminData(
-                viewModel.FirstName, 
-                viewModel.LastName, 
-                viewModel.UserName, 
-                viewModel.Password, 
-                viewModel.Email,
-                new List<Guid>()
-            );
+            return new AdminData
+            {
+                FirstName = viewModel.FirstName,
+                LastName = viewModel.LastName,
+                Username = viewModel.Username,
+                Password = viewModel.Password,
+                Email = viewModel.Email
+            };
         }
     }
 }
