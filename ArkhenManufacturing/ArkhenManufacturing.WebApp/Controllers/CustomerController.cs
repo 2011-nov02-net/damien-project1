@@ -43,10 +43,71 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 // Create the ViewModel and show the data
                 var viewModel = new CustomerViewModel(customer, address);
                 return View(viewModel);
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 _logger.LogError(ex.Message);
                 return View();
             }
+        }
+
+        // GET: Customer/{id}/Orders
+        public async Task<IActionResult> Orders(Guid id) {
+            var customer = await _archivist.RetrieveAsync<Customer>(id);
+            var customerName = customer.GetName();
+
+            var orders = await _archivist.RetrieveAllAsync<Order>();
+
+            var customerOrders = orders
+                .Where(o => {
+                    var data = o.GetData() as OrderData;
+                    return data.CustomerId == id;
+                })
+                .ToList();
+
+            var viewModels = customerOrders
+                .ConvertAll(async co => {
+                    // get the data
+                    var data = co.GetData() as OrderData;
+
+                    var admin = await _archivist.RetrieveAsync<Admin>(data.AdminId);
+                    string adminName = admin.GetName();
+
+                    // get the location name
+                    var location = await _archivist.RetrieveAsync<Location>(data.LocationId);
+                    string locationName = location.GetName();
+
+                    // get the order lines
+                    var orderLines = await _archivist.RetrieveSomeAsync<OrderLine>(data.OrderLineIds);
+
+                    var orderLineViewModels = orderLines
+                        .Select(async ol => {
+                            var olData = ol.GetData() as OrderLineData;
+                            var product = await _archivist.RetrieveAsync<Product>(olData.ProductId);
+                            string productName = product.GetName();
+                            return new OrderLineViewModel(productName, olData);
+                        })
+                        .Select(t => t.Result)
+                        .ToList();
+
+                    return new OrderViewModel(customerName, adminName, locationName, orderLineViewModels);
+                });
+
+            return View(viewModels);
+        }
+
+        // GET: Customer/SearchByName/{name}
+        public async Task<IActionResult> SearchByName(string id) {
+            var customers = await _archivist.RetrieveByNameAsync<Customer>(id);
+
+            var viewModels = customers
+                .ConvertAll(async c => {
+                    var data = c.GetData() as CustomerData;
+                    var address = await _archivist.RetrieveAsync<Address>(data.AddressId);
+                    return await Task.Run(() => new CustomerViewModel(c, address));
+                })
+                .Select(t => t.Result)
+                .ToList();
+
+            return View(viewModels);
         }
 
         // GET: Customer/Create
@@ -58,7 +119,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(CustomerViewModel viewModel) {
-            if(!ModelState.IsValid) {
+            if (!ModelState.IsValid) {
                 return View(viewModel);
             }
 
@@ -98,7 +159,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Guid id, CustomerViewModel viewModel) {
             try {
-                if(!ModelState.IsValid) {
+                if (!ModelState.IsValid) {
                     throw new Exception("Invalid ModelState");
                 }
 
