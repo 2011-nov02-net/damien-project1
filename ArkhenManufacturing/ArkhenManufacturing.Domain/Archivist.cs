@@ -51,20 +51,6 @@ namespace ArkhenManufacturing.Domain
             where T : ArkhEntity
             => await _repository.ExistsAsync<T>(id);
 
-        /// <summary>
-        /// Gets all the items that contain the specified string
-        /// </summary>
-        /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
-        /// <param name="name">The string of characters being searched for</param>
-        /// <returns>A list that contains the data of any of the items found, if any</returns>
-        public List<T> RetrieveByName<T>(string name)
-            where T : NamedArkhEntity
-            => _repository.RetrieveByName<T>(name);
-
-        public async Task<List<T>> RetrieveByNameAsync<T>(string name)
-            where T : NamedArkhEntity
-            => await _repository.RetrieveByNameAsync<T>(name);
-
         #endregion
 
         #region CRUD Operations
@@ -83,19 +69,6 @@ namespace ArkhenManufacturing.Domain
             => await _repository.CreateAsync<T>(data);
 
         /// <summary>
-        /// Get all of ArkhEntities of a specified type
-        /// </summary>
-        /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
-        /// <returns>A complete collection of all the items being stored</returns>
-        public List<T> RetrieveAll<T>()
-            where T : ArkhEntity 
-            => _repository.RetrieveAll<T>();
-
-        public async Task<List<T>> RetrieveAllAsync<T>()
-            where T : ArkhEntity
-            => await _repository.RetrieveAllAsync<T>();
-
-        /// <summary>
         /// Get an item using a Guid id
         ///     If it doesn't exist, it returns null
         /// </summary>
@@ -109,6 +82,41 @@ namespace ArkhenManufacturing.Domain
         public async Task<T> RetrieveAsync<T>(Guid id)
             where T : ArkhEntity
             => await _repository.RetrieveAsync<T>(id);
+
+        public ICollection<T> RetrieveSome<T>(List<Guid> ids)
+            where T : ArkhEntity
+            => _repository.RetrieveSome<T>(ids);
+
+        public async Task<ICollection<T>> RetrieveSomeAsync<T>(ICollection<Guid> ids)
+            where T : ArkhEntity
+            => await _repository.RetrieveSomeAsync<T>(ids);
+
+        /// <summary>
+        /// Get all of ArkhEntities of a specified type
+        /// </summary>
+        /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
+        /// <returns>A complete collection of all the items being stored</returns>
+        public List<T> RetrieveAll<T>()
+            where T : ArkhEntity
+            => _repository.RetrieveAll<T>();
+
+        public async Task<List<T>> RetrieveAllAsync<T>()
+            where T : ArkhEntity
+            => await _repository.RetrieveAllAsync<T>();
+
+        /// <summary>
+        /// Gets all the items that contain the specified string
+        /// </summary>
+        /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
+        /// <param name="name">The string of characters being searched for</param>
+        /// <returns>A list that contains the data of any of the items found, if any</returns>
+        public List<T> RetrieveByName<T>(string name)
+            where T : NamedArkhEntity
+            => _repository.RetrieveByName<T>(name);
+
+        public async Task<List<T>> RetrieveByNameAsync<T>(string name)
+            where T : NamedArkhEntity
+            => await _repository.RetrieveByNameAsync<T>(name);
 
         /// <summary>
         /// Update an ArkhEntity having the specified Guid with the data entered, if it exists

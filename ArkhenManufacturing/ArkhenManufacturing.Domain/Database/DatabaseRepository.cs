@@ -61,18 +61,6 @@ namespace ArkhenManufacturing.Domain.Database
             where T : ArkhEntity
             => await Task.Run(() => Exists<T>(id));
 
-        public List<T> RetrieveByName<T>(string name) 
-            where T : NamedArkhEntity
-            => Interfacer<T>()
-                .RetrieveAll()
-                .Where(item => item.GetName()
-                    .Contains(name))
-                .ToList();
-
-        public async Task<List<T>> RetrieveByNameAsync<T>(string name)
-            where T : NamedArkhEntity
-            => await Task.Run(() => RetrieveByName<T>(name));
-
         public int Count<T>()
             where T : ArkhEntity
             => Interfacer<T>()
@@ -100,6 +88,23 @@ namespace ArkhenManufacturing.Domain.Database
             where T : ArkhEntity
             => await Task.Run(() => Delete<T>(id));
 
+        public T Retrieve<T>(Guid id)
+            where T : ArkhEntity
+            => Interfacer<T>()
+                .Retrieve(id);
+
+        public async Task<T> RetrieveAsync<T>(Guid id)
+            where T : ArkhEntity
+            => await Task.Run(() => Retrieve<T>(id));
+
+        public ICollection<T> RetrieveSome<T>(ICollection<Guid> ids)
+            where T : ArkhEntity
+            => Interfacer<T>().RetrieveSome(ids);
+
+        public async Task<ICollection<T>> RetrieveSomeAsync<T>(ICollection<Guid> ids)
+            where T : ArkhEntity
+            => await Task.Run(() => RetrieveSomeAsync<T>(ids));
+
         public List<T> RetrieveAll<T>()
             where T : ArkhEntity
             => Interfacer<T>()
@@ -110,14 +115,17 @@ namespace ArkhenManufacturing.Domain.Database
             where T : ArkhEntity
             => await Task.Run(() => RetrieveAll<T>());
 
-        public T Retrieve<T>(Guid id)
-            where T : ArkhEntity
+        public List<T> RetrieveByName<T>(string name)
+            where T : NamedArkhEntity
             => Interfacer<T>()
-                .Retrieve(id);
+                .RetrieveAll()
+                .Where(item => item.GetName()
+                    .Contains(name))
+                .ToList();
 
-        public async Task<T> RetrieveAsync<T>(Guid id)
-            where T : ArkhEntity
-            => await Task.Run(() => Retrieve<T>(id));
+        public async Task<List<T>> RetrieveByNameAsync<T>(string name)
+            where T : NamedArkhEntity
+            => await Task.Run(() => RetrieveByName<T>(name));
 
         public void Update<T>(Guid id, IData data)
             where T : ArkhEntity

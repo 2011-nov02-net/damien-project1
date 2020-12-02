@@ -39,10 +39,6 @@ namespace ArkhenManufacturing.Domain.Internal
             data = new SHA256Managed().ComputeHash(data);
             string password = Encoding.ASCII.GetString(data);
             
-
-            // Admin id
-            Guid veroAdminId = Create<Admin>(new AdminData("Vero", "Richter", "VRichter", password, "vero.richter@arkhen.net", new List<Guid>()));
-
             // Product ids
             Guid coffeeId = Create<Product>(new ProductData("Coffee"));
             Guid waterBottleId = Create<Product>(new ProductData("Water Bottle"));
@@ -53,7 +49,14 @@ namespace ArkhenManufacturing.Domain.Internal
             Guid damienAddressId = Create<Address>(new AddressData("123 Road Drive", "", "Eleison", "Khalrun", "Cylon-243", "12345"));
 
             // Location ids
-            Guid arkhenplatzId = Create<Location>(new LocationData("Arkhenplatz", addressId, new List<Guid>(), new List<Guid> { veroAdminId }, new List<Guid>()));
+            Guid arkhenplatzId = Create<Location>(new LocationData("Arkhenplatz", addressId, new List<Guid>(), new List<Guid>(), new List<Guid>()));
+
+            // Admin id
+            Guid veroAdminId = Create<Admin>(new AdminData("Vero", "Richter", "VRichter", password, "vero.richter@arkhen.net", arkhenplatzId));
+
+            // Add the admin id to the location
+            var location = Retrieve<Location>(arkhenplatzId);
+            (location.GetData() as LocationData).AdminIds.Add(veroAdminId);
 
             // Inventory Entry ids
             Create<InventoryEntry>(new InventoryEntryData(coffeeId, arkhenplatzId, 10.00M, 0.00M, 10, 2));
@@ -128,6 +131,28 @@ namespace ArkhenManufacturing.Domain.Internal
             where T : ArkhEntity, new() => await Task.Run(() => Create<T>(data));
 
         /// <summary>
+        /// Get an item using a Guid id
+        ///     If it doesn't exist, it returns null
+        /// </summary>
+        /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
+        /// <param name="id">The Guid id of the item</param>
+        /// <returns>The item that has the specified Guid, otherwise it returns null</returns>
+        public T Retrieve<T>(Guid id)
+            where T : ArkhEntity => GetList<T>()
+                .FirstOrDefault(item => item.Id == id);
+
+        public async Task<T> RetrieveAsync<T>(Guid id)
+            where T : ArkhEntity => await Task.Run(() => Retrieve<T>(id));
+
+        public ICollection<T> RetrieveSome<T>(ICollection<Guid> ids)
+            where T : ArkhEntity => GetList<T>()
+                .Where(t => ids.Contains(t.Id))
+                .ToList();
+
+        public async Task<ICollection<T>> RetrieveSomeAsync<T>(ICollection<Guid> ids)
+            where T : ArkhEntity => await Task.Run(() => RetrieveSome<T>(ids));
+
+        /// <summary>
         /// Get all of ArkhEntities of a specified type
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
@@ -153,20 +178,6 @@ namespace ArkhenManufacturing.Domain.Internal
 
         public async Task<List<T>> RetrieveByNameAsync<T>(string name)
             where T : NamedArkhEntity => await Task.Run(() => RetrieveByName<T>(name));
-
-        /// <summary>
-        /// Get an item using a Guid id
-        ///     If it doesn't exist, it returns null
-        /// </summary>
-        /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
-        /// <param name="id">The Guid id of the item</param>
-        /// <returns>The item that has the specified Guid, otherwise it returns null</returns>
-        public T Retrieve<T>(Guid id)
-            where T : ArkhEntity => GetList<T>()
-                .FirstOrDefault(item => item.Id == id);
-
-        public async Task<T> RetrieveAsync<T>(Guid id)
-            where T : ArkhEntity => await Task.Run(() => Retrieve<T>(id));
 
         /// <summary>
         /// Update an ArkhEntity having the specified Guid with the data entered, if it exists

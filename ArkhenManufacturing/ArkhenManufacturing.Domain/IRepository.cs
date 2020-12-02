@@ -72,20 +72,6 @@ namespace ArkhenManufacturing.Domain
         Task<Guid> CreateAsync<T>(IData data) where T : ArkhEntity, new();
 
         /// <summary>
-        /// Get all of the items in the collection
-        /// </summary>
-        /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
-        /// <returns>A List of the data that is found in the collection</returns>
-        List<T> RetrieveAll<T>() where T : ArkhEntity;
-
-        /// <summary>
-        /// Get all of the items in the collection
-        /// </summary>
-        /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
-        /// <returns>A List of the data that is found in the collection</returns>
-        Task<List<T>> RetrieveAllAsync<T>() where T : ArkhEntity;
-
-        /// <summary>
         /// Gets the data that is paired with the Guid id being passed in.
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
@@ -100,6 +86,24 @@ namespace ArkhenManufacturing.Domain
         /// <param name="id">The Guid id of the item being searched for</param>
         /// <returns>The specified type of data found if the id exists within the collection. Elsewise, it returns null</returns>
         Task<T> RetrieveAsync<T>(Guid id) where T : ArkhEntity;
+
+        ICollection<T> RetrieveSome<T>(ICollection<Guid> ids) where T : ArkhEntity;
+
+        Task<ICollection<T>> RetrieveSomeAsync<T>(ICollection<Guid> ids) where T : ArkhEntity;
+
+        /// <summary>
+        /// Get all of the items in the collection
+        /// </summary>
+        /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
+        /// <returns>A List of the data that is found in the collection</returns>
+        List<T> RetrieveAll<T>() where T : ArkhEntity;
+
+        /// <summary>
+        /// Get all of the items in the collection
+        /// </summary>
+        /// <typeparam name="T">The type of ArkhEntity in the collection</typeparam>
+        /// <returns>A List of the data that is found in the collection</returns>
+        Task<List<T>> RetrieveAllAsync<T>() where T : ArkhEntity;
 
         /// <summary>
         /// Get an amount of items that contain a specified name
