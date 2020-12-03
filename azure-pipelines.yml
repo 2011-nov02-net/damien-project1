@@ -53,6 +53,7 @@ stages:
       workingDirectory: 'ArkhenManufacturing'
 
     - task: 'SonarCloudAnalyze@1'
+      displayName: sonar run analysis
 
     - task: 'SonarCloudPublish@1'
       inputs:
