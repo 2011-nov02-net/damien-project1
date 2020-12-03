@@ -1,0 +1,98 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  branches:
+    include: 
+    - 'master'
+  paths:
+    include:
+    - 'azure-pipelines.yml'
+    - 'ArkhenManufacturing'
+
+pr:
+- 'master'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  sdkVersion: '5.x'
+  buildConfiguration: 'Release'
+
+stages:
+- stage: 'build'
+  jobs:
+  - job: 'build'
+    steps:
+    - task: 'UseDotNet@2'
+      displayName: 'dotnet sdk 2.x'
+      inputs:
+        packageType: 'sdk'
+        version: '2.x'
+
+    - task: 'SonarCloudPrepare@1'
+      inputs:
+        SonarCloud: 'SonarCloud - Khyproxios'
+        organization: '2011-nov02-net'
+        scannerMode: 'MSBuild'
+        projectKey: '2011-nov02-net_damien-project1'
+        projectName: 'ArkhenManufacturing'
+        extraProperties: 'sonar.exclusions=**/lib/**'
+
+    - task: 'UseDotNet@2'
+      displayName: 'dotnet sdk $(sdkVersion)'
+      inputs:
+        packageType: 'sdk'
+        version: '$(sdkVersion)'
+
+    - script: 'dotnet build --configuration $(buildConfiguration)'
+      displayName: 'dotnet build'
+      workingDirectory: 'ArkhenManufacturing'
+
+    - task: 'SonarCloudAnalyze@1'
+      displayName: sonar run analysis
+
+    - task: 'SonarCloudPublish@1'
+      inputs:
+        pollingTimeoutSec: '300'
+
+    - task: 'DotNetCoreCLI@2'
+      displayName: 'dotnet test'
+      inputs:
+        command: 'test'
+        publishTestResults: true
+        arguments: '--configuration $(buildConfiguration)'
+        workingDirectory: 'ArkhenManufacturing'
+
+    - script: 'dotnet publish --configuration $(buildConfiguration) --output .publish'
+      displayName: 'dotnet publish'
+      workingDirectory: 'ArkhenManufacturing'
+
+    - publish: 'ArkhenManufacturing/.publish'
+      artifact: 'app'
+
+- stage: 'release'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - deployment: 'app_service'
+    environment: 'prod'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: 'current'
+            displayName: 'download app'
+            artifact: 'app'
+
+          - task: 'AzureRmWebAppDeployment@4'
+            displayName: 'Azure App Service Display'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
+              appType: 'webApp'
+              WebAppName: 'arkhen-manufacturing'
+              packageForLinux: '$(System.ArtifactsDirectory)/app'
