@@ -60,11 +60,11 @@ namespace ArkhenManufacturing.Domain
         /// </summary>
         /// <typeparam name="T">The type of ArkhEntity targeted</typeparam>
         /// <param name="data">The specific data type being passed in</param>
-        public void Create<T>(IData data)
+        public Guid Create<T>(IData data)
             where T : ArkhEntity, new()
             => _repository.Create<T>(data);
 
-        public async Task CreateAsync<T>(IData data)
+        public async Task<Guid> CreateAsync<T>(IData data)
             where T : ArkhEntity, new()
             => await _repository.CreateAsync<T>(data);
 
