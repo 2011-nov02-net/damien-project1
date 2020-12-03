@@ -7,7 +7,6 @@
 <h1>Details</h1>
 
 <div>
-  <h4>ProductViewModel</h4>
   <hr />
   <dl class="row">
     <dt class="col-sm-2">
@@ -41,6 +40,13 @@
       @Html.DisplayFor(model => model.Discount)
     </dd>
   </dl>
+  @if (TempData["CurrentUser"] is not null) {
+    await Html.RenderPartialAsync("RequestProduct", new ProductRequestViewModel(Model.Id) { ProductName = Model.ProductName, Count = 0 });
+  }
+  @*<form asp-controller="Product" asp-action="AddToCart">
+      <input type="number" value="Count" />
+      <button type="submit" value="Add to Cart" />
+    </form>*@
 </div>
 @*<div>
       @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |

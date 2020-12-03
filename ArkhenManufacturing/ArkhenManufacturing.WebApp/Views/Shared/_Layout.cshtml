@@ -4,12 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>@ViewData["Title"] - Arkhen Manufacturing</title>
-  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="~/css/site.css" />
+  @{ await Html.RenderPartialAsync("css"); }
 </head>
 <body>
   <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
       <div class="container">
         <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Arkhen Manufacturing</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -19,21 +18,22 @@
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
           <ul class="navbar-nav flex-grow-1">
             <li class="nav-item">
-              <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+              <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+              <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
             </li>
           </ul>
         </div>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
           @if (TempData.Peek("CurrentUser") is not null) {
-            <p class="navbar-brand btn-link">Welcome, @TempData.Peek("CurrentUser")</p>
-            <a class="navbar-brand btn-link" asp-controller="Account" asp-action="Logout">Logout</a>
+            <p class="navbar-brand btn-link text-light">Welcome, @TempData.Peek("CurrentUser")</p>
+            <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Logout">Logout</a>
           } else {
-            <a class="navbar-brand btn-link" asp-controller="Account" asp-action="Register">New? Register now</a>
-            <a class="navbar-brand btn-link" asp-controller="Account" asp-action="Login">Login</a>
+            <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Register">New? Register now</a>
+            <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Login">Login</a>
           }
+          <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Cart">Cart</a>
         </div>
       </div>
     </nav>
@@ -42,7 +42,8 @@
     <div>
       <p class="text-success">@(TempData["SuccessMessage"] ?? "")</p>
     </div>
-    <main role="main" class="pb-3">
+    <main role="main">
+      @*class="pb-3"*@
       @RenderBody()
     </main>
   </div>

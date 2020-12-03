@@ -1,0 +1,16 @@
+﻿@model ArkhenManufacturing.WebApp.Models.LocationProductRequestViewModel
+
+@{
+  ViewData["Title"] = "Select Location";
+}
+
+<div>
+  <form asp-action="Retrieve" asp-controller="Product">
+    <select asp-for="SelectedLocationId">
+      @foreach (var item in Model.LocationNamesWithIds) {
+        <option value="@item.Item2">@item.Item1</option>
+      }
+    </select>
+    <input type="submit" value="Select Location" class="btn btn-primary" />
+  </form>
+</div>
