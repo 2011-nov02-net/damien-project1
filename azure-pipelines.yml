@@ -13,7 +13,7 @@ trigger:
     - 'ArkhenManufacturing'
 
 pr:
-- master
+- 'master'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -23,17 +23,17 @@ variables:
   buildConfiguration: 'Release'
 
 stages:
-- stage: build
+- stage: 'build'
   jobs:
-  - job: build
+  - job: 'build'
     steps:
-    - task: UseDotNet@2
+    - task: 'UseDotNet@2'
       displayName: 'dotnet sdk 2.x'
       inputs:
         packageType: 'sdk'
-        version: 2.x
+        version: '2.x'
 
-    - task: SonarCloudPrepare@1
+    - task: 'SonarCloudPrepare@1'
       inputs:
         SonarCloud: 'SonarCloud - Khyproxios'
         organization: '2011-nov02-net'
@@ -42,23 +42,23 @@ stages:
         projectName: 'ArkhenManufacturing'
         extraProperties: 'sonar.exclusions=**/lib/**'
 
-    - task: UseDotNet@2
+    - task: 'UseDotNet@2'
       displayName: 'dotnet sdk $(sdkVersion)'
       inputs:
         packageType: 'sdk'
         version: '$(sdkVersion)'
 
-    - script: dotnet build --configuration $(buildConfiguration)
+    - script: 'dotnet build --configuration $(buildConfiguration)'
       displayName: 'dotnet build'
       workingDirectory: 'ArkhenManufacturing'
 
-    - task: SonarCloudAnalyze@1
+    - task: 'SonarCloudAnalyze@1'
 
-    - task: SonarCloudPublish@1
+    - task: 'SonarCloudPublish@1'
       inputs:
         pollingTimeoutSec: '300'
 
-    - task: DotNetCoreCLI@2
+    - task: 'DotNetCoreCLI@2'
       displayName: 'dotnet test'
       inputs:
         command: 'test'
@@ -66,16 +66,30 @@ stages:
         arguments: '--configuration $(buildConfiguration)'
         workingDirectory: 'ArkhenManufacturing'
 
-    - script: dotnet publish --configuration $(buildConfiguration) --output .publish
+    - script: 'dotnet publish --configuration $(buildConfiguration) --output .publish'
       displayName: 'dotnet publish'
       workingDirectory: 'ArkhenManufacturing'
 
-    - task: AzureRmWebAppDeployment@4
-      displayName: 'Azure App Service Display'
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
-        appType: 'webApp'
-        WebAppName: 'arkhen-manufacturing'
-        packageForLinux: 'ArkhenManufacturing/.publish'
+    - publish: 'ArkhenManufacturing/.publish'
+      artifact: 'app'
+
+- stage: 'release'
+  jobs:
+  - deployment: 'app-service'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: 'current'
+            displayName: 'download app'
+            artifact: 'app'
+
+          - task: 'AzureRmWebAppDeployment@4'
+            displayName: 'Azure App Service Display'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
+              appType: 'webApp'
+              WebAppName: 'arkhen-manufacturing'
+              packageForLinux: 'ArkhenManufacturing/.publish'
