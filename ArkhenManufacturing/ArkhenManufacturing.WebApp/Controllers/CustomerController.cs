@@ -132,7 +132,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 data.Password = userData.Password;
 
                 _archivist.Create<Customer>(data);
-                TempData["SuccessMessage"] = $"'{data.LastName}, {data.FirstName}' created successfully.";
+                TempData["Message"] = $"'{data.LastName}, {data.FirstName}' created successfully.";
                 return Redirect("/Account/Login");
             } catch {
                 return View();

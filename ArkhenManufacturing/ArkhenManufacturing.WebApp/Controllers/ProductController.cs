@@ -97,7 +97,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
             }
 
             // Send the user to a page that directs the user to checkout or the homepage
-            TempData["SuccessMessage"] = "Item added successfully";
+            TempData["Message"] = "Item added successfully";
             return await Task.Run(() => Redirect("/Home/Index"));
         }
 
@@ -107,9 +107,14 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
             var storeIds = inventoryEntries
                 .Select(ie => ie.GetData() as InventoryEntryData)
-                .Where(data => data.ProductId == id)
+                .Where(data => data.ProductId == id && data.Count > 0)
                 .Select(data => data.LocationId)
                 .ToList();
+
+            if(!storeIds.Any()) {
+                TempData["Message"] = "We apologize for the inconvenience, although no store locations carry this product.";
+                return RedirectToAction("Details", new { id = viewModel.ProductId });
+            }
 
             var locations = await _archivist.RetrieveSomeAsync<Location>(storeIds);
 
