@@ -1,0 +1,73 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  branches:
+    include: 
+    - 'master'
+  paths:
+    include:
+    - 'azure-pipelines.yml'
+    - 'KhaultSite'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  sdkVersion: '5.x'
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'dotnet sdk 2.x'
+  inputs:
+    packageType: 'sdk'
+    version: 2.x
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloud - Khyproxios'
+    organization: 'khyvault'
+    scannerMode: 'MSBuild'
+    projectKey: 'khyvault_KhaultSite'
+    projectName: 'KhaultSite'
+    extraProperties: 'sonar.exclusions=**/lib/**'
+
+- task: UseDotNet@2
+  displayName: 'dotnet sdk $(sdkVersion)'
+  inputs:
+    packageType: 'sdk'
+    version: '$(sdkVersion)'
+
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build'
+  workingDirectory: 'KhaultSite'
+
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: 'test'
+    publishTestResults: true
+    arguments: '--configuration $(buildConfiguration)'
+    workingDirectory: 'KhaultSite'
+
+- script: dotnet publish --configuration $(buildConfiguration) --output .publish
+  displayName: 'dotnet publish'
+  workingDirectory: 'KhaultSite'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Azure App Service Display'
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
+    appType: 'webApp'
+    WebAppName: 'khault'
+    packageForLinux: 'KhaultSite/.publish'
