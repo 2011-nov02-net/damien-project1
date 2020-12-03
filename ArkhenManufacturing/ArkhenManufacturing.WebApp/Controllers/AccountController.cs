@@ -35,7 +35,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel viewModel) {
-            if(!ModelState.IsValid) {
+            if (!ModelState.IsValid) {
                 return View(viewModel);
             }
 
@@ -45,7 +45,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                         .Select(c => c.GetData() as CustomerData)
                         .Where(cd => cd.Username == viewModel.Username));
 
-                if(customers.Any()) {
+                if (customers.Any()) {
                     ModelState.AddModelError("Username", "Username is already taken; try again.");
                     throw new ArgumentException($"User with username '{viewModel.Username}' already exists.");
                 }
@@ -110,6 +110,66 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // TODO: Get the currently logged in user and show their details
         public IActionResult Details() {
             return View();
+        }
+
+        // GET: Account/Cart/
+        public IActionResult Cart() {
+            if(TempData["CurrentUser"] is null) {
+                return RedirectToAction("Login", "Account");
+            }
+
+            List<ProductRequestViewModel> items = JsonSerializer.Deserialize<List<ProductRequestViewModel>>(TempData["Cart"]?.ToString());
+
+            if (items is not List<ProductRequestViewModel> productsInCart) {
+                productsInCart = new List<ProductRequestViewModel>();
+            }
+
+            return View(productsInCart);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveFromCart(ProductRequestViewModel viewModel) {
+            // get the targeted item
+            var cart = TempData["Cart"] as List<ProductRequestViewModel>;
+            // remove
+            cart.Remove(viewModel);
+            // return it to the view
+            TempData["Cart"] = JsonSerializer.Serialize(cart);
+            TempData.Keep("Cart");
+            return Redirect("/Account/Cart");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PlaceOrder(IEnumerable<ProductRequestViewModel> viewModels) {
+            var productIds = viewModels
+                .Select(vm => vm.ProductId)
+                .ToList();
+
+            // get an admin id for this location by the 
+            //      admin with the fewest number of orders
+
+            // get the customer id
+            Guid customerId = Guid.NewGuid();
+
+            // create the order lines
+
+            // Now to update the backend with the request
+            var data = new OrderData
+            {
+                AdminId = Guid.NewGuid(),
+                CustomerId = customerId,
+                LocationId = (Guid)TempData["SelectedLocation"],
+                OrderLineIds = new List<Guid>(),
+                PlacementDate = DateTime.Now
+            };
+
+            Guid orderId = await _archivist.CreateAsync<Order>(data);
+
+            TempData["SuccessMessage"] = "Order placed successfully";
+            TempData["Cart"] = JsonSerializer.Serialize(new List<ProductRequestViewModel>());
+            return RedirectToAction("Details", "Order", new { id = orderId });
         }
 
         public IActionResult Logout() {
