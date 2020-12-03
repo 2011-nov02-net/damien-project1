@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using ArkhenManufacturing.Domain;
@@ -75,6 +76,69 @@ namespace ArkhenManufacturing.WebApp.Controllers
             return View(id);
         }
 
+        // POST: Product/AddToCart/{id}
+        public async Task<IActionResult> AddToCart(ProductRequestViewModel viewModel) {
+            if(!ModelState.IsValid) {
+                return View(viewModel);
+            }
+
+            if (TempData["Cart"] is not List<ProductRequestViewModel> productsInCart) {
+                // No items are in cart, the user must select a location
+                productsInCart = new List<ProductRequestViewModel>();
+            }
+
+            productsInCart.Add(viewModel);
+            TempData["Cart"] = JsonSerializer.Serialize(productsInCart);
+            TempData.Keep("Cart");
+
+            if(TempData["SelectedLocation"] is null) {
+                // redirect the user to another page to select a location
+                return RedirectToAction("Retrieve", viewModel);
+            }
+
+            // Send the user to a page that directs the user to checkout or the homepage
+            TempData["SuccessMessage"] = "Item added successfully";
+            return await Task.Run(() => Redirect("/Home/Index"));
+        }
+
+        public async Task<IActionResult> Retrieve(ProductRequestViewModel viewModel) {
+            var id = viewModel.ProductId;
+            var inventoryEntries = await _archivist.RetrieveAllAsync<InventoryEntry>();
+
+            var storeIds = inventoryEntries
+                .Select(ie => ie.GetData() as InventoryEntryData)
+                .Where(data => data.ProductId == id)
+                .Select(data => data.LocationId)
+                .ToList();
+
+            var locations = await _archivist.RetrieveSomeAsync<Location>(storeIds);
+
+            // get the locations that offer the product
+            var locationNames = locations
+                .Select(l => new Tuple<string, Guid>(l.GetName(), l.Id))
+                .ToList();
+
+            var locationProductRequestViewModel = new LocationProductRequestViewModel
+            {
+                LocationNamesWithIds = locationNames,
+                ProductRequestViewModel = viewModel
+            };
+
+            return View(locationProductRequestViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Retrieve(LocationProductRequestViewModel viewModel) {
+            if(!ModelState.IsValid) {
+                return View(viewModel.ProductRequestViewModel);
+            }
+
+            TempData["SelectedLocation"] = viewModel.SelectedLocationId;
+
+            return RedirectToAction("AddToCart", viewModel.ProductRequestViewModel);
+        }
+
         // GET: Product/Create
         public ActionResult Create() {
             return View();
@@ -84,17 +148,18 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ProductViewModel viewModel) {
-            if (!ModelState.IsValid) {
-                return View(viewModel);
-            }
+            // TODO: Fill out create method for a product
+            throw new NotImplementedException();
 
-            try {
-
-
-                return RedirectToAction(nameof(Index));
-            } catch {
-                return View();
-            }
+            // if (!ModelState.IsValid) {
+            //     return View(viewModel);
+            // }
+            // 
+            // try {
+            //                     return RedirectToAction(nameof(Index));
+            // } catch {
+            //     return View();
+            // }
         }
 
         // GET: Product/Edit/5
