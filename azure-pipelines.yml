@@ -93,4 +93,4 @@ stages:
               azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
               appType: 'webApp'
               WebAppName: 'arkhen-manufacturing'
-              packageForLinux: 'ArkhenManufacturing/.publish'
+              packageForLinux: '$(System.ArtifactsDirectory)/app'
