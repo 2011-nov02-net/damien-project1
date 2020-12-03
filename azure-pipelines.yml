@@ -29,7 +29,7 @@ steps:
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'SonarCloud - Khyproxios'
-    organization: 'nov02-nov02-net'
+    organization: '2011-nov02-net'
     scannerMode: 'MSBuild'
     projectKey: '2011-nov02-net_damien-project1'
     projectName: 'ArkhenManufacturing'
