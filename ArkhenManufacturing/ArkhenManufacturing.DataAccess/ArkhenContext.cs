@@ -46,23 +46,14 @@ namespace ArkhenManufacturing.DataAccess
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
 
-                entity.Property(e => e.UserName)
-                    .IsRequired();
-
                 entity.Property(e => e.LastName)
                     .IsRequired();
 
                 entity.Property(e => e.FirstName)
                     .IsRequired();
 
-                entity.Property(e => e.Password)
-                    .IsRequired();
-
                 entity.Property(e => e.Email)
                     .IsRequired();
-
-                entity.HasIndex(e => e.UserName)
-                    .IsUnique();
 
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
@@ -78,16 +69,10 @@ namespace ArkhenManufacturing.DataAccess
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
 
-                entity.Property(e => e.UserName)
-                    .IsRequired();
-
                 entity.Property(e => e.LastName)
                     .IsRequired();
 
                 entity.Property(e => e.FirstName)
-                    .IsRequired();
-
-                entity.Property(e => e.Password)
                     .IsRequired();
 
                 entity.Property(e => e.Email)
@@ -98,9 +83,6 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.Property(e => e.SignUpDate)
                     .IsRequired();
-
-                entity.HasIndex(e => e.UserName)
-                    .IsUnique();
 
                 entity.HasIndex(e => e.Email)
                     .IsUnique();

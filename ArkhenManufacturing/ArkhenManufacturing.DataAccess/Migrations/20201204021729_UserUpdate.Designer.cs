@@ -4,14 +4,16 @@ using ArkhenManufacturing.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ArkhenManufacturing.DataAccess.Migrations
 {
     [DbContext(typeof(ArkhenContext))]
-    partial class ArkhenContextModelSnapshot : ModelSnapshot
+    [Migration("20201204021729_UserUpdate")]
+    partial class UserUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
