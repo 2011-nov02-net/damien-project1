@@ -25,11 +25,9 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="locationIds">Locations in which this Admin can access and can monitor</param>
         /// <param name="firstName">First Name of the User</param>
         /// <param name="lastName">Last Name of the User</param>
-        /// <param name="username">UserName of the User</param>
-        /// <param name="password">User's password</param>
         /// <param name="email">Email address of the user</param>
-        public AdminData(string firstName, string lastName, string username, string password, string email, Guid locationId) :
-            base(firstName, lastName, username, password, email) {
+        public AdminData(string firstName, string lastName, string email, Guid locationId) :
+            base(firstName, lastName, email) {
             LocationId = locationId;
         }
 
@@ -38,7 +36,7 @@ namespace ArkhenManufacturing.Library.Data
         /// </summary>
         /// <param name="other">The value being assigned to this</param>
         public AdminData(AdminData other) :
-            this(other.FirstName, other.LastName, other.Username, other.Password, other.Email, other.LocationId) {
+            this(other.FirstName, other.LastName, other.Email, other.LocationId) {
         }
     }
 }
