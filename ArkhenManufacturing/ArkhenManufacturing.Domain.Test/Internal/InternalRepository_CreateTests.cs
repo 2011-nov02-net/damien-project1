@@ -276,9 +276,9 @@ namespace ArkhenManufacturing.Domain.Test.Internal
 
         [Theory]
         [MemberData(nameof(ValidCustomerTestData))]
-        public void Create_Valid_CustomerData(string firstName, string lastName, string userName, string password, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? locationId) {
+        public void Create_Valid_CustomerData(string firstName, string lastName, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? locationId) {
             // Arrange
-            var data = new CustomerData(firstName, lastName, userName, password, email, phoneNumber, addressId, signUpDate, birthDate, locationId);
+            var data = new CustomerData(firstName, lastName, email, phoneNumber, addressId, signUpDate, birthDate, locationId);
 
             // Act
             _repository.Create<Customer>(data);
@@ -289,9 +289,9 @@ namespace ArkhenManufacturing.Domain.Test.Internal
         
         [Theory]
         [MemberData(nameof(InvalidCustomerTestData))]
-        public void Create_Invalid_CustomerData(string firstName, string lastName, string userName, string password, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? locationId) {
+        public void Create_Invalid_CustomerData(string firstName, string lastName, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? locationId) {
             // Arrange
-            var data = new CustomerData(firstName, lastName, userName, password, email, phoneNumber, addressId, signUpDate, birthDate, locationId);
+            var data = new CustomerData(firstName, lastName, email, phoneNumber, addressId, signUpDate, birthDate, locationId);
 
             // Act and Assert
             Assert.Throws<ArgumentException>(() => _repository.Create<Customer>(data));

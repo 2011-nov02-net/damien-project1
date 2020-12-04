@@ -52,7 +52,7 @@ namespace ArkhenManufacturing.Domain.Internal
             Guid arkhenplatzId = Create<Location>(new LocationData("Arkhenplatz", addressId, new List<Guid>(), new List<Guid>(), new List<Guid>()));
 
             // Admin id
-            Guid veroAdminId = Create<Admin>(new AdminData("Vero", "Richter", "VRichter", password, "vero.richter@arkhen.net", arkhenplatzId));
+            Guid veroAdminId = Create<Admin>(new AdminData("Vero", "Richter", "vero.richter@arkhen.net", arkhenplatzId));
 
             // Add the admin id to the location
             var location = Retrieve<Location>(arkhenplatzId);
@@ -64,7 +64,7 @@ namespace ArkhenManufacturing.Domain.Internal
             Create<InventoryEntry>(new InventoryEntryData(usbDrive8GBId, arkhenplatzId, 12.00M, 0.00M, 5, 1));
 
             // Customer ids
-            Create<Customer>(new CustomerData("Damien", "Bevins", "Khyproxios", password, "damien.bevins@outlook.com", "(385) 271-8623", damienAddressId, DateTime.Now, new DateTime(1997, 7, 23), arkhenplatzId));
+            Create<Customer>(new CustomerData("Damien", "Bevins", "damien.bevins@outlook.com", "(385) 271-8623", damienAddressId, DateTime.Now, new DateTime(1997, 7, 23), arkhenplatzId));
         }
 
         /// <summary>

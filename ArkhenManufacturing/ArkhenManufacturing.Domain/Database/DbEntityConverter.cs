@@ -38,8 +38,6 @@ namespace ArkhenManufacturing.Domain.Database
                 Id = item.Id,
                 FirstName = data.FirstName,
                 LastName = data.LastName,
-                UserName = data.Username,
-                Password = data.Password,
                 Email = data.Email
             };
         }
@@ -145,8 +143,8 @@ namespace ArkhenManufacturing.Domain.Database
             item.NullCheck(nameof(item));
 
             var data = new AdminData(
-                item.FirstName, item.LastName, item.UserName, 
-                item.Password, item.Email, item.LocationId);
+                item.FirstName, item.LastName, 
+                item.Email, item.LocationId);
 
             return new Admin(item.Id, data);
         }
@@ -155,8 +153,8 @@ namespace ArkhenManufacturing.Domain.Database
             item.NullCheck(nameof(item));
 
             var data = new CustomerData(
-                item.FirstName, item.LastName, item.UserName, 
-                item.Password, item.Email, item.PhoneNumber, item.AddressId, 
+                item.FirstName, item.LastName, item.Email, 
+                item.PhoneNumber, item.AddressId, 
                 item.BirthDate, item.SignUpDate, item.DefaultLocationId);
 
             return new Customer(item.Id, data);
