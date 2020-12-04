@@ -11,77 +11,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 {
-    public class AdminDbSetInterfacer : IDbSetInterfacer<Admin>
+    public class OrderLineDbSetInterfacer : IDbSetInterfacer<OrderLine>
     {
         private readonly Func<ArkhenContext> _createContext;
 
-        public AdminDbSetInterfacer(Func<ArkhenContext> createContext) {
+        public OrderLineDbSetInterfacer(Func<ArkhenContext> createContext) {
             _createContext = createContext;
         }
 
         public async Task<bool> AnyAsync() {
             using var context = _createContext();
-            return await context.Admins.AnyAsync();
+            return await context.OrderLines.AnyAsync();
         }
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Admins.FindAsync(id) is not null;
+            return await context.OrderLines.FindAsync(id) is not null;
         }
 
         public async Task<int> CountAsync() {
             using var context = _createContext();
-            return await context.Admins.CountAsync();
+            return await context.OrderLines.CountAsync();
         }
 
         public async Task<Guid> CreateAsync(IData data) {
-            var dbAdmin = DbEntityConverter.ToDbAdmin(Guid.NewGuid(), data as AdminData);
+            var dbOrderLine = DbEntityConverter.ToDbOrderLine(Guid.NewGuid(), data as OrderLineData);
 
             using (var context = _createContext()) {
-                await context.Admins.AddAsync(dbAdmin);
+                await context.OrderLines.AddAsync(dbOrderLine);
                 await context.SaveChangesAsync();
             }
 
-            return dbAdmin.Id;
+            return dbOrderLine.Id;
         }
 
-        public async Task<Admin> RetrieveAsync(Guid id) {
+        public async Task<OrderLine> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbAdmin = await context.Admins.FindAsync(id);
-            return DbEntityConverter.ToAdmin(dbAdmin);
+            var dbOrderLine = await context.OrderLines.FindAsync(id);
+            return DbEntityConverter.ToOrderLine(dbOrderLine);
         }
 
-        public async Task<ICollection<Admin>> RetrieveSomeAsync(ICollection<Guid> ids) {
+        public async Task<ICollection<OrderLine>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
-            return await context.Admins
-                .Where(a => ids.Contains(a.Id))
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.OrderLines
+                .Where(ie => ids.Contains(ie.Id))
+                .Select(ie => DbEntityConverter.ToOrderLine(ie))
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Admin>> RetrieveAllAsync() {
+        public async Task<ICollection<OrderLine>> RetrieveAllAsync() {
             using var context = _createContext();
-            return await context.Admins
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.OrderLines
+                .Select(ie => DbEntityConverter.ToOrderLine(ie))
                 .ToListAsync();
         }
 
         public async Task UpdateAsync(Guid id, IData data) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var orderLines = context.OrderLines;
 
-            if(admins.Find(id) is not null) {
-                admins.Update(DbEntityConverter.ToDbAdmin(id, data as AdminData));
+            if (orderLines.Find(id) is not null) {
+                orderLines.Update(DbEntityConverter.ToDbOrderLine(id, data as OrderLineData));
                 await context.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(Guid id) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var orderLines = context.OrderLines;
 
-            if(admins.Find(id) is DbAdmin dbAdmin) {
-                admins.Remove(dbAdmin);
+            if (orderLines.Find(id) is DbOrderLine dbOrderLine) {
+                orderLines.Remove(dbOrderLine);
                 await context.SaveChangesAsync();
             }
         }

@@ -11,77 +11,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 {
-    public class AdminDbSetInterfacer : IDbSetInterfacer<Admin>
+    public class ProductDbSetInterfacer : IDbSetInterfacer<Product>
     {
         private readonly Func<ArkhenContext> _createContext;
 
-        public AdminDbSetInterfacer(Func<ArkhenContext> createContext) {
+        public ProductDbSetInterfacer(Func<ArkhenContext> createContext) {
             _createContext = createContext;
         }
 
         public async Task<bool> AnyAsync() {
             using var context = _createContext();
-            return await context.Admins.AnyAsync();
+            return await context.Products.AnyAsync();
         }
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Admins.FindAsync(id) is not null;
+            return await context.Products.FindAsync(id) is not null;
         }
 
         public async Task<int> CountAsync() {
             using var context = _createContext();
-            return await context.Admins.CountAsync();
+            return await context.Products.CountAsync();
         }
 
         public async Task<Guid> CreateAsync(IData data) {
-            var dbAdmin = DbEntityConverter.ToDbAdmin(Guid.NewGuid(), data as AdminData);
+            var dbProduct = DbEntityConverter.ToDbProduct(Guid.NewGuid(), data as ProductData);
 
             using (var context = _createContext()) {
-                await context.Admins.AddAsync(dbAdmin);
+                await context.Products.AddAsync(dbProduct);
                 await context.SaveChangesAsync();
             }
 
-            return dbAdmin.Id;
+            return dbProduct.Id;
         }
 
-        public async Task<Admin> RetrieveAsync(Guid id) {
+        public async Task<Product> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbAdmin = await context.Admins.FindAsync(id);
-            return DbEntityConverter.ToAdmin(dbAdmin);
+            var dbProduct = await context.Products.FindAsync(id);
+            return DbEntityConverter.ToProduct(dbProduct);
         }
 
-        public async Task<ICollection<Admin>> RetrieveSomeAsync(ICollection<Guid> ids) {
+        public async Task<ICollection<Product>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
-            return await context.Admins
-                .Where(a => ids.Contains(a.Id))
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Products
+                .Where(ie => ids.Contains(ie.Id))
+                .Select(ie => DbEntityConverter.ToProduct(ie))
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Admin>> RetrieveAllAsync() {
+        public async Task<ICollection<Product>> RetrieveAllAsync() {
             using var context = _createContext();
-            return await context.Admins
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Products
+                .Select(ie => DbEntityConverter.ToProduct(ie))
                 .ToListAsync();
         }
 
         public async Task UpdateAsync(Guid id, IData data) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var products = context.Products;
 
-            if(admins.Find(id) is not null) {
-                admins.Update(DbEntityConverter.ToDbAdmin(id, data as AdminData));
+            if (products.Find(id) is not null) {
+                products.Update(DbEntityConverter.ToDbProduct(id, data as ProductData));
                 await context.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(Guid id) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var products = context.Products;
 
-            if(admins.Find(id) is DbAdmin dbAdmin) {
-                admins.Remove(dbAdmin);
+            if (products.Find(id) is DbProduct dbProduct) {
+                products.Remove(dbProduct);
                 await context.SaveChangesAsync();
             }
         }

@@ -11,77 +11,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 {
-    public class AdminDbSetInterfacer : IDbSetInterfacer<Admin>
+    public class OrderDbSetInterfacer : IDbSetInterfacer<Order>
     {
         private readonly Func<ArkhenContext> _createContext;
 
-        public AdminDbSetInterfacer(Func<ArkhenContext> createContext) {
+        public OrderDbSetInterfacer(Func<ArkhenContext> createContext) {
             _createContext = createContext;
         }
 
         public async Task<bool> AnyAsync() {
             using var context = _createContext();
-            return await context.Admins.AnyAsync();
+            return await context.Orders.AnyAsync();
         }
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Admins.FindAsync(id) is not null;
+            return await context.Orders.FindAsync(id) is not null;
         }
 
         public async Task<int> CountAsync() {
             using var context = _createContext();
-            return await context.Admins.CountAsync();
+            return await context.Orders.CountAsync();
         }
 
         public async Task<Guid> CreateAsync(IData data) {
-            var dbAdmin = DbEntityConverter.ToDbAdmin(Guid.NewGuid(), data as AdminData);
+            var dbOrder = DbEntityConverter.ToDbOrder(Guid.NewGuid(), data as OrderData);
 
             using (var context = _createContext()) {
-                await context.Admins.AddAsync(dbAdmin);
+                await context.Orders.AddAsync(dbOrder);
                 await context.SaveChangesAsync();
             }
 
-            return dbAdmin.Id;
+            return dbOrder.Id;
         }
 
-        public async Task<Admin> RetrieveAsync(Guid id) {
+        public async Task<Order> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbAdmin = await context.Admins.FindAsync(id);
-            return DbEntityConverter.ToAdmin(dbAdmin);
+            var dbOrder = await context.Orders.FindAsync(id);
+            return DbEntityConverter.ToOrder(dbOrder);
         }
 
-        public async Task<ICollection<Admin>> RetrieveSomeAsync(ICollection<Guid> ids) {
+        public async Task<ICollection<Order>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
-            return await context.Admins
-                .Where(a => ids.Contains(a.Id))
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Orders
+                .Where(ie => ids.Contains(ie.Id))
+                .Select(ie => DbEntityConverter.ToOrder(ie))
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Admin>> RetrieveAllAsync() {
+        public async Task<ICollection<Order>> RetrieveAllAsync() {
             using var context = _createContext();
-            return await context.Admins
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Orders
+                .Select(ie => DbEntityConverter.ToOrder(ie))
                 .ToListAsync();
         }
 
         public async Task UpdateAsync(Guid id, IData data) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var orders = context.Orders;
 
-            if(admins.Find(id) is not null) {
-                admins.Update(DbEntityConverter.ToDbAdmin(id, data as AdminData));
+            if (orders.Find(id) is not null) {
+                orders.Update(DbEntityConverter.ToDbOrder(id, data as OrderData));
                 await context.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(Guid id) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var orders = context.Orders;
 
-            if(admins.Find(id) is DbAdmin dbAdmin) {
-                admins.Remove(dbAdmin);
+            if (orders.Find(id) is DbOrder dbOrder) {
+                orders.Remove(dbOrder);
                 await context.SaveChangesAsync();
             }
         }

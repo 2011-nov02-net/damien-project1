@@ -11,77 +11,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 {
-    public class AdminDbSetInterfacer : IDbSetInterfacer<Admin>
+    public class CustomerDbSetInterfacer : IDbSetInterfacer<Customer>
     {
         private readonly Func<ArkhenContext> _createContext;
 
-        public AdminDbSetInterfacer(Func<ArkhenContext> createContext) {
+        public CustomerDbSetInterfacer(Func<ArkhenContext> createContext) {
             _createContext = createContext;
         }
 
         public async Task<bool> AnyAsync() {
             using var context = _createContext();
-            return await context.Admins.AnyAsync();
+            return await context.Customers.AnyAsync();
         }
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Admins.FindAsync(id) is not null;
+            return await context.Customers.FindAsync(id) is not null;
         }
 
         public async Task<int> CountAsync() {
             using var context = _createContext();
-            return await context.Admins.CountAsync();
+            return await context.Customers.CountAsync();
         }
 
         public async Task<Guid> CreateAsync(IData data) {
-            var dbAdmin = DbEntityConverter.ToDbAdmin(Guid.NewGuid(), data as AdminData);
+            var dbCustomer = DbEntityConverter.ToDbCustomer(Guid.NewGuid(), data as CustomerData);
 
             using (var context = _createContext()) {
-                await context.Admins.AddAsync(dbAdmin);
+                await context.Customers.AddAsync(dbCustomer);
                 await context.SaveChangesAsync();
             }
 
-            return dbAdmin.Id;
+            return dbCustomer.Id;
         }
 
-        public async Task<Admin> RetrieveAsync(Guid id) {
+        public async Task<Customer> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbAdmin = await context.Admins.FindAsync(id);
-            return DbEntityConverter.ToAdmin(dbAdmin);
+            var dbCustomer = await context.Customers.FindAsync(id);
+            return DbEntityConverter.ToCustomer(dbCustomer);
         }
 
-        public async Task<ICollection<Admin>> RetrieveSomeAsync(ICollection<Guid> ids) {
+        public async Task<ICollection<Customer>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
-            return await context.Admins
-                .Where(a => ids.Contains(a.Id))
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Customers
+                .Where(c => ids.Contains(c.Id))
+                .Select(c => DbEntityConverter.ToCustomer(c))
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Admin>> RetrieveAllAsync() {
+        public async Task<ICollection<Customer>> RetrieveAllAsync() {
             using var context = _createContext();
-            return await context.Admins
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Customers
+                .Select(c => DbEntityConverter.ToCustomer(c))
                 .ToListAsync();
         }
 
         public async Task UpdateAsync(Guid id, IData data) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var customers = context.Customers;
 
-            if(admins.Find(id) is not null) {
-                admins.Update(DbEntityConverter.ToDbAdmin(id, data as AdminData));
+            if (customers.Find(id) is not null) {
+                customers.Update(DbEntityConverter.ToDbCustomer(id, data as CustomerData));
                 await context.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(Guid id) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var customers = context.Customers;
 
-            if(admins.Find(id) is DbAdmin dbAdmin) {
-                admins.Remove(dbAdmin);
+            if (customers.Find(id) is DbCustomer customer) {
+                customers.Remove(customer);
                 await context.SaveChangesAsync();
             }
         }

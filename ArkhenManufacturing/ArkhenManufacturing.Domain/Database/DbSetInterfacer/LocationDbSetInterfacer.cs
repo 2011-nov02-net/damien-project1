@@ -11,77 +11,77 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 {
-    public class AdminDbSetInterfacer : IDbSetInterfacer<Admin>
+    public class LocationDbSetInterfacer : IDbSetInterfacer<Location>
     {
         private readonly Func<ArkhenContext> _createContext;
 
-        public AdminDbSetInterfacer(Func<ArkhenContext> createContext) {
+        public LocationDbSetInterfacer(Func<ArkhenContext> createContext) {
             _createContext = createContext;
         }
 
         public async Task<bool> AnyAsync() {
             using var context = _createContext();
-            return await context.Admins.AnyAsync();
+            return await context.Locations.AnyAsync();
         }
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Admins.FindAsync(id) is not null;
+            return await context.Locations.FindAsync(id) is not null;
         }
 
         public async Task<int> CountAsync() {
             using var context = _createContext();
-            return await context.Admins.CountAsync();
+            return await context.Locations.CountAsync();
         }
 
         public async Task<Guid> CreateAsync(IData data) {
-            var dbAdmin = DbEntityConverter.ToDbAdmin(Guid.NewGuid(), data as AdminData);
+            var dbLocation = DbEntityConverter.ToDbLocation(Guid.NewGuid(), data as LocationData);
 
             using (var context = _createContext()) {
-                await context.Admins.AddAsync(dbAdmin);
+                await context.Locations.AddAsync(dbLocation);
                 await context.SaveChangesAsync();
             }
 
-            return dbAdmin.Id;
+            return dbLocation.Id;
         }
 
-        public async Task<Admin> RetrieveAsync(Guid id) {
+        public async Task<Location> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbAdmin = await context.Admins.FindAsync(id);
-            return DbEntityConverter.ToAdmin(dbAdmin);
+            var dbLocation = await context.Locations.FindAsync(id);
+            return DbEntityConverter.ToLocation(dbLocation);
         }
 
-        public async Task<ICollection<Admin>> RetrieveSomeAsync(ICollection<Guid> ids) {
+        public async Task<ICollection<Location>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
-            return await context.Admins
-                .Where(a => ids.Contains(a.Id))
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Locations
+                .Where(ie => ids.Contains(ie.Id))
+                .Select(ie => DbEntityConverter.ToLocation(ie))
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Admin>> RetrieveAllAsync() {
+        public async Task<ICollection<Location>> RetrieveAllAsync() {
             using var context = _createContext();
-            return await context.Admins
-                .Select(a => DbEntityConverter.ToAdmin(a))
+            return await context.Locations
+                .Select(ie => DbEntityConverter.ToLocation(ie))
                 .ToListAsync();
         }
 
         public async Task UpdateAsync(Guid id, IData data) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var locations = context.Locations;
 
-            if(admins.Find(id) is not null) {
-                admins.Update(DbEntityConverter.ToDbAdmin(id, data as AdminData));
+            if (locations.Find(id) is not null) {
+                locations.Update(DbEntityConverter.ToDbLocation(id, data as LocationData));
                 await context.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(Guid id) {
             using var context = _createContext();
-            var admins = context.Admins;
+            var locations = context.Locations;
 
-            if(admins.Find(id) is DbAdmin dbAdmin) {
-                admins.Remove(dbAdmin);
+            if (locations.Find(id) is DbLocation dbLocation) {
+                locations.Remove(dbLocation);
                 await context.SaveChangesAsync();
             }
         }
