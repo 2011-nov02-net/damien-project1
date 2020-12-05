@@ -1,10 +1,11 @@
 ﻿using System;
 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class ArkhenContext : DbContext
+    public class ArkhenContext : IdentityDbContext<ApplicationUser>
     {
         public ArkhenContext(DbContextOptions<ArkhenContext> options) :
             base(options) {
@@ -20,6 +21,7 @@ namespace ArkhenManufacturing.DataAccess
         public DbSet<DbProduct> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<DbAddress>(entity => {
                 entity.ToTable("Address");
@@ -60,7 +62,8 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.HasOne(e => e.Location)
                     .WithMany(l => l.Admins)
-                    .HasForeignKey(e => e.LocationId);
+                    .HasForeignKey(e => e.LocationId)
+                    .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
             modelBuilder.Entity<DbCustomer>(entity => {
