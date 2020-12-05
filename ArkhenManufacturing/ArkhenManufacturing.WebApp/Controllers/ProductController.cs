@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
+using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
+    [Authorize(Roles = Roles.Admin)]
     public class ProductController : Controller
     {
         private readonly Archivist _archivist;
@@ -26,18 +29,20 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Product
+        [HttpGet]
+        [AllowAnonymous]
         public ActionResult Index() {
             var products = _archivist.RetrieveAll<Product>();
 
             Dictionary<string, ProductViewModel> productViewModels = new Dictionary<string, ProductViewModel>();
             var inventoryEntries = _archivist.RetrieveAll<InventoryEntry>();
 
-            foreach(var ie in inventoryEntries) {
+            foreach (var ie in inventoryEntries) {
                 var ieData = ie.GetData() as InventoryEntryData;
                 var firstProduct = products.First(p => p.Id == ieData.ProductId);
                 string productName = firstProduct.GetName();
-                
-                if(!productViewModels.ContainsKey(productName)) {
+
+                if (!productViewModels.ContainsKey(productName)) {
                     productViewModels[productName] = new ProductViewModel(productName, ieData);
                 }
             }
@@ -46,6 +51,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Product/Details/5
+        [HttpGet]
+        [Authorize(Roles = Roles.AdminAndUser)]
         public ActionResult Details(Guid id) {
             var product = _archivist.Retrieve<Product>(id);
             Guid? defaultStoreId = TempData.Peek("DefaultStoreId") as Guid?;
@@ -77,8 +84,10 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // POST: Product/AddToCart/{id}
-        public async Task<IActionResult> AddToCart(ProductRequestViewModel viewModel) {
-            if(!ModelState.IsValid) {
+        [HttpPost]
+        [Authorize(Roles = Roles.AdminAndUser)]
+        public IActionResult AddToCart(ProductRequestViewModel viewModel) {
+            if (!ModelState.IsValid) {
                 return View(viewModel);
             }
 
@@ -91,16 +100,19 @@ namespace ArkhenManufacturing.WebApp.Controllers
             TempData["Cart"] = JsonSerializer.Serialize(productsInCart);
             TempData.Keep("Cart");
 
-            if(TempData["SelectedLocation"] is null) {
+            if (TempData["SelectedLocation"] is null) {
                 // redirect the user to another page to select a location
-                return RedirectToAction("Retrieve", viewModel);
+                return RedirectToAction(nameof(Retrieve), viewModel);
             }
 
             // Send the user to a page that directs the user to checkout or the homepage
             TempData["Message"] = "Item added successfully";
-            return await Task.Run(() => Redirect("/Home/Index"));
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
+        [HttpPost]
+        [Authorize(Roles = Roles.AdminAndUser)]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Retrieve(ProductRequestViewModel viewModel) {
             var id = viewModel.ProductId;
             var inventoryEntries = await _archivist.RetrieveAllAsync<InventoryEntry>();
@@ -111,9 +123,9 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 .Select(data => data.LocationId)
                 .ToList();
 
-            if(!storeIds.Any()) {
+            if (!storeIds.Any()) {
                 TempData["Message"] = "We apologize for the inconvenience, although no store locations carry this product.";
-                return RedirectToAction("Details", new { id = viewModel.ProductId });
+                return RedirectToAction(nameof(Details), new { id = viewModel.ProductId });
             }
 
             var locations = await _archivist.RetrieveSomeAsync<Location>(storeIds);
@@ -133,41 +145,46 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult Retrieve(LocationProductRequestViewModel viewModel) {
-            if(!ModelState.IsValid) {
+            if (!ModelState.IsValid) {
                 return View(viewModel.ProductRequestViewModel);
             }
 
             TempData["SelectedLocation"] = viewModel.SelectedLocationId;
 
-            return RedirectToAction("AddToCart", viewModel.ProductRequestViewModel);
+            return RedirectToAction(nameof(AddToCart), viewModel.ProductRequestViewModel);
         }
 
         // GET: Product/Create
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Create() {
             return View();
         }
 
         // POST: Product/Create
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ProductViewModel viewModel) {
-            // TODO: Fill out create method for a product
-            throw new NotImplementedException();
+        public async Task<ActionResult> Create(ProductViewModel viewModel) {
+            if (!ModelState.IsValid) {
+                return View(viewModel);
+            }
 
-            // if (!ModelState.IsValid) {
-            //     return View(viewModel);
-            // }
-            // 
-            // try {
-            //                     return RedirectToAction(nameof(Index));
-            // } catch {
-            //     return View();
-            // }
+            try {
+                var data = new ProductData(viewModel.ProductName);
+                _ = await _archivist.CreateAsync<Product>(data);
+                return RedirectToAction(nameof(Index));
+            } catch {
+                return View(viewModel);
+            }
         }
 
         // GET: Product/Edit/5
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Edit(Guid id) {
 
             return View();
@@ -175,6 +192,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
         // POST: Product/Edit/5
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Guid id, IFormCollection collection) {
             try {
@@ -185,6 +203,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Product/Delete/5
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Delete(Guid id) {
             return View();
         }
@@ -192,6 +212,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // POST: Product/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Delete(Guid id, IFormCollection collection) {
             try {
                 return RedirectToAction(nameof(Index));

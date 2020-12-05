@@ -4,14 +4,17 @@ using System.Threading.Tasks;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
+using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
+    [Authorize(Roles = Roles.Admin)]
     public class AdminController : Controller
     {
         private readonly Archivist _archivist;
@@ -23,11 +26,15 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Admin
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Index() {
             return View();
         }
 
         // GET: Admin/Details/5
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Details(Guid id) {
             try {
                 var admin = await _archivist.RetrieveAsync<Admin>(id);
@@ -40,6 +47,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Admin/Create
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Create() {
             return View();
         }
@@ -47,6 +56,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // POST: Admin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Create(IFormCollection collection) {
             try {
                 return RedirectToAction(nameof(Index));
@@ -56,6 +66,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Admin/Edit/5
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Edit(Guid id) {
             return View();
         }
@@ -63,6 +75,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // POST: Admin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Edit(Guid id, IFormCollection collection) {
             try {
                 return RedirectToAction(nameof(Index));
@@ -72,11 +85,13 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Admin/Delete/5
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Delete(Guid id) {
             return View();
         }
 
         // POST: Admin/Delete/5
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(Guid id, IFormCollection collection) {

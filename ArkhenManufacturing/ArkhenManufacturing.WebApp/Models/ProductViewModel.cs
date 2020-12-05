@@ -13,6 +13,27 @@ namespace ArkhenManufacturing.WebApp.Models
         public decimal Price { get; set; }
         public decimal? Discount { get; set; }
 
+        public decimal DiscountedPrice {
+            get 
+            {
+                if(Discount.HasValue) {
+                    return (1.0M - Discount.Value) * Price;
+                } else {
+                    return Price;
+                }
+            }
+        }
+
+        public decimal DiscountPercentage {
+            get {
+                if(Discount.HasValue) {
+                    return Discount.Value * 100.0M;
+                } else {
+                    return 0.0M;
+                }
+            }
+        }
+
         public ProductViewModel() { }
 
         public ProductViewModel(string productName, InventoryEntryData data) {

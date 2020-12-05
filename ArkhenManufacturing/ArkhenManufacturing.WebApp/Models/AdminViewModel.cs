@@ -38,9 +38,7 @@ namespace ArkhenManufacturing.WebApp.Models
         public AdminViewModel(AdminData data) {
             FirstName = data.FirstName;
             LastName = data.LastName;
-            Username = data.Username;
-            Password = data.Password;
-            Email = data.Password;
+            Email = data.Email;
         }
 
         public static explicit operator AdminData(AdminViewModel viewModel) {
@@ -48,8 +46,6 @@ namespace ArkhenManufacturing.WebApp.Models
             {
                 FirstName = viewModel.FirstName,
                 LastName = viewModel.LastName,
-                Username = viewModel.Username,
-                Password = viewModel.Password,
                 Email = viewModel.Email
             };
         }

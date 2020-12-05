@@ -1,55 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
+using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.Library.Extensions;
+using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
+    [Authorize]
     public class CustomerController : Controller
     {
         private readonly Archivist _archivist;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(Archivist archivist, ILogger<CustomerController> logger) {
+        public CustomerController(Archivist archivist, UserManager<ApplicationUser> userManager, ILogger<CustomerController> logger) {
             _archivist = archivist;
+            _userManager = userManager;
             _logger = logger;
         }
 
         // GET: Customer
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Index() {
             return View();
         }
 
         // GET: Customer/Details/5
-        public ActionResult Details(Guid id) {
-            try {
-                // Get the requested data
-                var customer = _archivist.Retrieve<Customer>(id);
-                customer.NullCheck(nameof(customer));
-                var customerData = customer.GetData() as CustomerData;
-                var address = _archivist.Retrieve<Address>(customerData.AddressId);
+        [HttpGet]
+        [Authorize(Roles = Roles.AdminAndUser)]
+        public async Task<ActionResult> Details(ApplicationUser user) {
+            // Get the requested data
+            var customer = await _archivist.RetrieveAsync<Customer>(user.UserId);
+            customer.NullCheck(nameof(customer));
+            var customerData = customer.GetData() as CustomerData;
+            var address = await _archivist.RetrieveAsync<Address>(customerData.AddressId);
 
-                // Create the ViewModel and show the data
-                var viewModel = new CustomerViewModel(customer, address);
-                return View(viewModel);
-            } catch (Exception ex) {
-                _logger.LogError(ex.Message);
-                return View();
-            }
+            // Create the ViewModel and show the data
+            var viewModel = new CustomerViewModel(customer, address);
+            return View(viewModel);
         }
 
         // GET: Customer/{id}/Orders
+        [HttpGet]
+        [Authorize(Roles = Roles.AdminAndUser)]
         public async Task<IActionResult> Orders(Guid id) {
             var customer = await _archivist.RetrieveAsync<Customer>(id);
             var customerName = customer.GetName();
@@ -95,6 +101,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Customer/SearchByName/{name}
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> SearchByName(string id) {
             var customers = await _archivist.RetrieveByNameAsync<Customer>(id);
 
@@ -111,52 +119,54 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Customer/Create
-        public ActionResult Create() {
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult Create(Guid userId) {
+            ViewData["UserId"] = userId;
             return View();
         }
 
         // POST: Customer/Create
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CustomerViewModel viewModel) {
+        public async Task<ActionResult> Create(CustomerViewModel viewModel) {
             if (!ModelState.IsValid) {
                 return View(viewModel);
             }
 
-            string json = TempData["RegistrationData"].ToString();
-            var userData = JsonSerializer.Deserialize<RegisterViewModel>(json);
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
 
-            try {
-                var data = (CustomerData)viewModel;
-                data.Username = userData.Username;
-                data.Password = userData.Password;
+            var customerData = (CustomerData)viewModel;
+            var addressData = (AddressData)viewModel;
 
-                _archivist.Create<Customer>(data);
-                TempData["Message"] = $"'{data.LastName}, {data.FirstName}' created successfully.";
-                return Redirect("/Account/Login");
-            } catch {
-                return View();
-            }
+            Guid customerId = _archivist.Create<Customer>(customerData);
+            _ = _archivist.Create<Address>(addressData);
+
+            // Update the user's id to match the customer's id
+            currentUser.UserId = customerId;
+            currentUser.Email = viewModel.Email;
+
+            TempData["Message"] = $"'{customerData.LastName}, {customerData.FirstName}' created successfully.";
+
+            return RedirectToAction(nameof(AccountController.Login), "Account");
         }
 
         // GET: Customer/Edit/5
+        [HttpGet]
+        [Authorize(Roles = Roles.AdminAndUser)]
         public ActionResult Edit(Guid id) {
-            try {
-                var customer = _archivist.Retrieve<Customer>(id);
-                var customerData = customer.GetData() as CustomerData;
-                var address = _archivist.Retrieve<Address>(customerData.AddressId);
-                var viewModel = new CustomerViewModel(customer, address);
-                return View(viewModel);
-            } catch {
-
-            }
-
-            return View();
+            var customer = _archivist.Retrieve<Customer>(id);
+            var customerData = customer.GetData() as CustomerData;
+            var address = _archivist.Retrieve<Address>(customerData.AddressId);
+            var viewModel = new CustomerViewModel(customer, address);
+            return View(viewModel);
         }
 
         // POST: Customer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.AdminAndUser)]
         public ActionResult Edit(Guid id, CustomerViewModel viewModel) {
             try {
                 if (!ModelState.IsValid) {
@@ -171,6 +181,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Customer/Delete/5
+        [HttpGet]
+        [Authorize(Roles = Roles.AdminAndUser)]
         public ActionResult Delete(Guid id) {
             try {
                 _archivist.Delete<Customer>(id);
@@ -183,9 +195,9 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // POST: Customer/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.AdminAndUser)]
         public ActionResult Delete(Guid id, IFormCollection collection) {
             try {
-
                 return RedirectToAction(nameof(Index));
             } catch {
                 return View();

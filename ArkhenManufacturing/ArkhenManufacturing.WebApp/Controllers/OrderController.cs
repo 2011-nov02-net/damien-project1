@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
+using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly Archivist _archivist;
@@ -21,6 +24,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Order/Details/{id}
+        [Authorize(Roles = Roles.AdminAndUser)]
         public async Task<ActionResult> Details(Guid id) {
             var order = await _archivist.RetrieveAsync<Order>(id);
             var data = order.GetData() as OrderData;

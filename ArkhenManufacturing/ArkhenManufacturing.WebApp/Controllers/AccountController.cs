@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -12,27 +11,45 @@ using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.WebApp.Models;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using ArkhenManufacturing.WebApp.Misc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
+using ArkhenManufacturing.DataAccess;
+using Microsoft.AspNetCore.Authorization;
+using ArkhenManufacturing.Library.Extensions;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly Archivist _archivist;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<AccountController> _logger;
-        private readonly IEncrypter _encrypter;
 
-        public AccountController(Archivist archivist, ILogger<AccountController> logger, IEncrypter encrypter) {
+        public AccountController(Archivist archivist, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger) {
             _archivist = archivist;
+            _userManager = userManager;
+            _signInManager = signInManager;
             _logger = logger;
-            _encrypter = encrypter;
         }
 
+        private IActionResult GetRedirect(string returnUrl) {
+            if(Url.IsLocalUrl(returnUrl)) {
+                return Redirect(returnUrl);
+            } else {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register() {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel viewModel) {
             if (!ModelState.IsValid) {
@@ -40,67 +57,57 @@ namespace ArkhenManufacturing.WebApp.Controllers
             }
 
             try {
-                var customers = await Task.Run(() => _archivist.RetrieveAllAsync<Customer>()
-                    .Result
-                        .Select(c => c.GetData() as CustomerData)
-                        .Where(cd => cd.Username == viewModel.Username));
+                var user = new ApplicationUser
+                {
+                    UserName = viewModel.Username
+                };
 
-                if (customers.Any()) {
-                    ModelState.AddModelError("Username", "Username is already taken; try again.");
-                    throw new ArgumentException($"User with username '{viewModel.Username}' already exists.");
+                var createResult = await _userManager.CreateAsync(user, viewModel.Password);
+                var addToRoleResult = await _userManager.AddToRoleAsync(user, "User");
+
+                if (!createResult.Succeeded) {
+                    return View(viewModel);
+                } else if (!addToRoleResult.Succeeded) {
+                    ModelState.AddModelError(string.Empty, "An error occurred; please try again");
+                    return View(viewModel);
                 }
 
-                // Encrypt the password, since a user is being created
-                viewModel.Password = _encrypter.Encrypt(viewModel.Password);
-
-                // customer doesn't exist, so this can be done. Redirect them to the customer creation though
-                TempData["RegistrationData"] = JsonSerializer.Serialize(viewModel);
-                TempData["SuccessMessage"] = $"User '{viewModel.Username}' created successfully.";
+                await _signInManager.SignInAsync(user, isPersistent: false);
 
                 // Redirect to the customer creation view
-                return Redirect("/Customer/Create");
-            } catch {
+                return RedirectToAction(nameof(CustomerController.Create), "Customer");
+            } catch(Exception ex) {
+                _logger.LogError(ex.Message);
                 return View(viewModel);
             }
         }
 
-        public IActionResult Login() {
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login() {
+            // Log out any users that are currently logged in
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel viewModel) {
+        public async Task<IActionResult> Login(LoginViewModel viewModel, string returnUrl = null) {
             if (!ModelState.IsValid) {
                 return View(viewModel);
             }
 
             try {
                 // Try to log in the user here by checking that the data matches
-                var customerData = await Task.Run(() => _archivist
-                    .RetrieveAll<Customer>()
-                    .Select(c => c.GetData() as CustomerData)
-                    .FirstOrDefault(c => c.Username == viewModel.Username));
+                var result = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, viewModel.RememberMe, lockoutOnFailure: false);
 
-                if (customerData is null) {
-                    TempData["SuccessMessage"] = null;
-                    ModelState.AddModelError("", "User does not exist");
-                    return View(viewModel);
+                if (result.Succeeded) {
+                    return GetRedirect(returnUrl);
                 } else {
-                    string encryptedPassword = _encrypter.Encrypt(viewModel.Password);
-
-                    if (customerData.Password != encryptedPassword) {
-                        // login was not successful
-                        ModelState.AddModelError("", "Username/Password mismatch");
-                        throw new ApplicationException("Username/Password mismatch");
-                    }
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt; please try again");
+                    return View(viewModel);
                 }
-
-                // "Login" the user; credentials are correct
-                TempData["CurrentUser"] = viewModel.Username;
-                TempData.Keep("CurrentUser");
-
-                return Redirect("/Home");
             } catch (Exception ex) {
                 _logger.LogError(ex.Message);
                 return View(viewModel);
@@ -108,17 +115,47 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // TODO: Get the currently logged in user and show their details
-        public IActionResult Details() {
-            return View();
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Details() {
+            if(!_signInManager.IsSignedIn(HttpContext.User)) {
+                return RedirectToAction(nameof(AccountController.Login), "Account");
+            }
+
+            // get the current user id
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            // check if the user is an admin or customer
+            var roles = await _userManager.GetRolesAsync(user);
+
+            string controllerName;
+
+            if(roles.Contains("Admin")) {
+                // is an admin
+                controllerName = "Admin";
+            } else {
+                // is a customer
+                controllerName = "Customer";
+            }
+
+            return RedirectToAction(nameof(CustomerController.Details), controllerName, new { id = user.UserId });
         }
 
         // GET: Account/Cart/
+        [AllowAnonymous]
         public IActionResult Cart() {
-            if(TempData["CurrentUser"] is null) {
-                return RedirectToAction("Login", "Account");
+            if (!_signInManager.IsSignedIn(HttpContext.User)) {
+                return RedirectToAction(nameof(AccountController.Login), "Account");
             }
 
-            List<ProductRequestViewModel> items = JsonSerializer.Deserialize<List<ProductRequestViewModel>>(TempData["Cart"]?.ToString());
+            string cartString = TempData["Cart"]?.ToString();
+            List<ProductRequestViewModel> items = null;
+
+            if (cartString.IsNullOrEmpty()) {
+                items = new List<ProductRequestViewModel>();
+            } else {
+                items = JsonSerializer.Deserialize<List<ProductRequestViewModel>>(cartString);
+            }
 
             if (items is not List<ProductRequestViewModel> productsInCart) {
                 productsInCart = new List<ProductRequestViewModel>();
@@ -128,19 +165,24 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult RemoveFromCart(ProductRequestViewModel viewModel) {
             // get the targeted item
             var cart = TempData["Cart"] as List<ProductRequestViewModel>;
+
             // remove
             cart.Remove(viewModel);
+
             // return it to the view
             TempData["Cart"] = JsonSerializer.Serialize(cart);
             TempData.Keep("Cart");
-            return Redirect("/Account/Cart");
+
+            return RedirectToAction(nameof(Cart));
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PlaceOrder(IEnumerable<ProductRequestViewModel> viewModels) {
             var productIds = viewModels
@@ -153,9 +195,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
             // get the customer id
             Guid customerId = Guid.NewGuid();
 
-            // create the order lines
-
-            // Now to update the backend with the request
+            // Create the initial order data, and get its id
             var data = new OrderData
             {
                 AdminId = Guid.NewGuid(),
@@ -167,14 +207,26 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
             Guid orderId = await _archivist.CreateAsync<Order>(data);
 
-            TempData["SuccessMessage"] = "Order placed successfully";
+            // create the order lines
+            foreach(var productRequest in viewModels) {
+                var orderLineData = new OrderLineData(orderId, productRequest.ProductId, productRequest.Count, productRequest.PricePerUnit, productRequest.Discount);
+                Guid orderLineId = await _archivist.CreateAsync<OrderLine>(orderLineData);
+                data.OrderLineIds.Add(orderLineId);
+            }
+
+            // Now to update the backend with the request
+            await _archivist.UpdateAsync<Order>(orderId, data);
+
+            TempData["Message"] = "Order placed successfully";
             TempData["Cart"] = JsonSerializer.Serialize(new List<ProductRequestViewModel>());
-            return RedirectToAction("Details", "Order", new { id = orderId });
+            return RedirectToAction(nameof(OrderController.Details), "Order", new { id = orderId });
         }
 
-        public IActionResult Logout() {
-            TempData["CurrentUser"] = null;
-            return Redirect("/Home");
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Logout() {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
     }
 }
