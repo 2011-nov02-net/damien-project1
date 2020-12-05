@@ -29,13 +29,13 @@ namespace ArkhenManufacturing.Domain.Database
             _interfacers = new Dictionary<Type, IInterfacer>
             {
                 { typeof(Address), new AddressDbSetInterfacer(createContext) },
-                { typeof(Admin), null },
-                { typeof(Customer), null },
-                { typeof(InventoryEntry), null },
-                { typeof(Location), null },
-                { typeof(Order), null },
-                { typeof(OrderLine), null },
-                { typeof(Product), null },
+                { typeof(Admin), new AdminDbSetInterfacer(createContext) },
+                { typeof(Customer), new CustomerDbSetInterfacer(createContext)},
+                { typeof(InventoryEntry), new InventoryEntryDbSetInterfacer(createContext)},
+                { typeof(Location), new LocationDbSetInterfacer(createContext)},
+                { typeof(Order), new OrderDbSetInterfacer(createContext)},
+                { typeof(OrderLine), new OrderLineDbSetInterfacer(createContext)},
+                { typeof(Product), new ProductDbSetInterfacer(createContext)},
             };
         }
 
