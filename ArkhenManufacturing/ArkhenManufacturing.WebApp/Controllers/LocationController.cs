@@ -23,6 +23,17 @@ namespace ArkhenManufacturing.WebApp.Controllers
             _archivist = archivist;
         }
 
+        // GET: Location/[Index]
+        public async Task<IActionResult> Index() {
+            var locations = await _archivist.RetrieveAllAsync<Location>();
+
+            var viewModels = locations
+                .Select(l => l.GetData() as LocationData)
+                .Select(data => new LocationViewModel { Name = data.Name });
+
+            return View(viewModels);
+        }
+
         // GET: Location/{id}/Orders
         [HttpGet]
         [Authorize(Roles = Roles.AdminAndUser)]

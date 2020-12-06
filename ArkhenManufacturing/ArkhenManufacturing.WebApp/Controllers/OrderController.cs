@@ -23,19 +23,65 @@ namespace ArkhenManufacturing.WebApp.Controllers
             _archivist = archivist;
         }
 
+        public async Task<IActionResult> Index() {
+            var orders = await _archivist.RetrieveAllAsync<Order>();
+
+            var orderSummaries = orders
+                .Select(o => o.GetData() as OrderData)
+                .Select(async data => {
+                    // get the customer's name
+                    var customer = await _archivist.RetrieveAsync<Customer>(data.CustomerId);
+                    string customerName = customer.GetName();
+
+                    // get the admin's name
+                    var admin = await _archivist.RetrieveAsync<Admin>(data.AdminId);
+                    string adminName = admin.GetName();
+
+                    // get the location's name
+                    var location = await _archivist.RetrieveAsync<Location>(data.LocationId);
+                    string locationName = location.GetName();
+
+                    // Get the total price
+                    decimal total = data.OrderLineIds
+                        .Select(async id => await _archivist.RetrieveAsync<OrderLine>(id))
+                            .Select(t => t.Result)
+                        .Select(ol => ol.GetData() as OrderLineData)
+                        .Sum(olData => olData.TotalPrice);
+
+                    Tuple<string, Guid> customerLink = new(customerName, data.CustomerId);
+
+                    Tuple<string, Guid> adminLink = new(adminName, data.AdminId);
+
+                    Tuple<string, Guid> locationLink = new(locationName, data.LocationId);
+
+                    return new OrderSummaryViewModel
+                    {
+                        CustomerLink = customerLink,
+                        AdminLink = adminLink,
+                        LocationLink = locationLink,
+                        Total = total,
+                        PlacementDate = data.PlacementDate
+                    };
+                });
+
+            return View(orderSummaries);
+        }
+
         // GET: Order/Details/{id}
         [Authorize(Roles = Roles.AdminAndUser)]
         public async Task<ActionResult> Details(Guid id) {
             var order = await _archivist.RetrieveAsync<Order>(id);
             var data = order.GetData() as OrderData;
 
+            // get the customer's name
             var customer = await _archivist.RetrieveAsync<Customer>(data.CustomerId);
             string customerName = customer.GetName();
 
+            // get the admin's name
             var admin = await _archivist.RetrieveAsync<Admin>(data.AdminId);
             string adminName = admin.GetName();
 
-            // get the location name
+            // get the location's name
             var location = await _archivist.RetrieveAsync<Location>(data.LocationId);
             string locationName = location.GetName();
 

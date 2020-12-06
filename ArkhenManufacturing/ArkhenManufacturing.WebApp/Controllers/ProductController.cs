@@ -52,7 +52,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
         // GET: Product/Details/5
         [HttpGet]
-        [Authorize(Roles = Roles.AdminAndUser)]
+        [AllowAnonymous]
         public ActionResult Details(Guid id) {
             var product = _archivist.Retrieve<Product>(id);
             Guid? defaultStoreId = TempData.Peek("DefaultStoreId") as Guid?;

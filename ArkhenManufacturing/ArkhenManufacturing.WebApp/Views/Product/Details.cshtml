@@ -23,19 +23,17 @@
     </dt>
     <dd class="col-sm-10">
       @Html.DisplayFor(model => model.DiscountedPrice)
-      if(Model.Discount.HasValue) {
-      (@(Html.DisplayFor(model => model.DiscountPercentage))%)
+      @if (Model.Discount > 0.0M) {
+        @:(@(Html.DisplayFor(model => model.DiscountPercentage))%)
       }
-  </dl>
-  @if (TempData["CurrentUser"] is not null)
-  {
+</dl>
+  @if (TempData["CurrentUser"] is not null) {
     await Html.RenderPartialAsync("RequestProduct", new ProductRequestViewModel(Model.Id)
     {
       ProductName = Model.ProductName,
       Count = 0,
       PricePerUnit = Model.Price,
-      Discount = Model.Discount.HasValue ?
-      Model.Discount.Value : 0.0M
+      Discount = Model.Discount
     });
   }
   @*<form asp-controller="Product" asp-action="AddToCart">

@@ -11,28 +11,17 @@ namespace ArkhenManufacturing.WebApp.Models
         public int Count { get; set; }
         public int Threshold { get; set; }
         public decimal Price { get; set; }
-        public decimal? Discount { get; set; }
+        public decimal Discount { get; set; }
 
-        public decimal DiscountedPrice {
-            get 
+        public decimal DiscountedPrice
+        {
+            get
             {
-                if(Discount.HasValue) {
-                    return (1.0M - Discount.Value) * Price;
-                } else {
-                    return Price;
-                }
+                return (1.0M - Discount / 100.0M) * Price;
             }
         }
 
-        public decimal DiscountPercentage {
-            get {
-                if(Discount.HasValue) {
-                    return Discount.Value * 100.0M;
-                } else {
-                    return 0.0M;
-                }
-            }
-        }
+        public decimal DiscountPercentage { get => Discount; }
 
         public ProductViewModel() { }
 
@@ -46,7 +35,7 @@ namespace ArkhenManufacturing.WebApp.Models
         }
 
         public static explicit operator InventoryEntryData(ProductViewModel viewModel) {
-            decimal discount = viewModel.Discount ?? 0.0M;
+            decimal discount = viewModel.Discount;
             return new InventoryEntryData
             {
                 ProductId = viewModel.Id,
