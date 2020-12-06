@@ -26,7 +26,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Addresses.FindAsync(id) is not null;
+            return await context.Addresses.FirstOrDefaultAsync(a => a.Id == id) is not null;
         }
 
         public async Task<int> CountAsync() {
@@ -47,12 +47,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<Address> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbItem = await context.Addresses.FindAsync(id);
+            var dbItem = await context.Addresses.FirstOrDefaultAsync(a => a.Id == id);
             return DbEntityConverter.ToAddress(dbItem);
         }
 
         public async Task<ICollection<Address>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
+
+            if (!await context.Addresses.AnyAsync()) {
+                return new List<Address>();
+            }
+
             return await context.Addresses
                 .Where(a => ids.Contains(a.Id))
                 .Select(a => DbEntityConverter.ToAddress(a))
@@ -61,6 +66,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<ICollection<Address>> RetrieveAllAsync() {
             using var context = _createContext();
+
+            if (!await context.Addresses.AnyAsync()) {
+                return new List<Address>();
+            }
+
             return await context.Addresses
                 .Select(a => DbEntityConverter.ToAddress(a))
                 .ToListAsync();
@@ -70,7 +80,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var addresses = context.Addresses;
 
-            if (addresses.Find(id) is not null) {
+            if (await addresses.FirstOrDefaultAsync(a => a.Id == id) is not null) {
                 addresses.Update(DbEntityConverter.ToDbAddress(id, data as AddressData));
                 await context.SaveChangesAsync();
             }
@@ -80,7 +90,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var addresses = context.Addresses;
 
-            if (addresses.Find(id) is DbAddress dbAddress) {
+            if (await addresses.FirstOrDefaultAsync(a => a.Id == id) is DbAddress dbAddress) {
                 addresses.Remove(dbAddress);
                 await context.SaveChangesAsync();
             }

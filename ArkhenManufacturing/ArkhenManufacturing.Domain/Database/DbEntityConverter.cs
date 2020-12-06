@@ -16,7 +16,9 @@ namespace ArkhenManufacturing.Domain.Database
         #region To DbEntity (id, data)
 
         public static DbAddress ToDbAddress(Guid id, AddressData data) {
-            data.NullCheck(nameof(data));
+            if(data is null) {
+                return null;
+            }
 
             return new DbAddress
             {
@@ -31,7 +33,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static DbAdmin ToDbAdmin(Guid id, AdminData data) {
-            data.NullCheck(nameof(data));
+            if (data is null) {
+                return null;
+            }
 
             return new DbAdmin
             {
@@ -44,7 +48,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static DbCustomer ToDbCustomer(Guid id, CustomerData data) {
-            data.NullCheck(nameof(data));
+            if (data is null) {
+                return null;
+            }
 
             return new DbCustomer
             {
@@ -60,7 +66,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static DbInventoryEntry ToDbInventoryEntry(Guid id, InventoryEntryData data) {
-            data.NullCheck(nameof(data));
+            if (data is null) {
+                return null;
+            }
 
             return new DbInventoryEntry
             {
@@ -73,7 +81,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static DbLocation ToDbLocation(Guid id, LocationData data) {
-            data.NullCheck(nameof(data));
+            if (data is null) {
+                return null;
+            }
 
             return new DbLocation
             {
@@ -83,7 +93,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static DbOrder ToDbOrder(Guid id, OrderData data) {
-            data.NullCheck(nameof(data));
+            if (data is null) {
+                return null;
+            }
 
             return new DbOrder
             {
@@ -96,7 +108,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static DbOrderLine ToDbOrderLine(Guid id, OrderLineData data) {
-            data.NullCheck(nameof(data));
+            if (data is null) {
+                return null;
+            }
 
             return new DbOrderLine
             {
@@ -110,7 +124,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static DbProduct ToDbProduct(Guid id, ProductData data) {
-            data.NullCheck(nameof(data));
+            if (data is null) {
+                return null;
+            }
 
             return new DbProduct
             {
@@ -124,34 +140,66 @@ namespace ArkhenManufacturing.Domain.Database
         #region To DbEntity (item)
 
         public static DbAddress ToDbAddress(Address item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbAddress(item.Id, item.GetData() as AddressData);
         }
 
         public static DbAdmin ToDbAdmin(Admin item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbAdmin(item.Id, item.GetData() as AdminData);
         }
 
         public static DbCustomer ToDbCustomer(Customer item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbCustomer(item.Id, item.GetData() as CustomerData);
         }
 
         public static DbInventoryEntry ToDbInventoryEntry(InventoryEntry item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbInventoryEntry(item.Id, item.GetData() as InventoryEntryData);
         }
 
         public static DbLocation ToDbLocation(Location item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbLocation(item.Id, item.GetData() as LocationData);
         }
 
         public static DbOrder ToDbOrder(Order item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbOrder(item.Id, item.GetData() as OrderData);
         }
 
         public static DbOrderLine ToDbOrderLine(OrderLine item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbOrderLine(item.Id, item.GetData() as OrderLineData);
         }
 
         public static DbProduct ToDbProduct(Product item) {
+            if (item is null) {
+                return null;
+            }
+
             return ToDbProduct(item.Id, item.GetData() as ProductData);
         }
 
@@ -162,14 +210,19 @@ namespace ArkhenManufacturing.Domain.Database
         #region To Library Entity
 
         public static Address ToAddress(DbAddress item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
+
             var data = new AddressData(item.Line1, item.Line2,
                 item.City, item.State, item.Country, item.ZipCode);
             return new Address(item.Id, data);
         }
 
         public static Admin ToAdmin(DbAdmin item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
 
             var data = new AdminData(
                 item.FirstName, item.LastName, 
@@ -179,7 +232,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static Customer ToCustomer(DbCustomer item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
 
             var data = new CustomerData(
                 item.FirstName, item.LastName, item.Email, 
@@ -190,7 +245,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static InventoryEntry ToInventoryEntry(DbInventoryEntry item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
 
             var data = new InventoryEntryData(
                 item.ProductId, item.LocationId, item.Price, 
@@ -200,7 +257,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static Location ToLocation(DbLocation item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
 
             var orderIds = item.Orders
                 .Select(o => o.Id)
@@ -222,7 +281,10 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static Order ToOrder(DbOrder item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
+
             var orderLineIds = item.OrderLines
                 .Select(ol => ol.Id)
                 .ToList();
@@ -235,7 +297,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static OrderLine ToOrderLine(DbOrderLine item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
 
             var data = new OrderLineData(
                 item.OrderId, item.ProductId, item.Count, 
@@ -245,7 +309,9 @@ namespace ArkhenManufacturing.Domain.Database
         }
 
         public static Product ToProduct(DbProduct item) {
-            item.NullCheck(nameof(item));
+            if (item is null) {
+                return null;
+            }
 
             var data = new ProductData(item.Name);
 

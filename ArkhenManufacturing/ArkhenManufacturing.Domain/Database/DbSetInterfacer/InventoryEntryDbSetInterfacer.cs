@@ -26,7 +26,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.InventoryEntries.FindAsync(id) is not null;
+            return await context.InventoryEntries.FirstOrDefaultAsync(ie => ie.Id == id) is not null;
         }
 
         public async Task<int> CountAsync() {
@@ -47,12 +47,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<InventoryEntry> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbInventoryEntry = await context.InventoryEntries.FindAsync(id);
+            var dbInventoryEntry = await context.InventoryEntries.FirstOrDefaultAsync(ie => ie.Id == id);
             return DbEntityConverter.ToInventoryEntry(dbInventoryEntry);
         }
 
         public async Task<ICollection<InventoryEntry>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
+
+            if(!await context.InventoryEntries.AnyAsync()) {
+                return new List<InventoryEntry>();
+            }
+
             return await context.InventoryEntries
                 .Where(ie => ids.Contains(ie.Id))
                 .Select(ie => DbEntityConverter.ToInventoryEntry(ie))
@@ -61,6 +66,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<ICollection<InventoryEntry>> RetrieveAllAsync() {
             using var context = _createContext();
+
+            if(!await context.InventoryEntries.AnyAsync()) {
+                return new List<InventoryEntry>();
+            }
+
             return await context.InventoryEntries
                 .Select(ie => DbEntityConverter.ToInventoryEntry(ie))
                 .ToListAsync();
@@ -70,7 +80,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var inventoryEntries = context.InventoryEntries;
 
-            if(inventoryEntries.Find(id) is not null) {
+            if(await inventoryEntries.FirstOrDefaultAsync(ie => ie.Id == id) is not null) {
                 inventoryEntries.Update(DbEntityConverter.ToDbInventoryEntry(id, data as InventoryEntryData));
                 await context.SaveChangesAsync();
             }
@@ -80,7 +90,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var inventoryEntries = context.InventoryEntries;
 
-            if(inventoryEntries.Find(id) is DbInventoryEntry dbInventoryEntry) {
+            if(await inventoryEntries.FirstOrDefaultAsync(ie => ie.Id == id) is DbInventoryEntry dbInventoryEntry) {
                 inventoryEntries.Remove(dbInventoryEntry);
                 await context.SaveChangesAsync();
             }

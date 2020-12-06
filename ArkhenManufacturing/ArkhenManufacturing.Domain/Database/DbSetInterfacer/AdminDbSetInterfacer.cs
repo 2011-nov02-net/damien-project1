@@ -26,7 +26,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Admins.FindAsync(id) is not null;
+            return await context.Admins.FirstOrDefaultAsync(a => a.Id == id) is not null;
         }
 
         public async Task<int> CountAsync() {
@@ -47,12 +47,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<Admin> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbAdmin = await context.Admins.FindAsync(id);
+            var dbAdmin = await context.Admins.FirstOrDefaultAsync(a => a.Id == id);
             return DbEntityConverter.ToAdmin(dbAdmin);
         }
 
         public async Task<ICollection<Admin>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
+
+            if (!await context.Admins.AnyAsync()) {
+                return new List<Admin>();
+            }
+
             return await context.Admins
                 .Where(a => ids.Contains(a.Id))
                 .Select(a => DbEntityConverter.ToAdmin(a))
@@ -61,6 +66,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<ICollection<Admin>> RetrieveAllAsync() {
             using var context = _createContext();
+
+            if(!await context.Admins.AnyAsync()) {
+                return new List<Admin>();
+            }
+
             return await context.Admins
                 .Select(a => DbEntityConverter.ToAdmin(a))
                 .ToListAsync();
@@ -70,7 +80,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var admins = context.Admins;
 
-            if(admins.Find(id) is not null) {
+            if(await admins.FirstOrDefaultAsync(a => a.Id == id) is not null) {
                 admins.Update(DbEntityConverter.ToDbAdmin(id, data as AdminData));
                 await context.SaveChangesAsync();
             }
@@ -80,7 +90,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var admins = context.Admins;
 
-            if(admins.Find(id) is DbAdmin dbAdmin) {
+            if(await admins.FirstOrDefaultAsync(a => a.Id == id) is DbAdmin dbAdmin) {
                 admins.Remove(dbAdmin);
                 await context.SaveChangesAsync();
             }

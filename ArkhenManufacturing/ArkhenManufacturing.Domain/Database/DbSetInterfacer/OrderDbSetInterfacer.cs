@@ -26,7 +26,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Orders.FindAsync(id) is not null;
+            return await context.Orders.FirstOrDefaultAsync(o => o.Id == id) is not null;
         }
 
         public async Task<int> CountAsync() {
@@ -47,12 +47,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<Order> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbOrder = await context.Orders.FindAsync(id);
+            var dbOrder = await context.Orders.FirstOrDefaultAsync(o => o.Id == id);
             return DbEntityConverter.ToOrder(dbOrder);
         }
 
         public async Task<ICollection<Order>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
+
+            if (!await context.Orders.AnyAsync()) {
+                return new List<Order>();
+            }
+
             return await context.Orders
                 .Where(ie => ids.Contains(ie.Id))
                 .Select(ie => DbEntityConverter.ToOrder(ie))
@@ -61,6 +66,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<ICollection<Order>> RetrieveAllAsync() {
             using var context = _createContext();
+
+            if (!await context.Orders.AnyAsync()) {
+                return new List<Order>();
+            }
+
             return await context.Orders
                 .Select(ie => DbEntityConverter.ToOrder(ie))
                 .ToListAsync();
@@ -70,7 +80,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var orders = context.Orders;
 
-            if (orders.Find(id) is not null) {
+            if (await orders.FirstOrDefaultAsync(o => o.Id == id) is not null) {
                 orders.Update(DbEntityConverter.ToDbOrder(id, data as OrderData));
                 await context.SaveChangesAsync();
             }
@@ -80,7 +90,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var orders = context.Orders;
 
-            if (orders.Find(id) is DbOrder dbOrder) {
+            if (await orders.FirstOrDefaultAsync(o => o.Id == id) is DbOrder dbOrder) {
                 orders.Remove(dbOrder);
                 await context.SaveChangesAsync();
             }

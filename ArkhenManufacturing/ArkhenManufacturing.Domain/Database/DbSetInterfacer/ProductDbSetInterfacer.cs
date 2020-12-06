@@ -26,7 +26,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Products.FindAsync(id) is not null;
+            return await context.Products.FirstOrDefaultAsync(p => p.Id == id) is not null;
         }
 
         public async Task<int> CountAsync() {
@@ -47,12 +47,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<Product> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbProduct = await context.Products.FindAsync(id);
+            var dbProduct = await context.Products.FirstOrDefaultAsync(p => p.Id == id);
             return DbEntityConverter.ToProduct(dbProduct);
         }
 
         public async Task<ICollection<Product>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
+
+            if (!await context.Products.AnyAsync()) {
+                return new List<Product>();
+            }
+
             return await context.Products
                 .Where(ie => ids.Contains(ie.Id))
                 .Select(ie => DbEntityConverter.ToProduct(ie))
@@ -61,6 +66,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<ICollection<Product>> RetrieveAllAsync() {
             using var context = _createContext();
+
+            if (!await context.Products.AnyAsync()) {
+                return new List<Product>();
+            }
+
             return await context.Products
                 .Select(ie => DbEntityConverter.ToProduct(ie))
                 .ToListAsync();
@@ -70,7 +80,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var products = context.Products;
 
-            if (products.Find(id) is not null) {
+            if (await products.FirstOrDefaultAsync(p => p.Id == id) is not null) {
                 products.Update(DbEntityConverter.ToDbProduct(id, data as ProductData));
                 await context.SaveChangesAsync();
             }
@@ -80,7 +90,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var products = context.Products;
 
-            if (products.Find(id) is DbProduct dbProduct) {
+            if (!await products.AnyAsync()) {
+                return;
+            }
+
+            if (await products.FirstOrDefaultAsync(p => p.Id == id) is DbProduct dbProduct) {
                 products.Remove(dbProduct);
                 await context.SaveChangesAsync();
             }

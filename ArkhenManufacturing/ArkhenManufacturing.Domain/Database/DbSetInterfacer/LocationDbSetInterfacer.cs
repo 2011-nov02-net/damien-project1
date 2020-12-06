@@ -26,7 +26,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Locations.FindAsync(id) is not null;
+            return await context.Locations.FirstOrDefaultAsync(l => l.Id == id) is not null;
         }
 
         public async Task<int> CountAsync() {
@@ -47,12 +47,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<Location> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbLocation = await context.Locations.FindAsync(id);
+            var dbLocation = await context.Locations.FirstOrDefaultAsync(l => l.Id == id);
             return DbEntityConverter.ToLocation(dbLocation);
         }
 
         public async Task<ICollection<Location>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
+
+            if(!await context.Locations.AnyAsync()) {
+                return new List<Location>();
+            }
+
             return await context.Locations
                 .Where(ie => ids.Contains(ie.Id))
                 .Select(ie => DbEntityConverter.ToLocation(ie))
@@ -61,6 +66,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<ICollection<Location>> RetrieveAllAsync() {
             using var context = _createContext();
+
+            if (!await context.Locations.AnyAsync()) {
+                return new List<Location>();
+            }
+
             return await context.Locations
                 .Select(ie => DbEntityConverter.ToLocation(ie))
                 .ToListAsync();
@@ -70,7 +80,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var locations = context.Locations;
 
-            if (locations.Find(id) is not null) {
+            if (await locations.FirstOrDefaultAsync(l => l.Id == id) is not null) {
                 locations.Update(DbEntityConverter.ToDbLocation(id, data as LocationData));
                 await context.SaveChangesAsync();
             }
@@ -80,7 +90,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var locations = context.Locations;
 
-            if (locations.Find(id) is DbLocation dbLocation) {
+            if (await locations.FirstOrDefaultAsync(l => l.Id == id) is DbLocation dbLocation) {
                 locations.Remove(dbLocation);
                 await context.SaveChangesAsync();
             }

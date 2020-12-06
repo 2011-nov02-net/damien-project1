@@ -4,14 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArkhenManufacturing.DataAccess;
+
 using ArkhenManufacturing.Domain.Database.DbSetInterfacer;
-using ArkhenManufacturing.Library;
+
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
-using ArkhenManufacturing.Library.Extensions;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.Domain.Database
 {

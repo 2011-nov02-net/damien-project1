@@ -26,7 +26,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<bool> ExistsAsync(Guid id) {
             using var context = _createContext();
-            return await context.Customers.FindAsync(id) is not null;
+            return await context.Customers.FirstOrDefaultAsync(c => c.Id == id) is not null;
         }
 
         public async Task<int> CountAsync() {
@@ -47,12 +47,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<Customer> RetrieveAsync(Guid id) {
             using var context = _createContext();
-            var dbCustomer = await context.Customers.FindAsync(id);
+            var dbCustomer = await context.Customers.FirstOrDefaultAsync(c => c.Id == id);
             return DbEntityConverter.ToCustomer(dbCustomer);
         }
 
         public async Task<ICollection<Customer>> RetrieveSomeAsync(ICollection<Guid> ids) {
             using var context = _createContext();
+
+            if (!await context.Customers.AnyAsync()) {
+                return new List<Customer>();
+            }
+
             return await context.Customers
                 .Where(c => ids.Contains(c.Id))
                 .Select(c => DbEntityConverter.ToCustomer(c))
@@ -61,6 +66,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
 
         public async Task<ICollection<Customer>> RetrieveAllAsync() {
             using var context = _createContext();
+
+            if (!await context.Customers.AnyAsync()) {
+                return new List<Customer>();
+            }
+
             return await context.Customers
                 .Select(c => DbEntityConverter.ToCustomer(c))
                 .ToListAsync();
@@ -70,7 +80,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var customers = context.Customers;
 
-            if (customers.Find(id) is not null) {
+            if (await customers.FirstOrDefaultAsync(c => c.Id == id) is not null) {
                 customers.Update(DbEntityConverter.ToDbCustomer(id, data as CustomerData));
                 await context.SaveChangesAsync();
             }
@@ -80,7 +90,7 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var customers = context.Customers;
 
-            if (customers.Find(id) is DbCustomer customer) {
+            if (await customers.FirstOrDefaultAsync(c => c.Id == id) is DbCustomer customer) {
                 customers.Remove(customer);
                 await context.SaveChangesAsync();
             }
