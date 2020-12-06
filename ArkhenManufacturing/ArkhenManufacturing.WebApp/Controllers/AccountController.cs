@@ -222,7 +222,9 @@ namespace ArkhenManufacturing.WebApp.Controllers
             return RedirectToAction(nameof(OrderController.Details), "Order", new { id = orderId });
         }
 
-        [Authorize]
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout() {
             await _signInManager.SignOutAsync();
             return RedirectToAction(nameof(HomeController.Index), "Home");
