@@ -18,7 +18,7 @@ namespace ArkhenManufacturing.DataAccess
         public DbAddress Address { get; set; }
         public DateTime SignUpDate { get; set; }
         public DateTime BirthDate { get; set; }
-        public Guid DefaultLocationId { get; set; }
+        public Guid? DefaultLocationId { get; set; }
         public DbLocation DefaultLocation { get; set; }
 
         public virtual ICollection<DbOrder> Orders { get; set; }

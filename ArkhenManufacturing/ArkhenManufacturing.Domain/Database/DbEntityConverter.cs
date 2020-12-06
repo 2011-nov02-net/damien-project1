@@ -55,7 +55,7 @@ namespace ArkhenManufacturing.Domain.Database
                 PhoneNumber = data.PhoneNumber,
                 BirthDate = data.BirthDate,
                 AddressId = data.AddressId,
-                DefaultLocationId = data.DefaultLocationId.Value
+                DefaultLocationId = data.DefaultLocationId
             };
         }
 
