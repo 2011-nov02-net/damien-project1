@@ -4,13 +4,13 @@
     ViewData["Title"] = "Your Cart";
 }
 
-<div>
-  @if(Model.Count() > 0) {
+<div class='row justify-content-center'>
+  @if(Model is not null && Model.Any()) {
   <form asp-action="PlaceOrder" asp-controller="Account">
     @foreach (var productRequest in Model) {
       <label class="control-label" value="@productRequest.ProductName"></label>
       <input type="number" value="@productRequest.Count" />
-      @Html.ActionLink("Remove", "RemoveFromtCart", "Account", Model)
+      @Html.ActionLink("Remove", "RemoveFromCart", "Account", Model)
     }
     <input type="submit" value="Place Order" class="btn btn-primary" />
   </form>

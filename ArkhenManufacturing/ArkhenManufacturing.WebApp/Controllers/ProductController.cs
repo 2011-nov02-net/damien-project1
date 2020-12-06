@@ -80,7 +80,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 return View(viewModel);
             }
 
-            return View(id);
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         // POST: Product/AddToCart/{id}

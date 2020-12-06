@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication;
 using ArkhenManufacturing.DataAccess;
 using Microsoft.AspNetCore.Authorization;
 using ArkhenManufacturing.Library.Extensions;
+using ArkhenManufacturing.WebApp.Misc;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
@@ -114,12 +115,12 @@ namespace ArkhenManufacturing.WebApp.Controllers
             }
         }
 
-        // TODO: Get the currently logged in user and show their details
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = Roles.AdminAndUser)]
         public async Task<IActionResult> Details() {
+            _logger.LogInformation("Details method in AccountController reached.");
             if(!_signInManager.IsSignedIn(HttpContext.User)) {
-                return RedirectToAction(nameof(AccountController.Login), "Account");
+                return RedirectToAction(nameof(Login), "Account");
             }
 
             // get the current user id
@@ -149,7 +150,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
             }
 
             string cartString = TempData["Cart"]?.ToString();
-            List<ProductRequestViewModel> items = null;
+            List<ProductRequestViewModel> items;
 
             if (cartString.IsNullOrEmpty()) {
                 items = new List<ProductRequestViewModel>();
@@ -157,11 +158,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 items = JsonSerializer.Deserialize<List<ProductRequestViewModel>>(cartString);
             }
 
-            if (items is not List<ProductRequestViewModel> productsInCart) {
-                productsInCart = new List<ProductRequestViewModel>();
-            }
-
-            return View(productsInCart);
+            return View(items);
         }
 
         [HttpPost]
@@ -185,20 +182,23 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PlaceOrder(IEnumerable<ProductRequestViewModel> viewModels) {
-            var productIds = viewModels
-                .Select(vm => vm.ProductId)
-                .ToList();
-
             // get an admin id for this location by the 
             //      admin with the fewest number of orders
-
+            var admins = await _archivist.RetrieveAllAsync<Admin>();
+            var orders = await _archivist.RetrieveAllAsync<Order>();
+            var orderData = orders.ConvertAll(o => o.GetData() as OrderData);
+            // Get the admin who has the lowest count
+            var admin = admins.OrderBy(a => {
+                return orderData.Count(od => od.AdminId == a.Id);
+            }).First();
+            
             // get the customer id
             Guid customerId = Guid.NewGuid();
 
             // Create the initial order data, and get its id
             var data = new OrderData
             {
-                AdminId = Guid.NewGuid(),
+                AdminId = admin.Id,
                 CustomerId = customerId,
                 LocationId = (Guid)TempData["SelectedLocation"],
                 OrderLineIds = new List<Guid>(),
@@ -222,7 +222,6 @@ namespace ArkhenManufacturing.WebApp.Controllers
             return RedirectToAction(nameof(OrderController.Details), "Order", new { id = orderId });
         }
 
-        [HttpPost]
         [Authorize]
         public async Task<IActionResult> Logout() {
             await _signInManager.SignOutAsync();
