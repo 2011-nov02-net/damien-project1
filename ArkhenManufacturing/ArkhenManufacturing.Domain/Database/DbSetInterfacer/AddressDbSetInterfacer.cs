@@ -80,8 +80,15 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var addresses = context.Addresses;
 
-            if (await addresses.FirstOrDefaultAsync(a => a.Id == id) is not null) {
-                addresses.Update(DbEntityConverter.ToDbAddress(id, data as AddressData));
+            var addressData = data as AddressData;
+
+            if (await addresses.FirstOrDefaultAsync(a => a.Id == id) is DbAddress dbAddress) {
+                dbAddress.Line1 = addressData.Line1;
+                dbAddress.Line2 = addressData.Line2;
+                dbAddress.City = addressData.City;
+                dbAddress.State = addressData.State;
+                dbAddress.Country = addressData.Country;
+                dbAddress.ZipCode = addressData.ZipCode;
                 await context.SaveChangesAsync();
             }
         }

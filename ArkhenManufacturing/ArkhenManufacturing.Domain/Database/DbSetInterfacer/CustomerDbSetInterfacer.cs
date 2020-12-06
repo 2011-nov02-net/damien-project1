@@ -80,8 +80,17 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var customers = context.Customers;
 
-            if (await customers.FirstOrDefaultAsync(c => c.Id == id) is not null) {
-                customers.Update(DbEntityConverter.ToDbCustomer(id, data as CustomerData));
+            var customerData = data as CustomerData;
+
+            if (await customers.FirstOrDefaultAsync(c => c.Id == id) is DbCustomer dbCustomer) {
+                dbCustomer.FirstName = customerData.FirstName;
+                dbCustomer.LastName = customerData.LastName;
+                dbCustomer.PhoneNumber = customerData.PhoneNumber;
+                dbCustomer.Email = customerData.Email;
+                dbCustomer.SignUpDate = customerData.SignUpDate;
+                dbCustomer.AddressId = customerData.AddressId;
+                dbCustomer.BirthDate = customerData.BirthDate;
+                dbCustomer.DefaultLocationId = customerData.DefaultLocationId;
                 await context.SaveChangesAsync();
             }
         }

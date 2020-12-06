@@ -80,8 +80,24 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var locations = context.Locations;
 
-            if (await locations.FirstOrDefaultAsync(l => l.Id == id) is not null) {
-                locations.Update(DbEntityConverter.ToDbLocation(id, data as LocationData));
+            var locationData = data as LocationData;
+
+            if (await locations.FirstOrDefaultAsync(l => l.Id == id) is DbLocation dbLocation) {
+                dbLocation.Name = locationData.Name;
+                dbLocation.AddressId = locationData.AddressId;
+
+                dbLocation.Admins = await context.Admins
+                    .Where(a => locationData.AdminIds.Contains(a.Id))
+                    .ToListAsync();
+
+                dbLocation.Orders = await context.Orders
+                    .Where(o => locationData.OrderIds.Contains(o.Id))
+                    .ToListAsync();
+
+                dbLocation.InventoryEntries = await context.InventoryEntries
+                    .Where(ie => locationData.InventoryEntryIds.Contains(ie.Id))
+                    .ToListAsync();
+
                 await context.SaveChangesAsync();
             }
         }

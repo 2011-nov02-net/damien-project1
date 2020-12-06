@@ -80,8 +80,15 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var inventoryEntries = context.InventoryEntries;
 
-            if(await inventoryEntries.FirstOrDefaultAsync(ie => ie.Id == id) is not null) {
-                inventoryEntries.Update(DbEntityConverter.ToDbInventoryEntry(id, data as InventoryEntryData));
+            var inventoryEntryData = data as InventoryEntryData;
+
+            if(await inventoryEntries.FirstOrDefaultAsync(ie => ie.Id == id) is DbInventoryEntry dbInventoryEntry) {
+                dbInventoryEntry.ProductId = inventoryEntryData.ProductId;
+                dbInventoryEntry.Price = inventoryEntryData.Price;
+                dbInventoryEntry.Count = inventoryEntryData.Count;
+                dbInventoryEntry.Discount = inventoryEntryData.Discount;
+                dbInventoryEntry.LocationId = inventoryEntryData.LocationId;
+                dbInventoryEntry.Threshold = inventoryEntryData.Threshold;
                 await context.SaveChangesAsync();
             }
         }

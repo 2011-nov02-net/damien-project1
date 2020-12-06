@@ -80,8 +80,11 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var products = context.Products;
 
-            if (await products.FirstOrDefaultAsync(p => p.Id == id) is not null) {
-                products.Update(DbEntityConverter.ToDbProduct(id, data as ProductData));
+            var productData = data as ProductData;
+
+            if (await products.FirstOrDefaultAsync(p => p.Id == id) is DbProduct dbProduct) {
+                dbProduct.Name = productData.Name;
+
                 await context.SaveChangesAsync();
             }
         }

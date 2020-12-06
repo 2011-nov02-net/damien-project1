@@ -80,8 +80,13 @@ namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
             using var context = _createContext();
             var admins = context.Admins;
 
-            if(await admins.FirstOrDefaultAsync(a => a.Id == id) is not null) {
-                admins.Update(DbEntityConverter.ToDbAdmin(id, data as AdminData));
+            var adminData = data as AdminData;
+
+            if(await admins.FirstOrDefaultAsync(a => a.Id == id) is DbAdmin dbAdmin) {
+                dbAdmin.FirstName = adminData.FirstName;
+                dbAdmin.LastName = adminData.LastName;
+                dbAdmin.Email = adminData.Email;
+                dbAdmin.LocationId = adminData.LocationId;
                 await context.SaveChangesAsync();
             }
         }
