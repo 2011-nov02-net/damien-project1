@@ -77,6 +77,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 }
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                await _signInManager.SignOutAsync();
 
                 // Redirect to the customer creation view
                 return RedirectToAction(nameof(CustomerController.Create), "Customer");
@@ -110,7 +111,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                     var user = _userManager.GetUserAsync(HttpContext.User);
 
                     //return GetRedirect(returnUrl);
-                    return RedirectToAction(nameof(HomeController.Index), "Index");
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
                 } else {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt; please try again");
                     return View(viewModel);

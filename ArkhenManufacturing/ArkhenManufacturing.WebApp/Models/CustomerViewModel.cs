@@ -57,6 +57,14 @@ namespace ArkhenManufacturing.WebApp.Models
         [Required, DataType(DataType.PostalCode)]
         public string ZipCode { get; set; }
 
+        public string Address
+        {
+            get
+            {
+                return $"{Line1}, {(Line2.IsNullOrEmpty() ? $"{City}, " : $", {Line2}, {City}")}, {(State.IsNullOrEmpty() ? $"{Country}" : $"{State}, {Country}")} {ZipCode}";
+            }
+        }
+
         public Guid? DefaultLocationId { get; set; }
 
         public List<Tuple<string,Guid>> Locations { get; set; }

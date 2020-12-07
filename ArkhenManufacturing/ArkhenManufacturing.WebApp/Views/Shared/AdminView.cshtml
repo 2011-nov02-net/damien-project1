@@ -5,16 +5,8 @@
 
 <div>
   @*  *@
-  @if(User.IsInRole("Admin")) {
-    <select>
-    <option>@Html.ActionLink("Admins", "Index", "Admin")</option>
-    <option>@Html.ActionLink("Customers", "Index", "Customer")</option>
-    @* Add a line separater here *@
-    <option>@Html.ActionLink("InventoryEntries", "Index", "InventoryEntry")</option>
-    <option>@Html.ActionLink("Locations", "Index", "Location")</option>
-    <option>@Html.ActionLink("Orders", "Index", "Order")</option>
-    <option>@Html.ActionLink("OrderLines", "Index", "OrderLine")</option>
-    <option>@Html.ActionLink("Products", "Index", "Product")</option>
-  </select>
+  @if (User.IsInRole("Admin")) {
+    @Html.ActionLink("Customers", "Index", "Customer")
+    @Html.ActionLink("Locations", "Index", "Location")
   }
 </div>

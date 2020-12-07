@@ -34,8 +34,10 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // GET: Customer
         [HttpGet]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<ActionResult> Index(string searchString) {
-            var customers = await _archivist.RetrieveByNameAsync<Customer>(searchString);
+        public async Task<ActionResult> Index(string id) {
+            var customers = id.IsNullOrEmpty()
+                ? await _archivist.RetrieveAllAsync<Customer>()
+                : await _archivist.RetrieveByNameAsync<Customer>(id);
 
             var locations = (await _archivist.RetrieveAllAsync<Location>())
                 .Select(l => new Tuple<string, Guid>(l.GetName(), l.Id))
@@ -45,8 +47,10 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 .ConvertAll(async c => {
                     var data = c.GetData() as CustomerData;
                     var address = await _archivist.RetrieveAsync<Address>(data.AddressId);
-                    return new CustomerViewModel(c, address, locations);
-                });
+                    return await Task.Run(() => new CustomerViewModel(c, address, locations));
+                })
+                .Select(t => t.Result)
+                .ToList();
 
             return View(viewModels);
         }
@@ -139,34 +143,17 @@ namespace ArkhenManufacturing.WebApp.Controllers
             return View(orderSummaries);
         }
 
-        // GET: Customer/SearchByName/{name}
+        // GET: Customer/Create
         [HttpGet]
-        [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> SearchByName(string id) {
-            var customers = await _archivist.RetrieveByNameAsync<Customer>(id);
+        [AllowAnonymous]
+        public async Task<IActionResult> Create(Guid userId) {
+            ViewData["UserId"] = userId;
 
             var locations = (await _archivist.RetrieveAllAsync<Location>())
                 .Select(l => new Tuple<string, Guid>(l.GetName(), l.Id))
                 .ToList();
 
-            var viewModels = customers
-                .ConvertAll(async c => {
-                    var data = c.GetData() as CustomerData;
-                    var address = await _archivist.RetrieveAsync<Address>(data.AddressId);
-                    return await Task.Run(() => new CustomerViewModel(c, address, locations));
-                })
-                .Select(t => t.Result)
-                .ToList();
-
-            return View(viewModels);
-        }
-
-        // GET: Customer/Create
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult Create(Guid userId) {
-            ViewData["UserId"] = userId;
-            return View();
+            return View(new CustomerViewModel { Locations = locations });
         }
 
         // POST: Customer/Create

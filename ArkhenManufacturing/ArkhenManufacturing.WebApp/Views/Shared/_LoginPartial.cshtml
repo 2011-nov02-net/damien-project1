@@ -7,7 +7,7 @@
   <form asp-action="Logout" asp-controller="Account" method="post">
     <ul class="nav navbar-nav navbar-right">
       <li>
-        <a class="navbar-brand btn-link navbar-link text-light" asp-action="Details" asp-controller="Account">Hello @UserManager.GetUserName(User)!</a>
+        <a class="navbar-brand btn-link navbar-link text-light" asp-action="Details" asp-controller="Account">Hello, @UserManager.GetUserName(User)!</a>
       </li>
       <li>
         <a class="navbar-brand btn-link navbar-link text-light bg-dark" asp-action="Orders" asp-controller="Customer">Orders</a>
