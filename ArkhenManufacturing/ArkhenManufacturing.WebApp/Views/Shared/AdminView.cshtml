@@ -1,12 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
 
-@inject SignInManager<ArkhenManufacturing.DataAccess.ApplicationUser> SignInManager
 @inject UserManager<ArkhenManufacturing.DataAccess.ApplicationUser> UserManager
 
 <div>
-  @*  *@
   @if (User.IsInRole("Admin")) {
-    @Html.ActionLink("Customers", "Index", "Customer")
-    @Html.ActionLink("Locations", "Index", "Location")
+    <a asp-action="Index" asp-controller="Customer"  class="navbar-brand btn-link text-light">Customers</a>
+    <a asp-action="Index" asp-controller="Location"  class="navbar-brand btn-link text-light">Locations</a>
   }
 </div>

@@ -4,20 +4,6 @@
   ViewData["Title"] = "Arkhen Manufacturing - Home Page";
 }
 
-<div class="text-center">
-  @* TODO: Show the products here *@
-  @* Show the toggle for the displays here *@
-  @{
-    bool listView = true;
-  }
-  @*@{ await Html.RenderPartialAsync("", new object()) }*@
-
-  @if (listView) {
-    // Show the list view here
-
-  } else {
-    // Show the grid view here
-  }
-
+<div class="justify-content-center row m-5">
   @{ await Html.RenderPartialAsync("Products", Model); }
 </div>
