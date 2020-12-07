@@ -21,12 +21,10 @@ namespace ArkhenManufacturing.WebApp.Controllers
     {
         private readonly Archivist _archivist;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(Archivist archivist, UserManager<ApplicationUser> userManager, ILogger<CustomerController> logger) {
+        public CustomerController(Archivist archivist, UserManager<ApplicationUser> userManager) {
             _archivist = archivist;
             _userManager = userManager;
-            _logger = logger;
         }
 
         // GET: Customer
