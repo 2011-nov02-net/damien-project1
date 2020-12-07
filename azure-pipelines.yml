@@ -93,6 +93,7 @@ stages:
       workingDirectory: 'ArkhenManufacturing'
 
     - publish: 'ArkhenManufacturing/.publish'
+      displayName: 'Publish Artifact App'
       artifact: 'app'
 
 - stage: 'release'
@@ -110,7 +111,6 @@ stages:
 
           - task: 'AzureRmWebAppDeployment@4'
             displayName: 'Azure App Service Display'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
             inputs:
               ConnectionType: 'AzureRM'
               azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
