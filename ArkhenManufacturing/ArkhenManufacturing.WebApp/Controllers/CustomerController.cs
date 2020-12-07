@@ -34,8 +34,17 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // GET: Customer
         [HttpGet]
         [Authorize(Roles = Roles.Admin)]
-        public ActionResult Index() {
-            return View();
+        public async Task<ActionResult> Index(string searchString) {
+            var customers = await _archivist.RetrieveByNameAsync<Customer>(searchString);
+
+            var viewModels = customers
+                .ConvertAll(async c => {
+                    var data = c.GetData() as CustomerData;
+                    var address = await _archivist.RetrieveAsync<Address>(data.AddressId);
+                    return new CustomerViewModel(c, address);
+                });
+
+            return View(viewModels);
         }
 
         // GET: Customer/Details/5
@@ -62,42 +71,52 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
             var orders = await _archivist.RetrieveAllAsync<Order>();
 
-            var customerOrders = orders
+            orders = orders
                 .Where(o => {
                     var data = o.GetData() as OrderData;
                     return data.CustomerId == id;
                 })
                 .ToList();
 
-            var viewModels = customerOrders
-                .ConvertAll(async co => {
-                    // get the data
-                    var data = co.GetData() as OrderData;
+            var orderSummaries = orders
+                .Select(o => o.GetData() as OrderData)
+                .Select(async data => {
+                    // get the customer's name
+                    var customer = await _archivist.RetrieveAsync<Customer>(data.CustomerId);
+                    string customerName = customer.GetName();
 
+                    // get the admin's name
                     var admin = await _archivist.RetrieveAsync<Admin>(data.AdminId);
                     string adminName = admin.GetName();
 
-                    // get the location name
+                    // get the location's name
                     var location = await _archivist.RetrieveAsync<Location>(data.LocationId);
                     string locationName = location.GetName();
 
-                    // get the order lines
-                    var orderLines = await _archivist.RetrieveSomeAsync<OrderLine>(data.OrderLineIds);
+                    // Get the total price
+                    decimal total = data.OrderLineIds
+                        .Select(async id => await _archivist.RetrieveAsync<OrderLine>(id))
+                            .Select(t => t.Result)
+                        .Select(ol => ol.GetData() as OrderLineData)
+                        .Sum(olData => olData.TotalPrice);
 
-                    var orderLineViewModels = orderLines
-                        .Select(async ol => {
-                            var olData = ol.GetData() as OrderLineData;
-                            var product = await _archivist.RetrieveAsync<Product>(olData.ProductId);
-                            string productName = product.GetName();
-                            return new OrderLineViewModel(productName, olData);
-                        })
-                        .Select(t => t.Result)
-                        .ToList();
+                    Tuple<string, Guid> customerLink = new(customerName, data.CustomerId);
 
-                    return new OrderViewModel(customerName, adminName, locationName, orderLineViewModels);
+                    Tuple<string, Guid> adminLink = new(adminName, data.AdminId);
+
+                    Tuple<string, Guid> locationLink = new(locationName, data.LocationId);
+
+                    return new OrderSummaryViewModel
+                    {
+                        CustomerLink = customerLink,
+                        AdminLink = adminLink,
+                        LocationLink = locationLink,
+                        Total = total,
+                        PlacementDate = data.PlacementDate
+                    };
                 });
 
-            return View(viewModels);
+            return View(orderSummaries);
         }
 
         // GET: Customer/SearchByName/{name}
@@ -167,13 +186,20 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Roles.AdminAndUser)]
-        public ActionResult Edit(Guid id, CustomerViewModel viewModel) {
+        public async Task<ActionResult> Edit(Guid id, CustomerViewModel viewModel) {
             try {
                 if (!ModelState.IsValid) {
                     throw new Exception("Invalid ModelState");
                 }
 
-                return RedirectToAction(nameof(Index));
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+
+                var customerData = (CustomerData)viewModel;
+                var addressData = (AddressData)viewModel;
+                await _archivist.UpdateAsync<Customer>(user.UserId, customerData);
+                await _archivist.UpdateAsync<Address>(customerData.AddressId, addressData);
+
+                return RedirectToAction(nameof(HomeController.Index), "Home");
             } catch {
                 // Return the page to the editing page
                 return View(viewModel);

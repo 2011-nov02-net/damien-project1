@@ -85,6 +85,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         // GET: Admin/Delete/5
+        [HttpGet]
         [Authorize(Roles = Roles.Admin)]
         public ActionResult Delete(Guid id) {
             return View();

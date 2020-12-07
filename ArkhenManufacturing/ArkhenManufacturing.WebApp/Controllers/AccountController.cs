@@ -87,7 +87,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login() {
             // Log out any users that are currently logged in
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await _signInManager.SignOutAsync();
             return View();
         }
 
@@ -104,6 +104,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 var result = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, viewModel.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded) {
+                    var user = _userManager.GetUserAsync(HttpContext.User);
+
                     return GetRedirect(returnUrl);
                 } else {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt; please try again");
@@ -116,7 +118,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.AdminAndUser)]
+        [Authorize]
         public async Task<IActionResult> Details() {
             _logger.LogInformation("Details method in AccountController reached.");
             if(!_signInManager.IsSignedIn(HttpContext.User)) {
@@ -139,10 +141,11 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 controllerName = "Customer";
             }
 
-            return RedirectToAction(nameof(CustomerController.Details), controllerName, new { id = user.UserId });
+            return RedirectToAction(nameof(CustomerController.Details), controllerName, user);
         }
 
         // GET: Account/Cart/
+        [HttpGet]
         [AllowAnonymous]
         public IActionResult Cart() {
             if (!_signInManager.IsSignedIn(HttpContext.User)) {

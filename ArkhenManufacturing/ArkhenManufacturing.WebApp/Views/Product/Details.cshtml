@@ -1,4 +1,9 @@
-﻿@model ArkhenManufacturing.WebApp.Models.ProductViewModel
+﻿@model Tuple<ArkhenManufacturing.WebApp.Models.ProductViewModel, ICollection<Tuple<string, Guid>>>
+
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ArkhenManufacturing.DataAccess.ApplicationUser> SignInManager
+@inject UserManager<ArkhenManufacturing.DataAccess.ApplicationUser> UserManager
 
 @{
   ViewData["Title"] = "Details";
@@ -10,36 +15,33 @@
   <hr />
   <dl class="row">
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.ProductName)
+      @Html.DisplayFor(model => model.Item1.ProductName)
     </dd>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Count) left in stock
+      @Html.DisplayFor(model => model.Item1.Count) left in stock
     </dd>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Threshold) maximum
+      @Html.DisplayFor(model => model.Item1.Threshold) maximum
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.Price)
+      @Html.DisplayNameFor(model => model.Item1.Price)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.DiscountedPrice)
-      @if (Model.Discount > 0.0M) {
-        @:(@(Html.DisplayFor(model => model.DiscountPercentage))%)
+      @Html.DisplayFor(model => model.Item1.DiscountedPrice)
+      @if (Model.Item1.Discount > 0.0M) {
+        @:(@(Html.DisplayFor(model => model.Item1.DiscountPercentage))% Discount)
       }
-</dl>
-  @if (TempData["CurrentUser"] is not null) {
-    await Html.RenderPartialAsync("RequestProduct", new ProductRequestViewModel(Model.Id)
+  </dl>
+  @if (SignInManager.IsSignedIn(User)) {
+    await Html.RenderPartialAsync("RequestProduct", new ProductRequestViewModel(Model.Item1.Id)
     {
-      ProductName = Model.ProductName,
+      PossibleLocations = Model.Item2,
+      ProductName = Model.Item1.ProductName,
       Count = 0,
-      PricePerUnit = Model.Price,
-      Discount = Model.Discount
+      PricePerUnit = Model.Item1.Price,
+      Discount = Model.Item1.Discount
     });
   }
-  @*<form asp-controller="Product" asp-action="AddToCart">
-    <input type="number" value="Count" />
-    <button type="submit" value="Add to Cart" />
-    </form>*@
 </div>
 @*<div>
   @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |

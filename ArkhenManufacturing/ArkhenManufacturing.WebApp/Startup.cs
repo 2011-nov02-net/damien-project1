@@ -35,7 +35,7 @@ namespace ArkhenManufacturing.WebApp
                 .AddDefaultTokenProviders();
 
             // services.AddSingleton<IRepository, InternalRepository>();
-            services.AddScoped<IRepository, DatabaseRepository>(
+            services.AddTransient<IRepository, DatabaseRepository>(
                 sp => new DatabaseRepository(new DbContextOptionsBuilder<ArkhenContext>()
                         .UseSqlServer(connectionString)
                         .Options));
@@ -57,8 +57,8 @@ namespace ArkhenManufacturing.WebApp
 
             app.UseRouting();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(

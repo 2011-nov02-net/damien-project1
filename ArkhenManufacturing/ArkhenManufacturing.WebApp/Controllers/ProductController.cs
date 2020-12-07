@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
@@ -12,19 +13,22 @@ using ArkhenManufacturing.WebApp.Models;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly Archivist _archivist;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ProductController> _logger;
 
-        public ProductController(Archivist archivist, ILogger<ProductController> logger) {
+        public ProductController(Archivist archivist, UserManager<ApplicationUser> userManager, ILogger<ProductController> logger) {
             _archivist = archivist;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -53,39 +57,39 @@ namespace ArkhenManufacturing.WebApp.Controllers
         // GET: Product/Details/5
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult Details(Guid id) {
+        public async Task<ActionResult> Details(Guid id) {
             var product = _archivist.Retrieve<Product>(id);
-            Guid? defaultStoreId = TempData.Peek("DefaultStoreId") as Guid?;
-            InventoryEntryData inventoryEntry = _archivist
-                .RetrieveAll<InventoryEntry>()
-                .Select(ie => ie.GetData() as InventoryEntryData)
-                .FirstOrDefault(data => data.ProductId == id);
+            var user = await _userManager.GetUserAsync(HttpContext.User);
 
-            if (defaultStoreId.HasValue) {
-                if (inventoryEntry?.LocationId != defaultStoreId.Value) {
-                    inventoryEntry = null;
-                }
+            var customer = await _archivist.RetrieveAsync<Customer>(user.UserId);
+            var customerData = customer.GetData() as CustomerData;
+
+            Guid? defaultStoreId = customerData.DefaultLocationId;
+            var inventoryEntries = await _archivist.RetrieveAllAsync<InventoryEntry>();
+
+            var inventoryEntriesForProduct = inventoryEntries
+                .Where(ie => (ie.GetData() as InventoryEntryData).ProductId == id)
+                .ToList();
+
+            var locationNamesWithIds = new List<Tuple<string, Guid>>();
+
+            foreach (var ie in inventoryEntriesForProduct) {
+                var data = ie.GetData() as InventoryEntryData;
+                var location = await _archivist.RetrieveAsync<Location>(data.LocationId);
+                locationNamesWithIds.Add(new Tuple<string, Guid>(location.GetName(), location.Id));
             }
 
-            if (inventoryEntry is null) {
-                // the product doesn't exist
-                ModelState.AddModelError("", "Product is not found at any store.");
-            } else if (inventoryEntry.Count == 0) {
-                // product is out of stock
-                ModelState.AddModelError("", "Product is out of stock.");
-            } else {
-                // product is in stock
-                var productData = product.GetData() as ProductData;
-                var viewModel = new ProductViewModel(productData.Name, inventoryEntry);
-                return View(viewModel);
-            }
+            // product is in stock
+            var productData = product.GetData() as ProductData;
+            var inventoryEntryData = inventoryEntriesForProduct.First().GetData() as InventoryEntryData;
+            var viewModel = new ProductViewModel(productData.Name, inventoryEntryData);
 
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return View(new Tuple<ProductViewModel, ICollection<Tuple<string, Guid>>>(viewModel, locationNamesWithIds));
         }
 
         // POST: Product/AddToCart/{id}
         [HttpPost]
-        [Authorize(Roles = Roles.AdminAndUser)]
+        [Authorize]
         public IActionResult AddToCart(ProductRequestViewModel viewModel) {
             if (!ModelState.IsValid) {
                 return View(viewModel);
@@ -99,11 +103,6 @@ namespace ArkhenManufacturing.WebApp.Controllers
             productsInCart.Add(viewModel);
             TempData["Cart"] = JsonSerializer.Serialize(productsInCart);
             TempData.Keep("Cart");
-
-            if (TempData["SelectedLocation"] is null) {
-                // redirect the user to another page to select a location
-                return RedirectToAction(nameof(Retrieve), viewModel);
-            }
 
             // Send the user to a page that directs the user to checkout or the homepage
             TempData["Message"] = "Item added successfully";

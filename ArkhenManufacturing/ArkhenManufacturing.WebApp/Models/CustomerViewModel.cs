@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
@@ -77,6 +74,7 @@ namespace ArkhenManufacturing.WebApp.Models
 
             FirstName = customerData.FirstName;
             LastName = customerData.LastName;
+            PhoneNumber = customerData.PhoneNumber;
             Email = customerData.Email;
 
             Line1 = addressData.Line1;
@@ -92,6 +90,7 @@ namespace ArkhenManufacturing.WebApp.Models
             {
                 FirstName = viewModel.FirstName,
                 LastName = viewModel.LastName,
+                PhoneNumber = viewModel.PhoneNumber,
                 Email = viewModel.Email
             };
         }
