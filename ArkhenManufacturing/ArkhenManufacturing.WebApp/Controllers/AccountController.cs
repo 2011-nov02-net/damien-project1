@@ -164,6 +164,16 @@ namespace ArkhenManufacturing.WebApp.Controllers
             return View(items);
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult UpdateCart(IEnumerable<ProductRequestViewModel> viewModels) {
+            if (ModelState.IsValid) {
+                TempData["Cart"] = JsonSerializer.Serialize(viewModels);
+            }
+            
+            return RedirectToAction(nameof(Cart));
+        }
+
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]

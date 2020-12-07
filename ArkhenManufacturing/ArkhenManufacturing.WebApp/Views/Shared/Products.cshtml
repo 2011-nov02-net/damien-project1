@@ -1,5 +1,56 @@
 ﻿@model IEnumerable<ArkhenManufacturing.WebApp.Models.ProductViewModel>
 
-@foreach (var item in Model) {
-  await Html.RenderPartialAsync("ProductCard", item);
-}
+<div class="row justify-content-center">
+  @if (Model.Any()) {
+    <table class="table">
+      <thead>
+        <tr>
+          <td>
+            @Html.DisplayNameFor(_ => Model.First().ProductName)
+          </td>
+          <td>
+            @Html.DisplayNameFor(_ => Model.First().DiscountedPrice)
+          </td>
+          <td>
+            @Html.DisplayNameFor(_ => Model.First().DiscountPercentage)
+          </td>
+          <td>
+            @Html.DisplayNameFor(_ => Model.First().Cap)
+          </td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var item in Model) {
+          <tr>
+            <td>
+              @Html.DisplayFor(_ => item.ProductName)
+            </td>
+            <td>
+              @Html.DisplayFor(_ => item.DiscountedPrice)
+            </td>
+            <td>
+              @Html.DisplayFor(_ => item.DiscountPercentage)
+            </td>
+            <td>
+              @Html.DisplayFor(_ => item.Cap)
+            </td>
+            <td>
+              @Html.ActionLink("Details", "Details", "Product", new { id = item.Id })
+            </td>
+          </tr>
+        }
+
+        @*
+          @if ((TempData.Peek("IsAdmin") as bool?).Value) {
+            // Show this only if the current user is an admin
+            | Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ });@:|
+            Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ });
+          }
+        *@
+      </tbody>
+    </table>
+  } else {
+    <p>No Products Present</p>
+  }
+</div>
