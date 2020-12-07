@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.Domain.Database.DbSetInterfacer
