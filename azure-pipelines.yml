@@ -59,6 +59,10 @@ stages:
       inputs:
         pollingTimeoutSec: '300'
 
+- stage: test
+  jobs:
+  - job: 'run_tests'
+    steps:
     - task: 'DotNetCoreCLI@2'
       displayName: 'dotnet test'
       inputs:
@@ -67,6 +71,10 @@ stages:
         arguments: '--configuration $(buildConfiguration)'
         workingDirectory: 'ArkhenManufacturing'
 
+- stage: publish
+  jobs:
+  - job: 'publish_project'
+    steps:
     - script: 'dotnet publish --configuration $(buildConfiguration) --output .publish'
       displayName: 'dotnet publish'
       workingDirectory: 'ArkhenManufacturing'
