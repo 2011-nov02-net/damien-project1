@@ -4,6 +4,7 @@ namespace ArkhenManufacturing.WebApp.Models
 {
     public class OrderSummaryViewModel
     {
+        public Guid OrderId { get; set; }
         public Tuple<string, Guid> CustomerLink { get; set; }
         public Tuple<string, Guid> AdminLink { get; set; }
         public Tuple<string, Guid> LocationLink { get; set; }

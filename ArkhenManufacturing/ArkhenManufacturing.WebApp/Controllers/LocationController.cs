@@ -77,7 +77,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                         .Select(t => t.Result)
                         .ToList();
 
-                    return new OrderViewModel(customerName, adminName, locationName, orderLineViewModels);
+                    return new OrderViewModel(co.Id, customerName, adminName, locationName, orderLineViewModels);
                 });
 
             return View(viewModels);

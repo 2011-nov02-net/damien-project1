@@ -5,6 +5,7 @@ namespace ArkhenManufacturing.WebApp.Models
 {
     public class OrderViewModel
     {
+        public Guid OrderId { get; set; }
         public string CustomerName { get; set; }
         public string AdminName { get; set; }
         public string LocationName { get; set; }
@@ -14,7 +15,8 @@ namespace ArkhenManufacturing.WebApp.Models
         // TODO: Add in the partial rendering of the products in the order (constrained to a scrollbox)
         public OrderViewModel() { }
 
-        public OrderViewModel(string customerName, string adminName, string locationName, List<OrderLineViewModel> orderLineViewModels) {
+        public OrderViewModel(Guid orderId, string customerName, string adminName, string locationName, List<OrderLineViewModel> orderLineViewModels) {
+            OrderId = orderId;
             CustomerName = customerName;
             AdminName = adminName;
             LocationName = locationName;

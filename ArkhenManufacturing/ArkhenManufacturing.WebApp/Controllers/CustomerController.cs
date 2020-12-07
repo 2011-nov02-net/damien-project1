@@ -76,13 +76,15 @@ namespace ArkhenManufacturing.WebApp.Controllers
             orders = orders
                 .Where(o => {
                     var data = o.GetData() as OrderData;
-                    return data.CustomerId == id;
+                    return data.CustomerId == customer.Id;
                 })
                 .ToList();
 
             var orderSummaries = orders
-                .Select(o => o.GetData() as OrderData)
-                .Select(async data => {
+                .Select(o => new Tuple<Guid, OrderData>(o.Id, o.GetData() as OrderData))
+                .Select(async tuple => {
+                    Guid orderId = tuple.Item1;
+                    var data = tuple.Item2;
                     // get the customer's name
                     var customer = await _archivist.RetrieveAsync<Customer>(data.CustomerId);
                     string customerName = customer.GetName();
@@ -95,8 +97,14 @@ namespace ArkhenManufacturing.WebApp.Controllers
                     var location = await _archivist.RetrieveAsync<Location>(data.LocationId);
                     string locationName = location.GetName();
 
+                    var orderLines = (await _archivist.RetrieveAllAsync<OrderLine>())
+                        .Where(ol => (ol.GetData() as OrderLineData).OrderId == orderId);
+
+                    var orderLineIds = orderLines
+                        .Select(ol => ol.Id);
+
                     // Get the total price
-                    decimal total = data.OrderLineIds
+                    decimal total = orderLineIds
                         .Select(async id => await _archivist.RetrieveAsync<OrderLine>(id))
                             .Select(t => t.Result)
                         .Select(ol => ol.GetData() as OrderLineData)
@@ -110,6 +118,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
                     return new OrderSummaryViewModel
                     {
+                        OrderId = orderId,
                         CustomerLink = customerLink,
                         AdminLink = adminLink,
                         LocationLink = locationLink,

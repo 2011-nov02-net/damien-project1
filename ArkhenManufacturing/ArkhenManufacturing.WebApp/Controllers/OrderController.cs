@@ -27,8 +27,10 @@ namespace ArkhenManufacturing.WebApp.Controllers
             var orders = await _archivist.RetrieveAllAsync<Order>();
 
             var orderSummaries = orders
-                .Select(o => o.GetData() as OrderData)
-                .Select(async data => {
+                .Select(o => (o.Id, o.GetData() as OrderData))
+                .Select(async tuple => {
+                    Guid orderId = tuple.Item1;
+                    var data = tuple.Item2;
                     // get the customer's name
                     var customer = await _archivist.RetrieveAsync<Customer>(data.CustomerId);
                     string customerName = customer.GetName();
@@ -56,6 +58,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
                     return new OrderSummaryViewModel
                     {
+                        OrderId = orderId,
                         CustomerLink = customerLink,
                         AdminLink = adminLink,
                         LocationLink = locationLink,
@@ -98,7 +101,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 .Select(t => t.Result)
                 .ToList();
 
-            var viewModel = new OrderViewModel(customerName, adminName, locationName, orderLineViewModels);
+            var viewModel = new OrderViewModel(id, customerName, adminName, locationName, orderLineViewModels);
 
             return View(viewModel);
         }

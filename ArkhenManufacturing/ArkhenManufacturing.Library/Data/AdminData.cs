@@ -49,6 +49,9 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="email">Email address of the user</param>
         public AdminData(string firstName, string lastName, string email, Guid locationId) :
             base($"{lastName}, {firstName}") {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
             LocationId = locationId;
         }
 

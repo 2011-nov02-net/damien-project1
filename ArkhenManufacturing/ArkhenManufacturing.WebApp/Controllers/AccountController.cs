@@ -97,7 +97,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel viewModel, string returnUrl = null) {
+        public async Task<IActionResult> Login(LoginViewModel viewModel) {
             if (!ModelState.IsValid) {
                 return View(viewModel);
             }
@@ -109,7 +109,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 if (result.Succeeded) {
                     var user = _userManager.GetUserAsync(HttpContext.User);
 
-                    return GetRedirect(returnUrl);
+                    //return GetRedirect(returnUrl);
+                    return RedirectToAction(nameof(HomeController.Index), "Index");
                 } else {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt; please try again");
                     return View(viewModel);
@@ -193,16 +194,28 @@ namespace ArkhenManufacturing.WebApp.Controllers
             var admin = admins.OrderBy(a => {
                 return orderData.Count(od => od.AdminId == a.Id);
             }).First();
-            
+
+            Guid locationId = _cartService.ProductRequests.First().LocationId;
+
+            var products = _cartService.ProductRequests
+                .Select(pr => pr.ProductId)
+                .ToList();
+
+            var inventoryEntries = (await _archivist.RetrieveAllAsync<InventoryEntry>())
+                .Where(ie => (ie.GetData() as InventoryEntryData).LocationId == locationId)
+                .Where(ie => products.Contains((ie.GetData() as InventoryEntryData).ProductId))
+                .ToList();
+
             // get the customer id
-            Guid customerId = Guid.NewGuid();
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            Guid customerId = user.UserId;
 
             // Create the initial order data, and get its id
             var data = new OrderData
             {
                 AdminId = admin.Id,
                 CustomerId = customerId,
-                LocationId = (Guid)TempData["SelectedLocation"],
+                LocationId = locationId,
                 OrderLineIds = new List<Guid>(),
                 PlacementDate = DateTime.Now
             };
@@ -218,6 +231,15 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
             // Now to update the backend with the request
             await _archivist.UpdateAsync<Order>(orderId, data);
+
+            // update the store's inventory
+            for (int i = 0; i < inventoryEntries.Count; i++) {
+                var inventoryEntry = inventoryEntries[i];
+                var inventoryEntryData = inventoryEntry.GetData() as InventoryEntryData;
+                var productRequest = _cartService.ProductRequests.First(pr => pr.ProductId == inventoryEntryData.ProductId);
+                inventoryEntryData.Count -= productRequest.Count;
+                await _archivist.UpdateAsync<InventoryEntry>(inventoryEntry.Id, inventoryEntryData);
+            }
 
             _cartService.Clear();
 

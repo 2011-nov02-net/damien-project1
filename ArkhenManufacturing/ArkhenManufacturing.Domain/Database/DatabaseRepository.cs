@@ -98,11 +98,13 @@ namespace ArkhenManufacturing.Domain.Database
 
         public ICollection<T> RetrieveSome<T>(ICollection<Guid> ids)
             where T : ArkhEntity
-            => Interfacer<T>().RetrieveSomeAsync(ids).Result;
+            => Interfacer<T>()
+                .RetrieveSomeAsync(ids).Result;
 
         public async Task<ICollection<T>> RetrieveSomeAsync<T>(ICollection<Guid> ids)
             where T : ArkhEntity
-            => await Task.Run(() => RetrieveSomeAsync<T>(ids));
+            => await Task.Run(() => Interfacer<T>()
+                .RetrieveSomeAsync(ids));
 
         public List<T> RetrieveAll<T>()
             where T : ArkhEntity
