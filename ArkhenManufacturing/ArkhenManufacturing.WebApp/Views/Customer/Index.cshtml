@@ -13,23 +13,24 @@
     </form>
   </div>
   <table class="table">
+    <caption>A list of customers that have registered in the website.</caption>
     <thead>
       <tr>
-        <td>
+        <th id="firstName">
           @Html.DisplayNameFor(model => model.First().FirstName)
-        </td>
-        <td>
+        </th>
+        <th id="lastName">
           @Html.DisplayNameFor(model => model.First().LastName)
-        </td>
-        <td>
+        </th>
+        <th id="phoneNumber">
           @Html.DisplayNameFor(model => model.First().PhoneNumber)
-        </td>
-        <td>
+        </th>
+        <th id="email">
           @Html.DisplayNameFor(model => model.First().Email)
-        </td>
-        <td>
+        </th>
+        <th id="address">
           @Html.DisplayNameFor(model => model.First().Address)
-        </td>
+        </th>
       </tr>
     </thead>
     <tbody>

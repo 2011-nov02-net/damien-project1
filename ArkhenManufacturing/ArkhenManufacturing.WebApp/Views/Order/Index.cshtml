@@ -3,15 +3,22 @@
 <div>
   @if (Model.Any()) {
     <table class="table">
+      <caption>A list of all orders placed through this website.</caption>
       <thead>
         <tr>
-          <th>Customer</th>
-          <th>Admin</th>
-          <th>Location</th>
-          <th>
+          <th id="customerLink">
+            @Html.DisplayNameFor(model => model.First().CustomerLink)
+          </th>
+          <th id="adminLink">
+            @Html.DisplayNameFor(model => model.First().AdminLink)
+          </th>
+          <th id="locationLink">
+            @Html.DisplayNameFor(model => model.First().LocationLink)
+          </th>
+          <th id="total">
             @Html.DisplayNameFor(model => model.First().Total)
           </th>
-          <th>
+          <th id="placementDate">
             @Html.DisplayNameFor(model => model.First().PlacementDate)
           </th>
         </tr>

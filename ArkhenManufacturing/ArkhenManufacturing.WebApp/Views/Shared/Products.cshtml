@@ -2,54 +2,46 @@
 
 <div class="row justify-content-center">
   @if (Model.Any()) {
-    <table class="table">
-      <thead>
+  <table class="table">
+    <caption>A list of products that are available</caption>
+    <thead>
+      <tr>
+        <th id="productName">
+          @Html.DisplayNameFor(_ => Model.First().ProductName)
+        </th>
+        <th id="discountedPrice">
+          @Html.DisplayNameFor(_ => Model.First().DiscountedPrice)
+        </th>
+        <th id="discountedPercentage">
+          @Html.DisplayNameFor(_ => Model.First().DiscountPercentage)
+        </th>
+        <th id="cap">
+          @Html.DisplayNameFor(_ => Model.First().Cap)
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var item in Model) {
         <tr>
           <td>
-            @Html.DisplayNameFor(_ => Model.First().ProductName)
+            @Html.DisplayFor(_ => item.ProductName)
           </td>
           <td>
-            @Html.DisplayNameFor(_ => Model.First().DiscountedPrice)
+            @Html.DisplayFor(_ => item.DiscountedPrice)
           </td>
           <td>
-            @Html.DisplayNameFor(_ => Model.First().DiscountPercentage)
+            @Html.DisplayFor(_ => item.DiscountPercentage)
           </td>
           <td>
-            @Html.DisplayNameFor(_ => Model.First().Cap)
+            @Html.DisplayFor(_ => item.Cap)
           </td>
-          <td></td>
+          <td>
+            @Html.ActionLink("Details", "Details", "Product", new { id = item.Id })
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        @foreach (var item in Model) {
-          <tr>
-            <td>
-              @Html.DisplayFor(_ => item.ProductName)
-            </td>
-            <td>
-              @Html.DisplayFor(_ => item.DiscountedPrice)
-            </td>
-            <td>
-              @Html.DisplayFor(_ => item.DiscountPercentage)
-            </td>
-            <td>
-              @Html.DisplayFor(_ => item.Cap)
-            </td>
-            <td>
-              @Html.ActionLink("Details", "Details", "Product", new { id = item.Id })
-            </td>
-          </tr>
-        }
-
-        @*
-          @if ((TempData.Peek("IsAdmin") as bool?).Value) {
-            // Show this only if the current user is an admin
-            | Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ });@:|
-            Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ });
-          }
-        *@
-      </tbody>
-    </table>
+      }
+    </tbody>
+  </table>
   } else {
     <p>No Products Present</p>
   }

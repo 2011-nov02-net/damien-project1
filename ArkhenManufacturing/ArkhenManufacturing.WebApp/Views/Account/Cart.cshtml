@@ -8,7 +8,16 @@
   @if (Model is not null && Model.Any()) {
     <form asp-action="PlaceOrder" asp-controller="Account">
       <table class="table">
+        <caption>A display for all of the products in your cart currently.</caption>
         <thead>
+          <tr>
+            <th id="productName">
+              @Html.DisplayNameFor(model => model.First().ProductName)
+            </th>
+            <th id="count">
+              @Html.DisplayNameFor(model => model.First().Count)
+            </th>
+          </tr>
         </thead>
         <tbody>
           @foreach (var productRequest in Model) {

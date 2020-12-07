@@ -6,6 +6,7 @@
 
 <div class="row justify-content-center">
   <table class="table">
+    <caption>A list of the primary data in this order.</caption>
     <tbody>
       <tr>
         <td>
@@ -44,23 +45,24 @@
   <br />
   <label class="row justify-content-center">Products</label>
   <table class="table">
+    <caption>A list of all the products, their prices, counts, and any discount that was applied in this order.</caption>
     <thead>
       <tr>
-        <td>
+        <th id="productName">
           @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].ProductName)
-        </td>
-        <td>
+        </th>
+        <th id="price">
           @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].Price)
-        </td>
-        <td>
+        </th>
+        <th id="count">
           @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].Count)
-        </td>
-        <td>
+        </th>
+        <th id="discount">
           @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].Discount)
-        </td>
-        <td>
+        </th>
+        <th id="totalPrice">
           @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].TotalPrice)
-        </td>
+        </th>
       </tr>
     </thead>
     <tbody>

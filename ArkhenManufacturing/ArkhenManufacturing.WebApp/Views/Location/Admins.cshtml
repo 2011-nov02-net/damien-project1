@@ -6,20 +6,21 @@
 
 <div class="row justify-content-center">
   <table class="table">
+    <caption>A list of the admins that are associated with this location.</caption>
     <thead>
       <tr>
-        <td>
+        <th id="firstName">
           @Html.DisplayNameFor(model => model.First().FirstName)
-        </td>
-        <td>
+        </th>
+        <th id="lastName">
           @Html.DisplayNameFor(model => model.First().LastName)
-        </td>
-        <td>
+        </th>
+        <th id="username">
           @Html.DisplayNameFor(model => model.First().Username)
-        </td>
-        <td>
+        </th>
+        <th id="email">
           @Html.DisplayNameFor(model => model.First().Email)
-        </td>
+        </th>
       </tr>
     </thead>
     <tbody>

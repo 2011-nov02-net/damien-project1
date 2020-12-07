@@ -7,11 +7,12 @@
 <div class="row justify-content-center">
   @* Alright, so the locations need to be shown *@
   <table class="table">
+    <caption>A list of locations that are available.</caption>
     <thead>
       <tr>
-        <td>
+        <th id="name">
           @Html.DisplayNameFor(model => model.First().Name)
-        </td>
+        </th>
       </tr>
     </thead>
     <tbody>
