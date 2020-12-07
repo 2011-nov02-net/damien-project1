@@ -1,5 +1,4 @@
 ﻿using System;
-
 using ArkhenManufacturing.Library.Extensions;
 
 namespace ArkhenManufacturing.Library.Data
