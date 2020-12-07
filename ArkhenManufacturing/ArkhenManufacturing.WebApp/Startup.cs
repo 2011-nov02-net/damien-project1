@@ -2,6 +2,7 @@ using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
 // using ArkhenManufacturing.Domain.Internal;
 using ArkhenManufacturing.Domain.Database;
+using ArkhenManufacturing.WebApp.Models.Services;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +42,8 @@ namespace ArkhenManufacturing.WebApp
                         .Options));
 
             services.AddScoped<Archivist>();
+
+            services.AddSingleton<CartService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

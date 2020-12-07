@@ -17,6 +17,7 @@ using ArkhenManufacturing.DataAccess;
 using Microsoft.AspNetCore.Authorization;
 using ArkhenManufacturing.Library.Extensions;
 using ArkhenManufacturing.WebApp.Misc;
+using ArkhenManufacturing.WebApp.Models.Services;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
@@ -26,12 +27,14 @@ namespace ArkhenManufacturing.WebApp.Controllers
         private readonly Archivist _archivist;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly CartService _cartService;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(Archivist archivist, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger) {
+        public AccountController(Archivist archivist, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, [FromServices] CartService cartService, ILogger<AccountController> logger) {
             _archivist = archivist;
             _userManager = userManager;
             _signInManager = signInManager;
+            _cartService = cartService;
             _logger = logger;
         }
 
@@ -152,23 +155,16 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 return RedirectToAction(nameof(AccountController.Login), "Account");
             }
 
-            string cartString = TempData["Cart"]?.ToString();
-            List<ProductRequestViewModel> items;
-
-            if (cartString.IsNullOrEmpty()) {
-                items = new List<ProductRequestViewModel>();
-            } else {
-                items = JsonSerializer.Deserialize<List<ProductRequestViewModel>>(cartString);
-            }
-
-            return View(items);
+            return View(_cartService.ProductRequests);
         }
 
         [HttpGet]
         [Authorize]
-        public IActionResult UpdateCart(IEnumerable<ProductRequestViewModel> viewModels) {
+        public IActionResult UpdateCart(string data) {
             if (ModelState.IsValid) {
-                TempData["Cart"] = JsonSerializer.Serialize(viewModels);
+                var viewModels = JsonSerializer.Deserialize<List<ProductRequestViewModel>>(data);
+                _cartService.Clear();
+                _cartService.AddRange(viewModels);
             }
             
             return RedirectToAction(nameof(Cart));
@@ -178,15 +174,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult RemoveFromCart(ProductRequestViewModel viewModel) {
-            // get the targeted item
-            var cart = TempData["Cart"] as List<ProductRequestViewModel>;
-
             // remove
-            cart.Remove(viewModel);
-
-            // return it to the view
-            TempData["Cart"] = JsonSerializer.Serialize(cart);
-            TempData.Keep("Cart");
+            _cartService.Remove(viewModel);
 
             return RedirectToAction(nameof(Cart));
         }
@@ -194,7 +183,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PlaceOrder(IEnumerable<ProductRequestViewModel> viewModels) {
+        public async Task<IActionResult> PlaceOrder() {
             // get an admin id for this location by the 
             //      admin with the fewest number of orders
             var admins = await _archivist.RetrieveAllAsync<Admin>();
@@ -221,7 +210,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
             Guid orderId = await _archivist.CreateAsync<Order>(data);
 
             // create the order lines
-            foreach(var productRequest in viewModels) {
+            foreach(var productRequest in _cartService.ProductRequests) {
                 var orderLineData = new OrderLineData(orderId, productRequest.ProductId, productRequest.Count, productRequest.PricePerUnit, productRequest.Discount);
                 Guid orderLineId = await _archivist.CreateAsync<OrderLine>(orderLineData);
                 data.OrderLineIds.Add(orderLineId);
@@ -230,8 +219,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
             // Now to update the backend with the request
             await _archivist.UpdateAsync<Order>(orderId, data);
 
-            TempData["Message"] = "Order placed successfully";
-            TempData["Cart"] = JsonSerializer.Serialize(new List<ProductRequestViewModel>());
+            _cartService.Clear();
+
             return RedirectToAction(nameof(OrderController.Details), "Order", new { id = orderId });
         }
 

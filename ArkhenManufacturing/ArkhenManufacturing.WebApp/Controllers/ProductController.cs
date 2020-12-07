@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 using ArkhenManufacturing.DataAccess;
@@ -10,6 +9,7 @@ using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
+using ArkhenManufacturing.WebApp.Models.Services;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,11 +24,13 @@ namespace ArkhenManufacturing.WebApp.Controllers
     {
         private readonly Archivist _archivist;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly CartService _cartService;
         private readonly ILogger<ProductController> _logger;
 
-        public ProductController(Archivist archivist, UserManager<ApplicationUser> userManager, ILogger<ProductController> logger) {
+        public ProductController(Archivist archivist, UserManager<ApplicationUser> userManager, [FromServices] CartService cartService, ILogger<ProductController> logger) {
             _archivist = archivist;
             _userManager = userManager;
+            _cartService = cartService;
             _logger = logger;
         }
 
@@ -95,14 +97,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 return RedirectToAction("Details", new { id = viewModel.ProductId });
             }
 
-            if (TempData["Cart"] is not List<ProductRequestViewModel> productsInCart) {
-                // No items are in cart, the user must select a location
-                productsInCart = new List<ProductRequestViewModel>();
-            }
-
-            productsInCart.Add(viewModel);
-            TempData["Cart"] = JsonSerializer.Serialize(productsInCart);
-            TempData.Keep("Cart");
+            _cartService.Add(viewModel);
 
             // Send the user to a page that directs the user to checkout or the homepage
             TempData["Message"] = "Item added successfully";
