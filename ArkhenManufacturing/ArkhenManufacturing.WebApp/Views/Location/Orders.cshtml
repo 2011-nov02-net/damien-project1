@@ -5,9 +5,12 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Customer</th>
-          <th>Admin</th>
-          <th>Location</th>
+          <th>
+            @Html.DisplayNameFor(model => model.First().CustomerLink)
+          </th>
+          <th>
+            @Html.DisplayNameFor(model => model.First().AdminLink)
+          </th>
           <th>
             @Html.DisplayNameFor(model => model.First().Total)
           </th>
@@ -20,19 +23,16 @@
         @foreach (var item in Model) {
           <tr>
             <td>
-              @Html.ActionLink(item.CustomerLink.Item1, "Details", "Customer", new { id = item.CustomerLink.Item2 })
+              <label class="form-group">@item.CustomerLink.Item1</label>
             </td>
             <td>
-              @Html.ActionLink(item.CustomerLink.Item1, "Details", "Admin", new { id = item.CustomerLink.Item2 })
+              <label class="form-group">@item.AdminLink.Item1</label>
             </td>
             <td>
-              @Html.ActionLink(item.CustomerLink.Item1, "Details", "Location", new { id = item.CustomerLink.Item2 })
+              @Html.DisplayFor(_ => item.Total)
             </td>
             <td>
-              @Html.DisplayFor(_ => item.Total);
-            </td>
-            <td>
-              @Html.DisplayFor(_ => item.PlacementDate);
+              @Html.DisplayFor(_ => item.PlacementDate)
             </td>
           </tr>
         }
