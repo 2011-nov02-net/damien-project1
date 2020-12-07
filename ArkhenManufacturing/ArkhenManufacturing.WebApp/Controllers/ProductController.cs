@@ -92,7 +92,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [Authorize]
         public IActionResult AddToCart(ProductRequestViewModel viewModel) {
             if (!ModelState.IsValid) {
-                return View(viewModel);
+                return RedirectToAction("Details", new { id = viewModel.ProductId });
             }
 
             if (TempData["Cart"] is not List<ProductRequestViewModel> productsInCart) {

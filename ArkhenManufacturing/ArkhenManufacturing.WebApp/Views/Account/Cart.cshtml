@@ -1,19 +1,33 @@
-﻿@model IEnumerable<ArkhenManufacturing.WebApp.Models.ProductRequestViewModel>
+﻿@model IEnumerable<ProductRequestViewModel>
 
-@{ 
-    ViewData["Title"] = "Your Cart";
+@{
+  ViewData["Title"] = "Your Cart";
 }
 
 <div class='row justify-content-center'>
-  @if(Model is not null && Model.Any()) {
-  <form asp-action="PlaceOrder" asp-controller="Account">
-    @foreach (var productRequest in Model) {
-      <label class="control-label" value="@productRequest.ProductName"></label>
-      <input type="number" value="@productRequest.Count" />
-      @Html.ActionLink("Remove", "RemoveFromCart", "Account", Model)
-    }
-    <input type="submit" value="Place Order" class="btn btn-primary" />
-  </form>
+  @if (Model is not null && Model.Any()) {
+    <form asp-action="PlaceOrder" asp-controller="Account">
+      <table class="table">
+        <thead>
+        </thead>
+        <tbody>
+          @foreach (var productRequest in Model) {
+            <tr>
+              <td>
+                <label class="control-label">@productRequest.ProductName</label>
+              </td>
+              <td>
+                <input type="number" value="@productRequest.Count" />
+              </td>
+              <td>
+                @Html.ActionLink("Remove", "RemoveFromCart", "Account", Model)
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <input type="submit" value="Place Order" class="btn btn-primary" />
+    </form>
   } else {
     <p>You have no items in your cart.</p>
   }

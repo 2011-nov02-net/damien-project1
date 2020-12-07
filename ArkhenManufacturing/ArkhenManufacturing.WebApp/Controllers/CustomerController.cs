@@ -66,7 +66,9 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [HttpGet]
         [Authorize(Roles = Roles.AdminAndUser)]
         public async Task<IActionResult> Orders(Guid id) {
-            var customer = await _archivist.RetrieveAsync<Customer>(id);
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var customer = await _archivist.RetrieveAsync<Customer>(user.UserId);
             var customerName = customer.GetName();
 
             var orders = await _archivist.RetrieveAllAsync<Order>();
@@ -114,7 +116,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
                         Total = total,
                         PlacementDate = data.PlacementDate
                     };
-                });
+                })
+                .Select(t => t.Result);
 
             return View(orderSummaries);
         }
