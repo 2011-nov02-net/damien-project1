@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using ArkhenManufacturing.Library.Data;
-using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Misc;
 
 namespace ArkhenManufacturing.WebApp.Models

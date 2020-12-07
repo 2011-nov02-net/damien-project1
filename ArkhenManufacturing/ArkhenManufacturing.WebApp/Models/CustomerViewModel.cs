@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.Library.Extensions;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-
 using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
@@ -9,7 +8,6 @@ using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.Library.Extensions;
 using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

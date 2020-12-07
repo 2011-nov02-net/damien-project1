@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
@@ -10,7 +9,6 @@ using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
 using ArkhenManufacturing.WebApp.Models.Services;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

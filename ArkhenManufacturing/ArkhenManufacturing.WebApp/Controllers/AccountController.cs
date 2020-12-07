@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Mvc;
-
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.Domain;
@@ -12,11 +10,8 @@ using ArkhenManufacturing.WebApp.Models;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
 using ArkhenManufacturing.DataAccess;
 using Microsoft.AspNetCore.Authorization;
-using ArkhenManufacturing.Library.Extensions;
-using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models.Services;
 
 namespace ArkhenManufacturing.WebApp.Controllers

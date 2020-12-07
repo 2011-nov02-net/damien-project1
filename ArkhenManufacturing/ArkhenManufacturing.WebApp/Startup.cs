@@ -1,6 +1,5 @@
 using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
-// using ArkhenManufacturing.Domain.Internal;
 using ArkhenManufacturing.Domain.Database;
 using ArkhenManufacturing.WebApp.Models.Services;
 
@@ -35,7 +34,6 @@ namespace ArkhenManufacturing.WebApp
                 .AddEntityFrameworkStores<ArkhenContext>()
                 .AddDefaultTokenProviders();
 
-            // services.AddSingleton<IRepository, InternalRepository>();
             services.AddTransient<IRepository, DatabaseRepository>(
                 sp => new DatabaseRepository(new DbContextOptionsBuilder<ArkhenContext>()
                         .UseSqlServer(connectionString)

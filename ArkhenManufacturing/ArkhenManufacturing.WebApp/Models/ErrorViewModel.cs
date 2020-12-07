@@ -1,5 +1,3 @@
-using System;
-
 namespace ArkhenManufacturing.WebApp.Models
 {
     public class ErrorViewModel

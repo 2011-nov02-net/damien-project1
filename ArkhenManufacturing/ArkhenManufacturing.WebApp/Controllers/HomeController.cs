@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Models;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

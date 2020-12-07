@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
-using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.WebApp.Misc;
 
 namespace ArkhenManufacturing.WebApp.Models
