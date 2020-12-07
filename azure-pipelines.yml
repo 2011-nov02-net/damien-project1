@@ -92,28 +92,11 @@ stages:
       displayName: 'dotnet publish'
       workingDirectory: 'ArkhenManufacturing'
 
-    - publish: 'ArkhenManufacturing/.publish'
-      displayName: 'Publish Artifact App'
-      artifact: 'app'
-
-- stage: 'release'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  jobs:
-  - deployment: 'app_service'
-    environment: 'prod'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: 'current'
-            displayName: 'download app'
-            artifact: 'app'
-
-          - task: 'AzureRmWebAppDeployment@4'
-            displayName: 'Azure App Service Display'
-            inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
-              appType: 'webApp'
-              WebAppName: 'arkhen-manufacturing'
-              packageForLinux: '$(Pipeline.Workspace)/app'
+    - task: 'AzureRmWebAppDeployment@4'
+      displayName: 'Azure App Service Display'
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
+        appType: 'webApp'
+        WebAppName: 'arkhen-manufacturing'
+        packageForLinux: 'ArkhenManufacturing/.publish'
