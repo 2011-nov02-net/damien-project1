@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ArkhenManufacturing.WebApp.Models
@@ -6,9 +7,20 @@ namespace ArkhenManufacturing.WebApp.Models
     public class ProductRequestViewModel
     {
         public Guid ProductId { get; set; }
-        [Range(1, 999999)]
+
         public string ProductName { get; set; }
+
+        [Range(1, 999999)]
         public int Count { get; set; }
+
+        [DataType(DataType.Currency)]
+        public decimal PricePerUnit { get; set; }
+
+        public decimal Discount { get; set; }
+
+        public ICollection<Tuple<string, Guid>> PossibleLocations { get; set; }
+
+        public Guid LocationId { get; set; }
 
         public ProductRequestViewModel() { }
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>@ViewData["Title"] - Arkhen Manufacturing</title>
-  @{ await Html.RenderPartialAsync("css"); }
+  @await Html.PartialAsync("css")
 </head>
 <body>
   <header>
@@ -17,22 +17,11 @@
         </button>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
           <ul class="navbar-nav flex-grow-1">
-            <li class="nav-item">
-              <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            </li>
+            @await Html.PartialAsync("AdminView")
           </ul>
         </div>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
-          @if (TempData.Peek("CurrentUser") is not null) {
-            <p class="navbar-brand btn-link text-light">Welcome, @TempData.Peek("CurrentUser")</p>
-            <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Logout">Logout</a>
-          } else {
-            <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Register">New? Register now</a>
-            <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Login">Login</a>
-          }
+          @await Html.PartialAsync("_LoginPartial")
           <a class="navbar-brand btn-link text-light" asp-controller="Account" asp-action="Cart">Cart</a>
         </div>
       </div>
@@ -42,8 +31,7 @@
     <div>
       <p class="text-success">@(TempData["Message"] ?? "")</p>
     </div>
-    <main role="main">
-      @*class="pb-3"*@
+    <main role="main" class="pb-3">
       @RenderBody()
     </main>
   </div>

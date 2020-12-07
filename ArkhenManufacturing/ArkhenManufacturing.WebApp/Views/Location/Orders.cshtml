@@ -1,0 +1,45 @@
+﻿@model IEnumerable<OrderSummaryViewModel>
+
+<div>
+  @if (Model.Any()) {
+    <table class="table">
+      <caption>A list of all orders placed to this location.</caption>
+      <thead>
+        <tr>
+          <th id="customerLink">
+            @Html.DisplayNameFor(model => model.First().CustomerLink)
+          </th>
+          <th id="adminLink">
+            @Html.DisplayNameFor(model => model.First().AdminLink)
+          </th>
+          <th id="locationLink">
+            @Html.DisplayNameFor(model => model.First().Total)
+          </th>
+          <th id="placementDate">
+            @Html.DisplayNameFor(model => model.First().PlacementDate)
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var item in Model) {
+          <tr>
+            <td>
+              <label class="form-group">@item.CustomerLink.Item1</label>
+            </td>
+            <td>
+              <label class="form-group">@item.AdminLink.Item1</label>
+            </td>
+            <td>
+              @Html.DisplayFor(_ => item.Total)
+            </td>
+            <td>
+              @Html.DisplayFor(_ => item.PlacementDate)
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } else {
+    <p class="row justify-content-center">No Orders Present</p>
+  }
+</div>

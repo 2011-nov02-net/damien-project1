@@ -1,4 +1,5 @@
 ﻿using System;
+using ArkhenManufacturing.Library.Extensions;
 
 namespace ArkhenManufacturing.Library.Data
 {
@@ -6,8 +7,28 @@ namespace ArkhenManufacturing.Library.Data
     /// Container for the actual data of an Customer
     ///     (that is not contained in the UserData parent class)
     /// </summary>
-    public class CustomerData : UserData
+    public class CustomerData : NamedData
     {
+        /// <summary>
+        /// Property that only accesses the FirstName and LastName
+        /// </summary>
+        public string Fullname => $"{LastName}, {FirstName}";
+
+        /// <summary>
+        /// First Name of the User
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// Last Name of the User
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
+        /// Email address of the user
+        /// </summary>
+        public string Email { get; set; }
+
         /// <summary>
         /// Customer's Phone Number
         /// </summary>
@@ -38,7 +59,8 @@ namespace ArkhenManufacturing.Library.Data
         /// Default constructor for use with assigning the data in 
         ///     object initialization syntax
         /// </summary>
-        public CustomerData() { }
+        public CustomerData() :
+            base(nameof(CustomerData)) { }
 
         /// <summary>
         /// Constructor that allows the calling code to assign all of the values to it.
@@ -53,8 +75,15 @@ namespace ArkhenManufacturing.Library.Data
         /// <param name="username">UserName of the User</param>
         /// <param name="password">User's password</param>
         /// <param name="email">Email address of the user</param>
-        public CustomerData(string firstName, string lastName, string username, string password, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? defaultLocationId) :
-            base(firstName, lastName, username, password, email) {
+        public CustomerData(string firstName, string lastName, string email, string phoneNumber, Guid addressId, DateTime signUpDate, DateTime birthDate, Guid? defaultLocationId) :
+            base($"{lastName}, {firstName}") {
+            firstName.NullOrEmptyCheck(nameof(firstName));
+            lastName.NullOrEmptyCheck(nameof(lastName));
+            email.NullOrEmptyCheck(nameof(email));
+
+            FirstName = firstName.Trim();
+            LastName = lastName.Trim();
+            Email = email.Trim();
             PhoneNumber = phoneNumber?.Trim();
             AddressId = addressId;
             SignUpDate = signUpDate;
@@ -67,7 +96,7 @@ namespace ArkhenManufacturing.Library.Data
         /// </summary>
         /// <param name="other">The value being assigned to this</param>
         public CustomerData(CustomerData other) :
-            this(other.FirstName, other.LastName, other.Username, other.Password, other.Email, other.PhoneNumber, other.AddressId, other.SignUpDate, other.BirthDate, other.DefaultLocationId) {
+            this(other.FirstName, other.LastName, other.Email, other.PhoneNumber, other.AddressId, other.SignUpDate, other.BirthDate, other.DefaultLocationId) {
         }
     }
 }

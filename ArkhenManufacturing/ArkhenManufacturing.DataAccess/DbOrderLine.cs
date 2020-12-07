@@ -13,7 +13,7 @@ namespace ArkhenManufacturing.DataAccess
         public int Count { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal PricePerUnit { get; set; }
-        [Column(TypeName = "decimal(3,3)")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Discount { get; set; }
     }
 }

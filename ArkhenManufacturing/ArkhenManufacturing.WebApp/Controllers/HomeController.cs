@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Models;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.WebApp.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly Archivist _archivist;
@@ -24,6 +22,7 @@ namespace ArkhenManufacturing.WebApp.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index() {
             var products = _archivist.RetrieveAll<Product>();
 
@@ -43,10 +42,12 @@ namespace ArkhenManufacturing.WebApp.Controllers
             return View(productViewModels.Values);
         }
 
+        [AllowAnonymous]
         public IActionResult Privacy() {
             return View();
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

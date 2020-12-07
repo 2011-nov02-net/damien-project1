@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain.Database.DbSetInterfacer;
-using ArkhenManufacturing.Library;
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
-using ArkhenManufacturing.Library.Extensions;
-
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace ArkhenManufacturing.Domain.Database
 {
@@ -29,13 +24,13 @@ namespace ArkhenManufacturing.Domain.Database
             _interfacers = new Dictionary<Type, IInterfacer>
             {
                 { typeof(Address), new AddressDbSetInterfacer(createContext) },
-                { typeof(Admin), null },
-                { typeof(Customer), null },
-                { typeof(InventoryEntry), null },
-                { typeof(Location), null },
-                { typeof(Order), null },
-                { typeof(OrderLine), null },
-                { typeof(Product), null },
+                { typeof(Admin), new AdminDbSetInterfacer(createContext) },
+                { typeof(Customer), new CustomerDbSetInterfacer(createContext)},
+                { typeof(InventoryEntry), new InventoryEntryDbSetInterfacer(createContext)},
+                { typeof(Location), new LocationDbSetInterfacer(createContext)},
+                { typeof(Order), new OrderDbSetInterfacer(createContext)},
+                { typeof(OrderLine), new OrderLineDbSetInterfacer(createContext)},
+                { typeof(Product), new ProductDbSetInterfacer(createContext)},
             };
         }
 
@@ -46,7 +41,7 @@ namespace ArkhenManufacturing.Domain.Database
         public bool Any<T>()
             where T : ArkhEntity
             => Interfacer<T>()
-                .Any();
+                .AnyAsync().Result;
 
         public async Task<bool> AnyAsync<T>()
             where T : ArkhEntity
@@ -55,7 +50,7 @@ namespace ArkhenManufacturing.Domain.Database
         public bool Exists<T>(Guid id) 
             where T : ArkhEntity
             => Interfacer<T>()
-                .Exists(id);
+                .ExistsAsync(id).Result;
 
         public async Task<bool> ExistsAsync<T>(Guid id)
             where T : ArkhEntity
@@ -64,16 +59,16 @@ namespace ArkhenManufacturing.Domain.Database
         public int Count<T>()
             where T : ArkhEntity
             => Interfacer<T>()
-                .Count();
+                .CountAsync().Result;
 
         public async Task<int> CountAsync<T>()
             where T : ArkhEntity
             => await Task.Run(() => Count<T>());
 
-        public Guid Create<T>(IData data) 
-            where T : ArkhEntity, new() 
+        public Guid Create<T>(IData data)
+            where T : ArkhEntity, new()
             => Interfacer<T>()
-                .Create(data);
+                .CreateAsync(data).Result;
 
         public async Task<Guid> CreateAsync<T>(IData data)
             where T : ArkhEntity, new()
@@ -82,7 +77,7 @@ namespace ArkhenManufacturing.Domain.Database
         public void Delete<T>(Guid id)
             where T : ArkhEntity
             => Interfacer<T>()
-                .Delete(id);
+                .DeleteAsync(id);
 
         public async Task DeleteAsync<T>(Guid id)
             where T : ArkhEntity
@@ -91,7 +86,7 @@ namespace ArkhenManufacturing.Domain.Database
         public T Retrieve<T>(Guid id)
             where T : ArkhEntity
             => Interfacer<T>()
-                .Retrieve(id);
+                .RetrieveAsync(id).Result;
 
         public async Task<T> RetrieveAsync<T>(Guid id)
             where T : ArkhEntity
@@ -99,16 +94,18 @@ namespace ArkhenManufacturing.Domain.Database
 
         public ICollection<T> RetrieveSome<T>(ICollection<Guid> ids)
             where T : ArkhEntity
-            => Interfacer<T>().RetrieveSome(ids);
+            => Interfacer<T>()
+                .RetrieveSomeAsync(ids).Result;
 
         public async Task<ICollection<T>> RetrieveSomeAsync<T>(ICollection<Guid> ids)
             where T : ArkhEntity
-            => await Task.Run(() => RetrieveSomeAsync<T>(ids));
+            => await Task.Run(() => Interfacer<T>()
+                .RetrieveSomeAsync(ids));
 
         public List<T> RetrieveAll<T>()
             where T : ArkhEntity
             => Interfacer<T>()
-                .RetrieveAll()
+                .RetrieveAllAsync().Result
                 .ToList();
 
         public async Task<List<T>> RetrieveAllAsync<T>()
@@ -118,7 +115,7 @@ namespace ArkhenManufacturing.Domain.Database
         public List<T> RetrieveByName<T>(string name)
             where T : NamedArkhEntity
             => Interfacer<T>()
-                .RetrieveAll()
+                .RetrieveAllAsync().Result
                 .Where(item => item.GetName()
                     .Contains(name))
                 .ToList();
@@ -130,7 +127,7 @@ namespace ArkhenManufacturing.Domain.Database
         public void Update<T>(Guid id, IData data)
             where T : ArkhEntity
             => Interfacer<T>()
-                .Update(id, data);
+                .UpdateAsync(id, data);
 
         public async Task UpdateAsync<T>(Guid id, IData data)
             where T : ArkhEntity

@@ -1,5 +1,5 @@
 using System;
-
+using System.ComponentModel.DataAnnotations;
 using ArkhenManufacturing.Library.Data;
 
 namespace ArkhenManufacturing.WebApp.Models
@@ -7,11 +7,31 @@ namespace ArkhenManufacturing.WebApp.Models
     public class ProductViewModel
     {
         public Guid Id { get; set; }
+
+        [Display(Name = "Product Name")]
         public string ProductName { get; set; }
+
+        public int Cap { get => Math.Max(Count, Threshold); }
+
         public int Count { get; set; }
+
         public int Threshold { get; set; }
+
+        [DataType(DataType.Currency)]
         public decimal Price { get; set; }
-        public decimal? Discount { get; set; }
+
+        public decimal Discount { get; set; }
+
+        [DataType(DataType.Currency)]
+        public decimal DiscountedPrice
+        {
+            get
+            {
+                return (1.0M - Discount / 100.0M) * Price;
+            }
+        }
+
+        public decimal DiscountPercentage { get => Discount; }
 
         public ProductViewModel() { }
 
@@ -25,7 +45,7 @@ namespace ArkhenManufacturing.WebApp.Models
         }
 
         public static explicit operator InventoryEntryData(ProductViewModel viewModel) {
-            decimal discount = viewModel.Discount ?? 0.0M;
+            decimal discount = viewModel.Discount;
             return new InventoryEntryData
             {
                 ProductId = viewModel.Id,

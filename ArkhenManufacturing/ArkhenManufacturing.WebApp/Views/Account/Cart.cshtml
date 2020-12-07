@@ -1,19 +1,43 @@
-﻿@model IEnumerable<ArkhenManufacturing.WebApp.Models.ProductRequestViewModel>
+﻿@model IEnumerable<ProductRequestViewModel>
 
-@{ 
-    ViewData["Title"] = "Your Cart";
+@{
+  ViewData["Title"] = "Your Cart";
 }
 
-<div>
-  @if(Model.Count() > 0) {
-  <form asp-action="PlaceOrder" asp-controller="Account">
-    @foreach (var productRequest in Model) {
-      <label class="control-label" value="@productRequest.ProductName"></label>
-      <input type="number" value="@productRequest.Count" />
-      @Html.ActionLink("Remove", "RemoveFromtCart", "Account", Model)
-    }
-    <input type="submit" value="Place Order" class="btn btn-primary" />
-  </form>
+<div class='row justify-content-center'>
+  @if (Model is not null && Model.Any()) {
+    <form asp-action="PlaceOrder" asp-controller="Account">
+      <table class="table">
+        <caption>A display for all of the products in your cart currently.</caption>
+        <thead>
+          <tr>
+            <th id="productName">
+              @Html.DisplayNameFor(model => model.First().ProductName)
+            </th>
+            <th id="count">
+              @Html.DisplayNameFor(model => model.First().Count)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var productRequest in Model) {
+            <tr>
+              <td>
+                <label class="control-label">@productRequest.ProductName</label>
+              </td>
+              <td>
+                <label class="control-label">@productRequest.Count</label>
+              </td>
+              <td>
+                @Html.ActionLink("Remove", "RemoveFromCart", "Account", Model)
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @*<a class="btn btn-primary" asp-action="UpdateCart" asp-controller="Account" asp-route-data="@System.Text.Json.JsonSerializer.Serialize(Model)">Update Cart</a>*@
+      <input type="submit" value="Place Order" class="btn btn-primary" />
+    </form>
   } else {
     <p>You have no items in your cart.</p>
   }

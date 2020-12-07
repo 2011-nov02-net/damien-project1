@@ -2,10 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 
@@ -34,37 +31,6 @@ namespace ArkhenManufacturing.Domain.Internal
                 { typeof(OrderLine), new List<OrderLine>() },
                 { typeof(Product), new List<Product>() },
             };
-
-            byte[] data = Encoding.ASCII.GetBytes("Password123");
-            data = new SHA256Managed().ComputeHash(data);
-            string password = Encoding.ASCII.GetString(data);
-            
-            // Product ids
-            Guid coffeeId = Create<Product>(new ProductData("Coffee"));
-            Guid waterBottleId = Create<Product>(new ProductData("Water Bottle"));
-            Guid usbDrive8GBId = Create<Product>(new ProductData("USB Drive (8GB)"));
-
-            // Address ids
-            Guid addressId = Create<Address>(new AddressData("123 Location Dr", "", "Eleison", "Khalrun", "Cylon-243", "12345"));
-            Guid damienAddressId = Create<Address>(new AddressData("123 Road Drive", "", "Eleison", "Khalrun", "Cylon-243", "12345"));
-
-            // Location ids
-            Guid arkhenplatzId = Create<Location>(new LocationData("Arkhenplatz", addressId, new List<Guid>(), new List<Guid>(), new List<Guid>()));
-
-            // Admin id
-            Guid veroAdminId = Create<Admin>(new AdminData("Vero", "Richter", "VRichter", password, "vero.richter@arkhen.net", arkhenplatzId));
-
-            // Add the admin id to the location
-            var location = Retrieve<Location>(arkhenplatzId);
-            (location.GetData() as LocationData).AdminIds.Add(veroAdminId);
-
-            // Inventory Entry ids
-            Create<InventoryEntry>(new InventoryEntryData(coffeeId, arkhenplatzId, 10.00M, 0.00M, 10, 2));
-            Create<InventoryEntry>(new InventoryEntryData(waterBottleId, arkhenplatzId, 1.00M, 0.00M, 24, 2));
-            Create<InventoryEntry>(new InventoryEntryData(usbDrive8GBId, arkhenplatzId, 12.00M, 0.00M, 5, 1));
-
-            // Customer ids
-            Create<Customer>(new CustomerData("Damien", "Bevins", "Khyproxios", password, "damien.bevins@outlook.com", "(385) 271-8623", damienAddressId, DateTime.Now, new DateTime(1997, 7, 23), arkhenplatzId));
         }
 
         /// <summary>

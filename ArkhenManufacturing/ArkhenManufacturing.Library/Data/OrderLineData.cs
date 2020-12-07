@@ -42,7 +42,7 @@ namespace ArkhenManufacturing.Library.Data
             get
             {
                 var total = Count * PricePerUnit;
-                var discount = (100M - Discount) / 100M;
+                var discount = 1.0M - Discount / 100.0M;
                 return total * discount;
             }
         }

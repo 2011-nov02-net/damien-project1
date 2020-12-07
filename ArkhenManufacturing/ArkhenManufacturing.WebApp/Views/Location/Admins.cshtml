@@ -1,0 +1,45 @@
+﻿@model IEnumerable<AdminViewModel>
+
+@{
+  ViewData["Title"] = "Admins";
+}
+
+<div class="row justify-content-center">
+  <table class="table">
+    <caption>A list of the admins that are associated with this location.</caption>
+    <thead>
+      <tr>
+        <th id="firstName">
+          @Html.DisplayNameFor(model => model.First().FirstName)
+        </th>
+        <th id="lastName">
+          @Html.DisplayNameFor(model => model.First().LastName)
+        </th>
+        <th id="username">
+          @Html.DisplayNameFor(model => model.First().Username)
+        </th>
+        <th id="email">
+          @Html.DisplayNameFor(model => model.First().Email)
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var item in Model) {
+        <tr>
+          <td>
+            @Html.DisplayFor(_ => item.FirstName)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.LastName)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Username)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Email)
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

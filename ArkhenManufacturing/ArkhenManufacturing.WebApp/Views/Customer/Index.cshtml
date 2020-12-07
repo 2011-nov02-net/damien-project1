@@ -1,0 +1,58 @@
+﻿@model IEnumerable<CustomerViewModel>
+
+@{
+  ViewData["Title"] = "Customers";
+}
+
+<div class="row justify-content-center">
+  <div>
+    <form class="form-group" asp-action="Index" asp-controller="Customer" method="get">
+      Search By Name: 
+      <input type="text" name="id" />
+      <input type="submit" value="Filter" />
+    </form>
+  </div>
+  <table class="table">
+    <caption>A list of customers that have registered in the website.</caption>
+    <thead>
+      <tr>
+        <th id="firstName">
+          @Html.DisplayNameFor(model => model.First().FirstName)
+        </th>
+        <th id="lastName">
+          @Html.DisplayNameFor(model => model.First().LastName)
+        </th>
+        <th id="phoneNumber">
+          @Html.DisplayNameFor(model => model.First().PhoneNumber)
+        </th>
+        <th id="email">
+          @Html.DisplayNameFor(model => model.First().Email)
+        </th>
+        <th id="address">
+          @Html.DisplayNameFor(model => model.First().Address)
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var item in Model) {
+        <tr>
+          <td>
+            @Html.DisplayFor(_ => item.FirstName)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.LastName)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.PhoneNumber)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Email)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Address)
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

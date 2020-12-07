@@ -12,15 +12,13 @@ namespace ArkhenManufacturing.DataAccess
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public Guid AddressId { get; set; }
         public DbAddress Address { get; set; }
         public DateTime SignUpDate { get; set; }
         public DateTime BirthDate { get; set; }
-        public Guid DefaultLocationId { get; set; }
+        public Guid? DefaultLocationId { get; set; }
         public DbLocation DefaultLocation { get; set; }
 
         public virtual ICollection<DbOrder> Orders { get; set; }

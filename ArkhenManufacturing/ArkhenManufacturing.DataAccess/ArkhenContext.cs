@@ -1,10 +1,9 @@
-﻿using System;
-
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArkhenManufacturing.DataAccess
 {
-    public class ArkhenContext : DbContext
+    public class ArkhenContext : IdentityDbContext<ApplicationUser>
     {
         public ArkhenContext(DbContextOptions<ArkhenContext> options) :
             base(options) {
@@ -19,9 +18,10 @@ namespace ArkhenManufacturing.DataAccess
         public DbSet<DbOrderLine> OrderLines { get; set; }
         public DbSet<DbProduct> Products { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        protected override void OnModelCreating(ModelBuilder builder) {
+            base.OnModelCreating(builder);
 
-            modelBuilder.Entity<DbAddress>(entity => {
+            builder.Entity<DbAddress>(entity => {
                 entity.ToTable("Address");
 
                 entity.Property(e => e.Id)
@@ -40,14 +40,11 @@ namespace ArkhenManufacturing.DataAccess
                     .IsRequired();
             });
 
-            modelBuilder.Entity<DbAdmin>(entity => {
+            builder.Entity<DbAdmin>(entity => {
                 entity.ToTable("Admin");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
-
-                entity.Property(e => e.UserName)
-                    .IsRequired();
 
                 entity.Property(e => e.LastName)
                     .IsRequired();
@@ -55,39 +52,28 @@ namespace ArkhenManufacturing.DataAccess
                 entity.Property(e => e.FirstName)
                     .IsRequired();
 
-                entity.Property(e => e.Password)
-                    .IsRequired();
-
                 entity.Property(e => e.Email)
                     .IsRequired();
-
-                entity.HasIndex(e => e.UserName)
-                    .IsUnique();
 
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
 
                 entity.HasOne(e => e.Location)
                     .WithMany(l => l.Admins)
-                    .HasForeignKey(e => e.LocationId);
+                    .HasForeignKey(e => e.LocationId)
+                    .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
-            modelBuilder.Entity<DbCustomer>(entity => {
+            builder.Entity<DbCustomer>(entity => {
                 entity.ToTable("Customer");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
 
-                entity.Property(e => e.UserName)
-                    .IsRequired();
-
                 entity.Property(e => e.LastName)
                     .IsRequired();
 
                 entity.Property(e => e.FirstName)
-                    .IsRequired();
-
-                entity.Property(e => e.Password)
                     .IsRequired();
 
                 entity.Property(e => e.Email)
@@ -98,9 +84,6 @@ namespace ArkhenManufacturing.DataAccess
 
                 entity.Property(e => e.SignUpDate)
                     .IsRequired();
-
-                entity.HasIndex(e => e.UserName)
-                    .IsUnique();
 
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
@@ -115,7 +98,7 @@ namespace ArkhenManufacturing.DataAccess
                     .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
-            modelBuilder.Entity<DbInventoryEntry>(entity => {
+            builder.Entity<DbInventoryEntry>(entity => {
                 entity.ToTable("InventoryEntry");
 
                 entity.Property(e => e.Id)
@@ -133,14 +116,14 @@ namespace ArkhenManufacturing.DataAccess
                     .HasForeignKey(e => e.LocationId);
             });
 
-            modelBuilder.Entity<DbLocation>(entity => {
+            builder.Entity<DbLocation>(entity => {
                 entity.ToTable("Location");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<DbOrder>(entity => {
+            builder.Entity<DbOrder>(entity => {
                 entity.ToTable("Order");
 
                 entity.Property(e => e.Id)
@@ -163,7 +146,7 @@ namespace ArkhenManufacturing.DataAccess
                     .OnDelete(DeleteBehavior.ClientNoAction);
             });
 
-            modelBuilder.Entity<DbOrderLine>(entity => {
+            builder.Entity<DbOrderLine>(entity => {
                 entity.ToTable("OrderLine");
 
                 entity.Property(e => e.Id)
@@ -184,7 +167,7 @@ namespace ArkhenManufacturing.DataAccess
                     .HasForeignKey(e => e.ProductId);
             });
 
-            modelBuilder.Entity<DbProduct>(entity => {
+            builder.Entity<DbProduct>(entity => {
                 entity.ToTable("Product");
 
                 entity.Property(e => e.Id)

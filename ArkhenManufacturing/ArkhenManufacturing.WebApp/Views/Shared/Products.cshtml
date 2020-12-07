@@ -1,5 +1,48 @@
 ﻿@model IEnumerable<ArkhenManufacturing.WebApp.Models.ProductViewModel>
 
-@foreach (var item in Model) {
-  await Html.RenderPartialAsync("ProductCard", item);
-}
+<div class="row justify-content-center">
+  @if (Model.Any()) {
+  <table class="table">
+    <caption>A list of products that are available</caption>
+    <thead>
+      <tr>
+        <th id="productName">
+          @Html.DisplayNameFor(_ => Model.First().ProductName)
+        </th>
+        <th id="discountedPrice">
+          @Html.DisplayNameFor(_ => Model.First().DiscountedPrice)
+        </th>
+        <th id="discountedPercentage">
+          @Html.DisplayNameFor(_ => Model.First().DiscountPercentage)
+        </th>
+        <th id="cap">
+          @Html.DisplayNameFor(_ => Model.First().Cap)
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var item in Model) {
+        <tr>
+          <td>
+            @Html.DisplayFor(_ => item.ProductName)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.DiscountedPrice)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.DiscountPercentage)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Cap)
+          </td>
+          <td>
+            @Html.ActionLink("Details", "Details", "Product", new { id = item.Id })
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  } else {
+    <p>No Products Present</p>
+  }
+</div>

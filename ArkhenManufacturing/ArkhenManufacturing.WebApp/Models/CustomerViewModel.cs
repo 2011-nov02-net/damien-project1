@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
 using ArkhenManufacturing.Library.Data;
 using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.Library.Extensions;
@@ -59,6 +56,18 @@ namespace ArkhenManufacturing.WebApp.Models
         [Required, DataType(DataType.PostalCode)]
         public string ZipCode { get; set; }
 
+        public string Address
+        {
+            get
+            {
+                return $"{Line1}, {(Line2.IsNullOrEmpty() ? $"{City}, " : $", {Line2}, {City}")}, {(State.IsNullOrEmpty() ? $"{Country}" : $"{State}, {Country}")} {ZipCode}";
+            }
+        }
+
+        public Guid? DefaultLocationId { get; set; }
+
+        public List<Tuple<string,Guid>> Locations { get; set; }
+
         public CustomerViewModel() { }
 
         /// <summary>
@@ -68,16 +77,20 @@ namespace ArkhenManufacturing.WebApp.Models
         /// <param name="customer">The customer data being stored</param>
         /// <param name="address">The address data being stored</param>
         /// <exception cref="ArgumentException">Exception thrown when the data of the customer is null</exception>
-        public CustomerViewModel(Customer customer, Address address) {
+        public CustomerViewModel(Customer customer, Address address, List<Tuple<string, Guid>> locations) {
             customer.NullCheck(nameof(customer));
             address.NullCheck(nameof(address));
+
+            Locations = locations;
 
             var customerData = customer.GetData() as CustomerData;
             var addressData = address.GetData() as AddressData;
 
             FirstName = customerData.FirstName;
             LastName = customerData.LastName;
+            PhoneNumber = customerData.PhoneNumber;
             Email = customerData.Email;
+            DefaultLocationId = customerData.DefaultLocationId;
 
             Line1 = addressData.Line1;
             Line2 = addressData.Line2;
@@ -92,6 +105,7 @@ namespace ArkhenManufacturing.WebApp.Models
             {
                 FirstName = viewModel.FirstName,
                 LastName = viewModel.LastName,
+                PhoneNumber = viewModel.PhoneNumber,
                 Email = viewModel.Email
             };
         }

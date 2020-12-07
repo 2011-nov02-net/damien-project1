@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ArkhenManufacturing.DataAccess.ApplicationUser> SignInManager
+@inject UserManager<ArkhenManufacturing.DataAccess.ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User)) {
+  <form asp-action="Logout" asp-controller="Account" method="post">
+    <ul class="nav navbar-nav navbar-right">
+      <li>
+        <a class="navbar-brand btn-link navbar-link text-light" asp-action="Details" asp-controller="Account">Hello, @UserManager.GetUserName(User)!</a>
+      </li>
+      <li>
+        <a class="navbar-brand btn-link navbar-link text-light bg-dark" asp-action="Orders" asp-controller="Customer">Orders</a>
+      </li>
+      <li>
+        <input type="submit" class="navbar-brand btn-link navbar-link text-light bg-dark" value="Log Out" />
+      </li>
+    </ul>
+  </form>
+} else {
+  <ul class="nav navbar-nav navbar-right">
+    <li><a class="navbar-brand btn-link text-light" asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
+    <li><a class="navbar-brand btn-link text-light" asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+  </ul>
+}

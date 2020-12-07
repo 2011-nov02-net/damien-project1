@@ -3,5 +3,6 @@
         "**/.vs/": true,
         "**/bin/": true,
         "**/obj/": true
-    }
+    },
+    "editor.fontFamily": "Cascadia Code, Ubuntu Mono"
 }

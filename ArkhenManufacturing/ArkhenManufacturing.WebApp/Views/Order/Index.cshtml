@@ -1,0 +1,51 @@
+﻿@model IEnumerable<OrderSummaryViewModel>
+
+<div>
+  @if (Model.Any()) {
+    <table class="table">
+      <caption>A list of all orders placed through this website.</caption>
+      <thead>
+        <tr>
+          <th id="customerLink">
+            @Html.DisplayNameFor(model => model.First().CustomerLink)
+          </th>
+          <th id="adminLink">
+            @Html.DisplayNameFor(model => model.First().AdminLink)
+          </th>
+          <th id="locationLink">
+            @Html.DisplayNameFor(model => model.First().LocationLink)
+          </th>
+          <th id="total">
+            @Html.DisplayNameFor(model => model.First().Total)
+          </th>
+          <th id="placementDate">
+            @Html.DisplayNameFor(model => model.First().PlacementDate)
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach(var item in Model) {
+        <tr>
+          <td>
+            @Html.ActionLink(item.CustomerLink.Item1, "Details", "Customer", new { id = item.CustomerLink.Item2 })
+          </td>
+          <td>
+            @Html.ActionLink(item.CustomerLink.Item1, "Details", "Admin", new { id = item.CustomerLink.Item2 })
+          </td>
+          <td>
+            @Html.ActionLink(item.CustomerLink.Item1, "Details", "Location", new { id = item.CustomerLink.Item2 })
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Total);
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.PlacementDate);
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  } else {
+    <p class="row justify-content-center">No Orders Present</p>
+  }
+</div>

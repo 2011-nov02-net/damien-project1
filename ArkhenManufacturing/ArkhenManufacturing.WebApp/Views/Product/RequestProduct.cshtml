@@ -3,9 +3,13 @@
 <hr />
 <div class="row">
   <div class="col-md-4">
-    <form asp-action="AddToCart" asp-controller="Product">
+    <form asp-action="AddToCart" asp-controller="Product" method="post">
       <div asp-validation-summary="ModelOnly" class="text-danger"></div>
       <div class="form-group">
+        <input asp-for="ProductName" type="hidden" value="@Model.ProductName" />
+        <input asp-for="PricePerUnit" type="hidden" value="@Model.PricePerUnit" />
+        <input asp-for="Discount" type="hidden" value="@Model.Discount" />
+        <input type="hidden" value="@Model.ProductName" />
         <input asp-for="ProductId" type="hidden" value="@Model.ProductId" />
       </div>
       <div class="form-group">
@@ -14,7 +18,15 @@
         <span asp-validation-for="Count" class="text-danger"></span>
       </div>
       <div class="form-group">
-        <input type="submit" value="Add to Cart" class="btn btn-primary" />
+        <select asp-for="LocationId">
+          @foreach (var item in Model.PossibleLocations) {
+            <option value="@item.Item2">@item.Item1</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Add to Cart" class="btn btn-primary" @if (!Model.PossibleLocations.Any()) { @: disabled
+               } />
       </div>
     </form>
   </div>
