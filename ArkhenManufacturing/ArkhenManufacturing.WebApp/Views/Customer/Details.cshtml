@@ -60,6 +60,23 @@
         <span asp-validation-for="ZipCode" class="text-danger"></span>
       </div>
       <div class="form-group">
+        <label asp-for="DefaultLocationId" class="control-label"></label>
+        <select asp-for="DefaultLocationId">
+          @if (!Model.DefaultLocationId.HasValue) {
+            <option value="@null" selected>None</option>
+          } else {
+            <option value="@null">None</option>
+          }
+          @foreach (var item in Model.Locations) {
+            @if (item.Item2 == Model.DefaultLocationId) {
+              <option value="@item.Item2" selected>@item.Item1</option>
+            } else {
+              <option value="@item.Item2">@item.Item1</option>
+            }
+          }
+        </select>
+      </div>
+      <div class="form-group">
         <input type="submit" value="Save Changes" class="btn btn-primary" />
       </div>
     </form>

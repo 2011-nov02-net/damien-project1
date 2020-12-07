@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 using ArkhenManufacturing.Library.Data;
@@ -56,6 +57,10 @@ namespace ArkhenManufacturing.WebApp.Models
         [Required, DataType(DataType.PostalCode)]
         public string ZipCode { get; set; }
 
+        public Guid? DefaultLocationId { get; set; }
+
+        public List<Tuple<string,Guid>> Locations { get; set; }
+
         public CustomerViewModel() { }
 
         /// <summary>
@@ -65,9 +70,11 @@ namespace ArkhenManufacturing.WebApp.Models
         /// <param name="customer">The customer data being stored</param>
         /// <param name="address">The address data being stored</param>
         /// <exception cref="ArgumentException">Exception thrown when the data of the customer is null</exception>
-        public CustomerViewModel(Customer customer, Address address) {
+        public CustomerViewModel(Customer customer, Address address, List<Tuple<string, Guid>> locations) {
             customer.NullCheck(nameof(customer));
             address.NullCheck(nameof(address));
+
+            Locations = locations;
 
             var customerData = customer.GetData() as CustomerData;
             var addressData = address.GetData() as AddressData;
@@ -76,6 +83,7 @@ namespace ArkhenManufacturing.WebApp.Models
             LastName = customerData.LastName;
             PhoneNumber = customerData.PhoneNumber;
             Email = customerData.Email;
+            DefaultLocationId = customerData.DefaultLocationId;
 
             Line1 = addressData.Line1;
             Line2 = addressData.Line2;
