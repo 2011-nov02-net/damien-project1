@@ -1,0 +1,88 @@
+﻿@model OrderViewModel
+
+@{
+  ViewData["Title"] = $"Order on {Model.PlacementDate}";
+}
+
+<div class="row justify-content-center">
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>
+          @Html.DisplayNameFor(model => model.CustomerName)
+        </td>
+        <td>
+          @Html.DisplayFor(model => model.CustomerName)
+        </td>
+      </tr>
+      <tr>
+        <td>
+          @Html.DisplayNameFor(model => model.AdminName)
+        </td>
+        <td>
+          @Html.DisplayFor(model => model.AdminName)
+        </td>
+      </tr>
+      <tr>
+        <td>
+          @Html.DisplayNameFor(model => model.LocationName)
+        </td>
+        <td>
+          @Html.DisplayFor(model => model.LocationName)
+        </td>
+      </tr>
+      <tr>
+        <td>
+          @Html.DisplayNameFor(model => model.PlacementDate)
+        </td>
+        <td>
+          @Html.DisplayFor(model => model.PlacementDate)
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <label class="row justify-content-center">Products</label>
+  <table class="table">
+    <thead>
+      <tr>
+        <td>
+          @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].ProductName)
+        </td>
+        <td>
+          @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].Price)
+        </td>
+        <td>
+          @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].Count)
+        </td>
+        <td>
+          @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].Discount)
+        </td>
+        <td>
+          @Html.DisplayNameFor(_ => Model.OrderLineViewModels[0].TotalPrice)
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var item in Model.OrderLineViewModels) {
+        <tr>
+          <td>
+            @Html.DisplayFor(_ => item.ProductName)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Price)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Count)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Discount)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.TotalPrice)
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

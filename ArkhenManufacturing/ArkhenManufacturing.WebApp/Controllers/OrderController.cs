@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -89,7 +89,8 @@ namespace ArkhenManufacturing.WebApp.Controllers
             string locationName = location.GetName();
 
             // get the order lines
-            var orderLines = await _archivist.RetrieveSomeAsync<OrderLine>(data.OrderLineIds);
+            var orderLines = (await _archivist.RetrieveAllAsync<OrderLine>())
+                .Where(ol => (ol.GetData() as OrderLineData).OrderId == id);
 
             var orderLineViewModels = orderLines
                 .Select(async ol => {
