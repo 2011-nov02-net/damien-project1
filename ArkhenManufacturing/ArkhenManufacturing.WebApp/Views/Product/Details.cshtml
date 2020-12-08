@@ -21,7 +21,7 @@
       @Html.DisplayFor(model => model.Item1.Count) left in stock
     </dd>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Item1.Threshold) maximum
+      @Html.DisplayFor(model => model.Item1.Max) maximum
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Item1.Price)
@@ -37,7 +37,7 @@
     {
       PossibleLocations = Model.Item2,
       ProductName = Model.Item1.ProductName,
-      Count = 0,
+      Count = Model.Item1.Max,
       PricePerUnit = Model.Item1.Price,
       Discount = Model.Item1.Discount
     });

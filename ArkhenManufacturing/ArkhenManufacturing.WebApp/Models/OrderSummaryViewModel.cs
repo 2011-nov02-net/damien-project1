@@ -17,6 +17,7 @@ namespace ArkhenManufacturing.WebApp.Models
         public Tuple<string, Guid> LocationLink { get; set; }
 
         [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Total { get; set; }
 
         public DateTime PlacementDate { get; set; }

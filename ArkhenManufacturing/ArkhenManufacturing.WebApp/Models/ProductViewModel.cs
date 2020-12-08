@@ -13,16 +13,20 @@ namespace ArkhenManufacturing.WebApp.Models
 
         public int Cap { get => Math.Max(Count, Threshold); }
 
+        public int Max { get => Math.Min(Threshold, Count); }
+
         public int Count { get; set; }
 
         public int Threshold { get; set; }
 
         [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Price { get; set; }
 
         public decimal Discount { get; set; }
 
         [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal DiscountedPrice
         {
             get

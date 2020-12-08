@@ -11,12 +11,14 @@ namespace ArkhenManufacturing.WebApp.Models
         public int Count { get; set; }
 
         [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Price { get; set; }
 
         public decimal Discount { get; set; }
 
         [Display(Name = "Total Price")]
         [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal TotalPrice { get; set; }
 
         public OrderLineViewModel() { }
