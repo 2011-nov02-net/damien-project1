@@ -22,20 +22,23 @@
       </thead>
       <tbody>
         @foreach (var item in Model) {
-          <tr>
-            <td>
-              <label class="form-group">@item.CustomerLink.Item1</label>
-            </td>
-            <td>
-              <label class="form-group">@item.AdminLink.Item1</label>
-            </td>
-            <td>
-              @Html.DisplayFor(_ => item.Total)
-            </td>
-            <td>
-              @Html.DisplayFor(_ => item.PlacementDate)
-            </td>
-          </tr>
+        <tr>
+          <td>
+            <label class="form-group">@item.CustomerLink.Item1</label>
+          </td>
+          <td>
+            <label class="form-group">@item.AdminLink.Item1</label>
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.Total)
+          </td>
+          <td>
+            @Html.DisplayFor(_ => item.PlacementDate)
+          </td>
+          <td>
+            @Html.ActionLink("Details", "Details", "Order", new { id = item.OrderId })
+          </td>
+        </tr>
         }
       </tbody>
     </table>
