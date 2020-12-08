@@ -117,7 +117,8 @@ namespace ArkhenManufacturing.Domain.Database
             => Interfacer<T>()
                 .RetrieveAllAsync().Result
                 .Where(item => item.GetName()
-                    .Contains(name))
+                    .ToLower()
+                    .Contains(name.ToLower()))
                 .ToList();
 
         public async Task<List<T>> RetrieveByNameAsync<T>(string name)
