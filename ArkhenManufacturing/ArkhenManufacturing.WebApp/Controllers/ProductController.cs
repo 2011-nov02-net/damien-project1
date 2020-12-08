@@ -59,12 +59,14 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Details(Guid id) {
             var product = _archivist.Retrieve<Product>(id);
+
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
-            var customer = await _archivist.RetrieveAsync<Customer>(user.UserId);
-            var customerData = customer.GetData() as CustomerData;
+            // var customer = await _archivist.RetrieveAsync<Customer>(user.UserId);
+            // var customerData = customer.GetData() as CustomerData;
 
-            Guid? defaultStoreId = customerData.DefaultLocationId;
+            // TODO: Change so that the user selects a single location instead of a per-item basis
+            // Guid? defaultStoreId = customerData.DefaultLocationId;
             var inventoryEntries = await _archivist.RetrieveAllAsync<InventoryEntry>();
 
             var inventoryEntriesForProduct = inventoryEntries
