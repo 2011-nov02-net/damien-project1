@@ -6,15 +6,19 @@
 @if (SignInManager.IsSignedIn(User)) {
   <form asp-action="Logout" asp-controller="Account" method="post">
     <ul class="nav navbar-nav navbar-right">
-      <li>
-        <a class="navbar-brand btn-link navbar-link text-light" asp-action="Details" asp-controller="Account">Hello, @UserManager.GetUserName(User)!</a>
-      </li>
       @if (!User.IsInRole("Admin")) {
+        <li>
+          <a class="navbar-brand btn-link navbar-link text-light" asp-action="Details" asp-controller="Account">Hello, @UserManager.GetUserName(User)!</a>
+        </li>
         <li>
           <a class="navbar-brand btn-link btn btn-secondary navbar-link text-light" asp-action="Orders" asp-controller="Customer">Orders</a>
         </li>
         <li>
           <a class="navbar-brand btn-link btn btn-secondary text-light" asp-controller="Account" asp-action="Cart">Cart</a>
+        </li>
+      } else {
+        <li>
+          <label class="navbar-brand btn-link navbar-link text-light">Hello, @UserManager.GetUserName(User)!</label>
         </li>
       }
       <li>
