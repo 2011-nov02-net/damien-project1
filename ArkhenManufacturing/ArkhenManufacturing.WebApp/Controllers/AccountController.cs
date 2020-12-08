@@ -72,7 +72,6 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 }
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                await _signInManager.SignOutAsync();
 
                 // Redirect to the customer creation view
                 return RedirectToAction(nameof(CustomerController.Create), "Customer");
