@@ -1,13 +1,14 @@
 ﻿@model IEnumerable<CustomerViewModel>
 
 @{
+  Layout = "_Layout";
   ViewData["Title"] = "Customers";
 }
 
 <div class="row justify-content-center">
   <div>
     <form class="form-inline my-2 my-lg-0" asp-action="Index" asp-controller="Customer" method="get">
-      Search By Name: 
+      Search By Name:
       <input class="form-control mr-sm-2" type="text" name="id" />
       <input class="btn btn-secondary my-2 my-sm-0" type="submit" value="Filter" />
     </form>
