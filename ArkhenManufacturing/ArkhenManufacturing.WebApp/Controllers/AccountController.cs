@@ -233,7 +233,12 @@ namespace ArkhenManufacturing.WebApp.Controllers
 
                 // create the order lines
                 foreach (var productRequest in validProducts) {
-                    var orderLineData = new OrderLineData(orderId, productRequest.ProductId, productRequest.Count, productRequest.PricePerUnit, productRequest.Discount);
+                    var inventoryEntry = inventoryEntries
+                        .Select(ie => ie.GetData() as InventoryEntryData)
+                        .First(data => data.ProductId == productRequest.ProductId);
+                    var product = await _archivist.RetrieveAsync<Product>(productRequest.ProductId);
+
+                    var orderLineData = new OrderLineData(orderId, productRequest.ProductId, productRequest.Count, inventoryEntry.Price, inventoryEntry.Discount);
                     Guid orderLineId = await _archivist.CreateAsync<OrderLine>(orderLineData);
                     data.OrderLineIds.Add(orderLineId);
                 }
