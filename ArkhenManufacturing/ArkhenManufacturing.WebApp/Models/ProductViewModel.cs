@@ -31,6 +31,7 @@ namespace ArkhenManufacturing.WebApp.Models
             }
         }
 
+        [Display(Name = "Discount Percentage")]
         public decimal DiscountPercentage { get => Discount; }
 
         public ProductViewModel() { }
