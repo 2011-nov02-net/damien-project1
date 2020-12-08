@@ -191,55 +191,71 @@ namespace ArkhenManufacturing.WebApp.Controllers
                 return orderData.Count(od => od.AdminId == a.Id);
             }).First();
 
-            Guid locationId = _cartService.ProductRequests.First().LocationId;
-
-            var products = _cartService.ProductRequests
+            var productIds = _cartService.ProductRequests
                 .Select(pr => pr.ProductId)
                 .ToList();
 
-            var inventoryEntries = (await _archivist.RetrieveAllAsync<InventoryEntry>())
-                .Where(ie => (ie.GetData() as InventoryEntryData).LocationId == locationId)
-                .Where(ie => products.Contains((ie.GetData() as InventoryEntryData).ProductId))
+            var uniqueLocations = _cartService.ProductRequests
+                .Select(pr => pr.LocationId)
+                .Distinct()
                 .ToList();
 
-            // get the customer id
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            Guid customerId = user.UserId;
+            foreach(var itemId in uniqueLocations) {
+                // get the ies assocaited with this location
 
-            // Create the initial order data, and get its id
-            var data = new OrderData
-            {
-                AdminId = admin.Id,
-                CustomerId = customerId,
-                LocationId = locationId,
-                OrderLineIds = new List<Guid>(),
-                PlacementDate = DateTime.Now
-            };
+                var inventoryEntries = (await _archivist.RetrieveAllAsync<InventoryEntry>())
+                    .Where(ie => (ie.GetData() as InventoryEntryData).LocationId == itemId)
+                    .Where(ie => productIds.Contains((ie.GetData() as InventoryEntryData).ProductId))
+                    .ToList();
 
-            Guid orderId = await _archivist.CreateAsync<Order>(data);
+                var inventoryEntriesData = inventoryEntries
+                    .Select(ie => ie.GetData() as InventoryEntryData)
+                    .ToList();
 
-            // create the order lines
-            foreach(var productRequest in _cartService.ProductRequests) {
-                var orderLineData = new OrderLineData(orderId, productRequest.ProductId, productRequest.Count, productRequest.PricePerUnit, productRequest.Discount);
-                Guid orderLineId = await _archivist.CreateAsync<OrderLine>(orderLineData);
-                data.OrderLineIds.Add(orderLineId);
-            }
+                var validProducts = _cartService.ProductRequests
+                    .Where(pr => inventoryEntriesData.Select(ie => ie.ProductId).Contains(pr.ProductId))
+                    .ToList();
 
-            // Now to update the backend with the request
-            await _archivist.UpdateAsync<Order>(orderId, data);
+                // get the customer id
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                Guid customerId = user.UserId;
 
-            // update the store's inventory
-            for (int i = 0; i < inventoryEntries.Count; i++) {
-                var inventoryEntry = inventoryEntries[i];
-                var inventoryEntryData = inventoryEntry.GetData() as InventoryEntryData;
-                var productRequest = _cartService.ProductRequests.First(pr => pr.ProductId == inventoryEntryData.ProductId);
-                inventoryEntryData.Count -= productRequest.Count;
-                await _archivist.UpdateAsync<InventoryEntry>(inventoryEntry.Id, inventoryEntryData);
+                // Create the initial order data, and get its id
+                var data = new OrderData
+                {
+                    AdminId = admin.Id,
+                    CustomerId = customerId,
+                    LocationId = itemId,
+                    OrderLineIds = new List<Guid>(),
+                    PlacementDate = DateTime.Now
+                };
+
+                Guid orderId = await _archivist.CreateAsync<Order>(data);
+
+                // create the order lines
+                foreach (var productRequest in validProducts) {
+                    var orderLineData = new OrderLineData(orderId, productRequest.ProductId, productRequest.Count, productRequest.PricePerUnit, productRequest.Discount);
+                    Guid orderLineId = await _archivist.CreateAsync<OrderLine>(orderLineData);
+                    data.OrderLineIds.Add(orderLineId);
+                }
+
+                // Now to update the backend with the request
+                await _archivist.UpdateAsync<Order>(orderId, data);
+
+                // update the store's inventory
+                for (int i = 0; i < inventoryEntries.Count; i++) {
+                    var inventoryEntry = inventoryEntries[i];
+                    var inventoryEntryData = inventoryEntry.GetData() as InventoryEntryData;
+                    var productRequest = _cartService.ProductRequests.First(pr => pr.ProductId == inventoryEntryData.ProductId);
+                    inventoryEntryData.Count -= productRequest.Count;
+                    await _archivist.UpdateAsync<InventoryEntry>(inventoryEntry.Id, inventoryEntryData);
+                }
+
             }
 
             _cartService.Clear();
 
-            return RedirectToAction(nameof(OrderController.Details), "Order", new { id = orderId });
+            return RedirectToAction(nameof(CustomerController.Orders), "Customer");
         }
 
         [HttpPost]

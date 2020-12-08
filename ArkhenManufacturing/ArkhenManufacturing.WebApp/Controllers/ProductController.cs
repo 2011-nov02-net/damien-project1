@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArkhenManufacturing.DataAccess;
 using ArkhenManufacturing.Domain;
 using ArkhenManufacturing.Library.Data;
@@ -9,6 +10,7 @@ using ArkhenManufacturing.Library.Entity;
 using ArkhenManufacturing.WebApp.Misc;
 using ArkhenManufacturing.WebApp.Models;
 using ArkhenManufacturing.WebApp.Models.Services;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -94,6 +96,12 @@ namespace ArkhenManufacturing.WebApp.Controllers
         [Authorize]
         public IActionResult AddToCart(ProductRequestViewModel viewModel) {
             if (!ModelState.IsValid) {
+                return RedirectToAction("Details", new { id = viewModel.ProductId });
+            } else if (viewModel.Count <= 0) {
+                ModelState.AddModelError("Count", "Count is too low.");
+                return RedirectToAction("Details", new { id = viewModel.ProductId });
+            } else if (viewModel.Max < viewModel.Count) {
+                ModelState.AddModelError("Count", "Count is too high.");
                 return RedirectToAction("Details", new { id = viewModel.ProductId });
             }
 

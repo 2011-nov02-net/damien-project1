@@ -9,17 +9,22 @@
       <li>
         <a class="navbar-brand btn-link navbar-link text-light" asp-action="Details" asp-controller="Account">Hello, @UserManager.GetUserName(User)!</a>
       </li>
+      @if (!User.IsInRole("Admin")) {
+        <li>
+          <a class="navbar-brand btn-link btn btn-secondary navbar-link text-light" asp-action="Orders" asp-controller="Customer">Orders</a>
+        </li>
+        <li>
+          <a class="navbar-brand btn-link btn btn-secondary text-light" asp-controller="Account" asp-action="Cart">Cart</a>
+        </li>
+      }
       <li>
-        <a class="navbar-brand btn-link navbar-link text-light bg-dark" asp-action="Orders" asp-controller="Customer">Orders</a>
-      </li>
-      <li>
-        <input type="submit" class="navbar-brand btn-link navbar-link text-light bg-dark" value="Log Out" />
+        <input type="submit" class="navbar-brand btn-link btn btn-secondary navbar-link text-light" value="Log Out" />
       </li>
     </ul>
   </form>
 } else {
   <ul class="nav navbar-nav navbar-right">
-    <li><a class="navbar-brand btn-link text-light" asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
-    <li><a class="navbar-brand btn-link text-light" asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+    <li><a class="navbar-brand btn-link text-light btn btn-secondary" asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
+    <li><a class="navbar-brand btn-link text-light btn btn-secondary" asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
   </ul>
 }

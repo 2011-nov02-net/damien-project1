@@ -10,6 +10,8 @@ namespace ArkhenManufacturing.WebApp.Models
 
         public string ProductName { get; set; }
 
+        public int Max { get; set; }
+
         [Range(1, 999999)]
         public int Count { get; set; }
 
